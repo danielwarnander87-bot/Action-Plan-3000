@@ -104,11 +104,18 @@
   }
   .block.pink{background:var(--pink-soft);}
   .block.green{background:var(--green-soft);}
+  .block-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:4px;
+  }
   .block h2{
     font-family:'Fredoka',sans-serif;
     font-weight:600;
     font-size:22px;
-    margin:0 0 4px;
+    margin:0;
     display:flex;
     align-items:center;
     gap:9px;
@@ -116,6 +123,21 @@
   .block.pink h2{color:var(--pink-deep);}
   .block.green h2{color:var(--green-deep);}
   .block .icon{font-size:22px;}
+  .eta-btn{
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:11px;
+    letter-spacing:0.3px;
+    white-space:nowrap;
+    border:2px solid var(--ink);
+    background:#fff;
+    color:var(--ink);
+    padding:5px 10px;
+    border-radius:100px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .eta-btn:active{background:var(--pink-soft);}
   .block .sub{
     font-size:12px;
     font-weight:700;
@@ -142,6 +164,24 @@
   }
   textarea.bullet-area:focus{background:rgba(255,255,255,0.85);}
   textarea.bullet-area::placeholder{color:rgba(35,20,40,0.35);font-weight:600;}
+  .budget-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    align-self:flex-start;
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    color:#fff;
+    background:var(--green-deep);
+    border:2.5px solid var(--ink);
+    border-radius:100px;
+    padding:7px 14px;
+    margin-bottom:12px;
+    text-decoration:none;
+    box-shadow:3px 3px 0 rgba(35,20,40,0.9);
+  }
+  .budget-link:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(35,20,40,0.9);}
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
@@ -200,6 +240,147 @@
     cursor:pointer;
   }
   .clear-btn:active{background:var(--pink-soft);}
+
+  .eta-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(35,20,40,0.55);
+    z-index:300;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+  }
+  .eta-overlay.open{display:flex;}
+  .eta-modal{
+    background:#fff;
+    border:3px solid var(--ink);
+    border-radius:22px;
+    padding:20px 22px 22px;
+    width:100%;
+    max-width:340px;
+    box-shadow:6px 6px 0 rgba(35,20,40,0.9);
+  }
+  .eta-modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .eta-month-label{
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:17px;
+    color:var(--ink);
+  }
+  .eta-nav{
+    width:30px;height:30px;
+    border-radius:50%;
+    border:2px solid var(--ink);
+    background:#fff;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    color:var(--ink);
+    line-height:1;
+  }
+  .eta-nav:active{background:var(--pink-soft);}
+  .eta-weekdays{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    text-align:center;
+    font-size:11px;
+    font-weight:800;
+    opacity:0.5;
+    margin-bottom:4px;
+  }
+  .eta-days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:3px;
+  }
+  .eta-day{
+    aspect-ratio:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    border:none;
+    background:transparent;
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .eta-day.blank{cursor:default;}
+  .eta-day.in-week{background:var(--green-soft);}
+  .eta-day.today{box-shadow:inset 0 0 0 2px var(--pink-deep);}
+  .eta-day.selected{background:var(--pink-deep)!important;color:#fff;}
+  .eta-day:active{background:var(--pink-soft);}
+  .eta-legend{
+    display:flex;
+    align-items:center;
+    font-size:10px;
+    font-weight:700;
+    opacity:0.55;
+    margin-top:10px;
+    gap:4px;
+  }
+  .eta-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:2px;}
+  .eta-legend .dot.week{background:var(--green-soft);border:1.5px solid var(--green-deep);}
+  .eta-legend .dot.today{border:1.5px solid var(--pink-deep);}
+  .eta-time-row{
+    margin-top:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:13px;
+    font-weight:700;
+  }
+  .eta-time-row input{
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
+    border:2px solid var(--ink);
+    border-radius:8px;
+    padding:5px 8px;
+    font-size:13px;
+  }
+  .eta-modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:18px;
+  }
+  .eta-cancel,.eta-insert{
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    padding:9px 16px;
+    border-radius:100px;
+    cursor:pointer;
+    border:2.5px solid var(--ink);
+  }
+  .eta-cancel{background:#fff;color:var(--ink);}
+  .eta-insert{background:var(--green-deep);color:#fff;}
+  .eta-insert:disabled{opacity:0.4;cursor:not-allowed;}
+
+  @media print{
+    body{padding:0;background:#fff;}
+    .stripe-band .track{animation:none;}
+    .save-note,.print-btn,footer .clear-btn:last-child,.budget-link,.eta-btn,.eta-overlay{display:none!important;}
+    footer{justify-content:center;}
+    .block,.quote-wrap{box-shadow:none;page-break-inside:avoid;break-inside:avoid;}
+    textarea.bullet-area{
+      background:#fff!important;
+      border:1.5px solid rgba(35,20,40,0.25);
+      resize:none;
+      overflow:hidden;
+      min-height:140px;
+    }
+    header{padding-top:14px;}
+    .week-range{box-shadow:none;}
+  }
 </style>
 </head>
 <body>
@@ -214,23 +395,24 @@
   <main>
     <div class="grid">
       <div class="block green">
-        <h2><span class="icon">💼</span>Work</h2>
+        <div class="block-head"><h2><span class="icon">💼</span>Work</h2><button class="eta-btn" onclick="addETA('work')">⏱ ETA</button></div>
         <div class="sub">Priorities &amp; follow-ups</div>
         <textarea class="bullet-area" data-key="work" placeholder="• "></textarea>
       </div>
       <div class="block pink">
-        <h2><span class="icon">💰</span>Finances</h2>
+        <div class="block-head"><h2><span class="icon">💰</span>Finances</h2><button class="eta-btn" onclick="addETA('finances')">⏱ ETA</button></div>
         <div class="sub">Budget, savings, debt moves</div>
         <textarea class="bullet-area" data-key="finances" placeholder="• "></textarea>
       </div>
       <div class="block pink">
-        <h2><span class="icon">📅</span>Appointments</h2>
+        <div class="block-head"><h2><span class="icon">📅</span>Appointments</h2><button class="eta-btn" onclick="addETA('appointments')">⏱ ETA</button></div>
         <div class="sub">Where you need to be, and when</div>
         <textarea class="bullet-area" data-key="appointments" placeholder="• "></textarea>
       </div>
       <div class="block green">
-        <h2><span class="icon">🧾</span>Bills</h2>
+        <div class="block-head"><h2><span class="icon">🧾</span>Bills</h2><button class="eta-btn" onclick="addETA('bills')">⏱ ETA</button></div>
         <div class="sub">Due this week</div>
+        <a class="budget-link" href="https://danielwarnander87-bot.github.io/Budget-Calendar/" target="_blank" rel="noopener">💳 Open Budget Tool →</a>
         <textarea class="bullet-area" data-key="bills" placeholder="• "></textarea>
       </div>
     </div>
@@ -243,8 +425,34 @@
 
   <footer>
     <div class="save-note" id="saveNote">Auto-saves as you type</div>
-    <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
+    <div style="display:flex;gap:10px;">
+      <button class="clear-btn print-btn" onclick="window.print()">🖨 Print</button>
+      <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
+    </div>
   </footer>
+
+  <div class="eta-overlay" id="etaOverlay" onclick="if(event.target===this)etaCancel();">
+    <div class="eta-modal">
+      <div class="eta-modal-head">
+        <button class="eta-nav" onclick="etaChangeMonth(-1)">‹</button>
+        <div class="eta-month-label" id="etaMonthLabel"></div>
+        <button class="eta-nav" onclick="etaChangeMonth(1)">›</button>
+      </div>
+      <div class="eta-weekdays">
+        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+      </div>
+      <div class="eta-days" id="etaDaysGrid"></div>
+      <div class="eta-legend"><span class="dot week"></span> This week &nbsp; <span class="dot today"></span> Today</div>
+      <div class="eta-time-row">
+        <label for="etaTimeInput">Time (optional)</label>
+        <input type="time" id="etaTimeInput">
+      </div>
+      <div class="eta-modal-actions">
+        <button class="eta-cancel" onclick="etaCancel()">Cancel</button>
+        <button class="eta-insert" id="etaInsertBtn" onclick="etaConfirm()" disabled>Insert ETA</button>
+      </div>
+    </div>
+  </div>
 
 <script>
 const QUOTES=[
@@ -278,6 +486,89 @@ function weekKey(monday){
   return monday.getFullYear()+'-'+String(monday.getMonth()+1).padStart(2,'0')+'-'+String(monday.getDate()).padStart(2,'0');
 }
 
+function nowStamp(){
+  const d=new Date();
+  const datePart=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const timePart=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  return datePart+', '+timePart;
+}
+let etaTargetKey=null;
+let etaViewDate=new Date();
+let etaSelectedDate=null;
+
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+
+function renderEtaCalendar(){
+  const y=etaViewDate.getFullYear(),m=etaViewDate.getMonth();
+  document.getElementById('etaMonthLabel').textContent=
+    etaViewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+
+  const today=new Date();
+  const wkMonday=mondayOf(today);
+  const wkSunday=new Date(wkMonday);wkSunday.setDate(wkMonday.getDate()+6);
+
+  const firstOfMonth=new Date(y,m,1);
+  const startOffset=firstOfMonth.getDay(); // 0=Sun
+  const daysInMonth=new Date(y,m+1,0).getDate();
+
+  const grid=document.getElementById('etaDaysGrid');
+  grid.innerHTML='';
+  for(let i=0;i<startOffset;i++){
+    const blank=document.createElement('div');
+    blank.className='eta-day blank';
+    grid.appendChild(blank);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const cellDate=new Date(y,m,d);
+    const btn=document.createElement('button');
+    btn.className='eta-day';
+    btn.textContent=d;
+    if(cellDate>=wkMonday&&cellDate<=wkSunday)btn.classList.add('in-week');
+    if(sameDay(cellDate,today))btn.classList.add('today');
+    if(etaSelectedDate&&sameDay(cellDate,etaSelectedDate))btn.classList.add('selected');
+    btn.onclick=()=>{etaSelectedDate=cellDate;document.getElementById('etaInsertBtn').disabled=false;renderEtaCalendar();};
+    grid.appendChild(btn);
+  }
+}
+
+function addETA(key){
+  etaTargetKey=key;
+  etaViewDate=new Date();
+  etaSelectedDate=null;
+  document.getElementById('etaTimeInput').value='';
+  document.getElementById('etaInsertBtn').disabled=true;
+  renderEtaCalendar();
+  document.getElementById('etaOverlay').classList.add('open');
+}
+function etaChangeMonth(delta){
+  etaViewDate=new Date(etaViewDate.getFullYear(),etaViewDate.getMonth()+delta,1);
+  renderEtaCalendar();
+}
+function etaCancel(){
+  document.getElementById('etaOverlay').classList.remove('open');
+  etaTargetKey=null;etaSelectedDate=null;
+}
+function etaConfirm(){
+  if(!etaTargetKey||!etaSelectedDate)return;
+  const a=document.querySelector('.bullet-area[data-key="'+etaTargetKey+'"]');
+  if(!a){etaCancel();return;}
+  let dateLabel=etaSelectedDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const timeVal=document.getElementById('etaTimeInput').value;
+  if(timeVal){
+    const[hh,mm]=timeVal.split(':').map(Number);
+    const t=new Date();t.setHours(hh,mm,0,0);
+    dateLabel+=', '+t.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  }
+  a.focus();
+  const pos=a.selectionEnd!=null?a.selectionEnd:a.value.length;
+  const insert=' \u2192 ETA: '+dateLabel+' ';
+  a.value=a.value.slice(0,pos)+insert+a.value.slice(pos);
+  const newPos=pos+insert.length;
+  a.selectionStart=a.selectionEnd=newPos;
+  persist();
+  etaCancel();
+}
+
 const today=new Date();
 const monday=mondayOf(today);
 const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
@@ -301,7 +592,7 @@ const areas=document.querySelectorAll('.bullet-area');
 let saved={};
 try{const raw=localStorage.getItem(STORE_KEY);if(raw)saved=JSON.parse(raw);}catch(e){}
 areas.forEach(a=>{
-  a.value=saved[a.dataset.key]!==undefined?saved[a.dataset.key]:'\u2022 ';
+  a.value=saved[a.dataset.key]!==undefined?saved[a.dataset.key]:'\u2022 ['+nowStamp()+'] ';
 });
 
 function persist(){
@@ -320,7 +611,7 @@ areas.forEach(a=>{
       e.preventDefault();
       const start=a.selectionStart,end=a.selectionEnd;
       const val=a.value;
-      const insert='\n\u2022 ';
+      const insert='\n\u2022 ['+nowStamp()+'] ';
       a.value=val.slice(0,start)+insert+val.slice(end);
       const pos=start+insert.length;
       a.selectionStart=a.selectionEnd=pos;
