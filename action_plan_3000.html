@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Action Plan 3000!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#FF3E9E;
+    --pink-deep:#C4127A;
+    --pink-soft:#FFDCEF;
+    --green:#33CC66;
+    --green-deep:#1C9A48;
+    --green-soft:#D7FFE2;
+    --ink:#231428;
+    --cream:#FFFCF5;
+    --paper:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    font-family:'Nunito',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding:0 0 40px;
+  }
+  .stripe-band{
+    background:repeating-linear-gradient(-45deg,var(--pink) 0 40px,var(--green) 40px 80px);
+    padding:6px 0;
+    overflow:hidden;
+  }
+  .stripe-band .track{
+    display:flex;
+    white-space:nowrap;
+    animation:scroll 18s linear infinite;
+  }
+  .stripe-band span{
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:#fff;
+    letter-spacing:1px;
+    padding:0 18px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.25);
+  }
+  @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  header{
+    text-align:center;
+    padding:34px 20px 22px;
+  }
+  h1{
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    font-size:clamp(38px,8vw,64px);
+    margin:0;
+    line-height:1;
+    background:linear-gradient(90deg,var(--pink-deep),var(--green-deep));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    letter-spacing:0.5px;
+  }
+  h1 .bang{color:var(--pink-deep);-webkit-text-fill-color:var(--pink-deep);}
+  .week-range{
+    margin-top:10px;
+    display:inline-block;
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:clamp(14px,2.6vw,19px);
+    letter-spacing:1.5px;
+    color:var(--ink);
+    background:#fff;
+    border:3px solid var(--ink);
+    border-radius:100px;
+    padding:8px 22px;
+    box-shadow:4px 4px 0 var(--pink);
+  }
+  main{
+    max-width:1040px;
+    margin:0 auto;
+    padding:0 20px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    margin-top:8px;
+  }
+  @media (max-width:720px){
+    .grid{grid-template-columns:1fr;}
+  }
+  .block{
+    border-radius:22px;
+    border:3px solid var(--ink);
+    padding:20px 20px 16px;
+    position:relative;
+    box-shadow:6px 6px 0 rgba(35,20,40,0.9);
+    display:flex;
+    flex-direction:column;
+  }
+  .block.pink{background:var(--pink-soft);}
+  .block.green{background:var(--green-soft);}
+  .block h2{
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:22px;
+    margin:0 0 4px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .block.pink h2{color:var(--pink-deep);}
+  .block.green h2{color:var(--green-deep);}
+  .block .icon{font-size:22px;}
+  .block .sub{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    opacity:0.55;
+    margin-bottom:12px;
+  }
+  textarea.bullet-area{
+    width:100%;
+    min-height:180px;
+    flex:1;
+    resize:vertical;
+    border:none;
+    background:rgba(255,255,255,0.55);
+    border-radius:14px;
+    padding:14px 16px;
+    font-family:'Nunito',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    line-height:1.65;
+    color:var(--ink);
+    outline:none;
+  }
+  textarea.bullet-area:focus{background:rgba(255,255,255,0.85);}
+  textarea.bullet-area::placeholder{color:rgba(35,20,40,0.35);font-weight:600;}
+  .quote-wrap{
+    margin-top:30px;
+    border-radius:22px;
+    padding:30px 30px 26px;
+    text-align:center;
+    background:linear-gradient(120deg,var(--pink) 0%,var(--pink-deep) 45%,var(--green-deep) 75%,var(--green) 100%);
+    box-shadow:6px 6px 0 rgba(35,20,40,0.9);
+    border:3px solid var(--ink);
+  }
+  .quote-label{
+    font-family:'Fredoka',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#fff;
+    opacity:0.85;
+    margin-bottom:10px;
+  }
+  .quote-text{
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:clamp(18px,3.4vw,27px);
+    color:#fff;
+    line-height:1.35;
+    max-width:640px;
+    margin:0 auto;
+    text-shadow:0 2px 6px rgba(0,0,0,0.2);
+  }
+  footer{
+    max-width:1040px;
+    margin:22px auto 0;
+    padding:0 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .save-note{
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink);
+    opacity:0.5;
+  }
+  .clear-btn{
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:0.5px;
+    border:2.5px solid var(--ink);
+    background:#fff;
+    color:var(--ink);
+    padding:9px 16px;
+    border-radius:100px;
+    cursor:pointer;
+  }
+  .clear-btn:active{background:var(--pink-soft);}
+</style>
+</head>
+<body>
+
+  <div class="stripe-band"><div class="track" id="stripeTrack"></div></div>
+
+  <header>
+    <h1>ACTION PLAN 3000<span class="bang">!</span></h1>
+    <div class="week-range" id="weekRange"></div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <div class="block green">
+        <h2><span class="icon">💼</span>Work</h2>
+        <div class="sub">Priorities &amp; follow-ups</div>
+        <textarea class="bullet-area" data-key="work" placeholder="• "></textarea>
+      </div>
+      <div class="block pink">
+        <h2><span class="icon">💰</span>Finances</h2>
+        <div class="sub">Budget, savings, debt moves</div>
+        <textarea class="bullet-area" data-key="finances" placeholder="• "></textarea>
+      </div>
+      <div class="block pink">
+        <h2><span class="icon">📅</span>Appointments</h2>
+        <div class="sub">Where you need to be, and when</div>
+        <textarea class="bullet-area" data-key="appointments" placeholder="• "></textarea>
+      </div>
+      <div class="block green">
+        <h2><span class="icon">🧾</span>Bills</h2>
+        <div class="sub">Due this week</div>
+        <textarea class="bullet-area" data-key="bills" placeholder="• "></textarea>
+      </div>
+    </div>
+
+    <div class="quote-wrap">
+      <div class="quote-label">Quote of the Week</div>
+      <div class="quote-text" id="quoteText"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="save-note" id="saveNote">Auto-saves as you type</div>
+    <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
+  </footer>
+
+<script>
+const QUOTES=[
+  "Courage comes through suffering.",
+  "Don't build your happiness on others' sorrow.",
+  "Everyone needs to be loved, especially those who don't deserve it.",
+  "Adventure is not outside; it is within.",
+  "The thought that leads to no action is not thought — it is dreaming."
+];
+
+function mondayOf(d){
+  const day=(d.getDay()+6)%7; // 0=Mon .. 6=Sun
+  const m=new Date(d);
+  m.setDate(d.getDate()-day);
+  m.setHours(0,0,0,0);
+  return m;
+}
+function fmtShort(d){
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function isoWeekNum(d){
+  const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const dayNum=(date.getUTCDay()+6)%7;
+  date.setUTCDate(date.getUTCDate()-dayNum+3);
+  const firstThursday=new Date(Date.UTC(date.getUTCFullYear(),0,4));
+  const fdDayNum=(firstThursday.getUTCDay()+6)%7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate()-fdDayNum+3);
+  return 1+Math.round((date-firstThursday)/(7*86400000));
+}
+function weekKey(monday){
+  return monday.getFullYear()+'-'+String(monday.getMonth()+1).padStart(2,'0')+'-'+String(monday.getDate()).padStart(2,'0');
+}
+
+const today=new Date();
+const monday=mondayOf(today);
+const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
+const wk=weekKey(monday);
+const STORE_KEY='actionPlan3000::'+wk;
+
+document.getElementById('weekRange').textContent=
+  fmtShort(monday).toUpperCase()+' \u2013 '+fmtShort(sunday).toUpperCase()+', '+sunday.getFullYear();
+
+const qIdx=isoWeekNum(today)%QUOTES.length;
+document.getElementById('quoteText').textContent='\u201C'+QUOTES[qIdx]+'\u201D';
+
+// scrolling stripe banner text
+const track=document.getElementById('stripeTrack');
+let bannerHTML='';
+for(let i=0;i<8;i++)bannerHTML+='<span>ACTION PLAN 3000 \u2605</span>';
+track.innerHTML=bannerHTML+bannerHTML;
+
+// load/save per-week bullet content
+const areas=document.querySelectorAll('.bullet-area');
+let saved={};
+try{const raw=localStorage.getItem(STORE_KEY);if(raw)saved=JSON.parse(raw);}catch(e){}
+areas.forEach(a=>{
+  a.value=saved[a.dataset.key]!==undefined?saved[a.dataset.key]:'\u2022 ';
+});
+
+function persist(){
+  const data={};
+  areas.forEach(a=>{data[a.dataset.key]=a.value;});
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
+  const note=document.getElementById('saveNote');
+  note.textContent='Saved just now';
+  clearTimeout(persist._t);
+  persist._t=setTimeout(()=>{note.textContent='Auto-saves as you type';},1400);
+}
+
+areas.forEach(a=>{
+  a.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      const start=a.selectionStart,end=a.selectionEnd;
+      const val=a.value;
+      const insert='\n\u2022 ';
+      a.value=val.slice(0,start)+insert+val.slice(end);
+      const pos=start+insert.length;
+      a.selectionStart=a.selectionEnd=pos;
+      persist();
+    }
+  });
+  a.addEventListener('input',persist);
+});
+
+function clearWeek(){
+  if(!confirm('Clear everything filled in for this week?'))return;
+  areas.forEach(a=>{a.value='\u2022 ';});
+  persist();
+}
+</script>
+</body>
+</html>
