@@ -182,6 +182,63 @@
     box-shadow:3px 3px 0 rgba(35,20,40,0.9);
   }
   .budget-link:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(35,20,40,0.9);}
+  .debt-links{margin-bottom:12px;}
+  .debt-links-label{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:0.8px;
+    text-transform:uppercase;
+    opacity:0.55;
+    margin-bottom:6px;
+  }
+  .debt-links-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .debt-item{
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+  .debt-check{
+    width:16px;
+    height:16px;
+    accent-color:var(--pink-deep);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .debt-link{
+    display:inline-flex;
+    align-items:center;
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    color:var(--ink);
+    background:#fff;
+    border:2px solid var(--ink);
+    border-radius:100px;
+    padding:6px 13px;
+    text-decoration:none;
+    transition:opacity 0.15s;
+  }
+  .debt-link.checked{
+    text-decoration:line-through;
+    opacity:0.45;
+  }
+  .debt-link:active{background:var(--pink-soft);}
+  .block.accountability{
+    margin-top:22px;
+    background:linear-gradient(135deg,var(--pink-soft) 0%,var(--green-soft) 100%);
+    border-radius:22px;
+    border:3px solid var(--ink);
+    padding:20px 20px 16px;
+    box-shadow:6px 6px 0 rgba(35,20,40,0.9);
+    display:flex;
+    flex-direction:column;
+  }
+  .block.accountability h2{color:var(--ink);}
+  .block.accountability textarea.bullet-area{min-height:130px;}
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
@@ -366,20 +423,39 @@
   .eta-insert:disabled{opacity:0.4;cursor:not-allowed;}
 
   @media print{
+    @page{size:letter;margin:0.3in;}
     body{padding:0;background:#fff;}
+    .stripe-band{padding:3px 0;}
     .stripe-band .track{animation:none;}
-    .save-note,.print-btn,footer .clear-btn:last-child,.budget-link,.eta-btn,.eta-overlay{display:none!important;}
-    footer{justify-content:center;}
-    .block,.quote-wrap{box-shadow:none;page-break-inside:avoid;break-inside:avoid;}
+    .stripe-band span{font-size:10px;padding:0 10px;}
+    header{padding:10px 10px 8px;}
+    h1{font-size:30px;}
+    .week-range{padding:4px 14px;font-size:13px;box-shadow:none;margin-top:4px;}
+    main{padding:0 14px;}
+    .grid{gap:10px;margin-top:4px;}
+    .block{padding:10px 12px 8px;border-radius:14px;box-shadow:none;page-break-inside:avoid;break-inside:avoid;}
+    .block-head{margin-bottom:2px;}
+    .block h2{font-size:15px;}
+    .block .icon{font-size:15px;}
+    .block .sub{font-size:9px;margin-bottom:5px;}
+    .save-note,.print-btn,footer .clear-btn:last-child,.budget-link,.eta-btn,.eta-overlay,.debt-links{display:none!important;}
     textarea.bullet-area{
       background:#fff!important;
-      border:1.5px solid rgba(35,20,40,0.25);
+      border:1.2px solid rgba(35,20,40,0.25);
       resize:none;
       overflow:hidden;
-      min-height:140px;
+      min-height:62px;
+      padding:8px 10px;
+      font-size:11px;
+      line-height:1.4;
+      border-radius:8px;
     }
-    header{padding-top:14px;}
-    .week-range{box-shadow:none;}
+    .block.accountability{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
+    .block.accountability textarea.bullet-area{min-height:56px;}
+    .quote-wrap{margin-top:10px;padding:12px 16px 10px;box-shadow:none;border-radius:14px;page-break-inside:avoid;break-inside:avoid;}
+    .quote-label{font-size:9px;margin-bottom:4px;}
+    .quote-text{font-size:14px;}
+    footer{justify-content:center;margin-top:8px;padding:0 14px;}
   }
 </style>
 </head>
@@ -413,8 +489,31 @@
         <div class="block-head"><h2><span class="icon">🧾</span>Bills</h2><button class="eta-btn" onclick="addETA('bills')">⏱ ETA</button></div>
         <div class="sub">Due this week</div>
         <a class="budget-link" href="https://danielwarnander87-bot.github.io/Budget-Calendar/" target="_blank" rel="noopener">💳 Open Budget Tool →</a>
+        <div class="debt-links">
+          <div class="debt-links-label">Track Your Accounts</div>
+          <div class="debt-links-row">
+            <div class="debt-item">
+              <input type="checkbox" class="debt-check" data-key="affirm" onchange="toggleDebtCheck(this)">
+              <a class="debt-link" href="https://www.affirm.com/u/loans/BWNW-0L8V" target="_blank" rel="noopener">Affirm</a>
+            </div>
+            <div class="debt-item">
+              <input type="checkbox" class="debt-check" data-key="paypal" onchange="toggleDebtCheck(this)">
+              <a class="debt-link" href="https://www.paypal.com/mep/dashboard" target="_blank" rel="noopener">PayPal</a>
+            </div>
+            <div class="debt-item">
+              <input type="checkbox" class="debt-check" data-key="amazonsync" onchange="toggleDebtCheck(this)">
+              <a class="debt-link" href="https://asc.syf.com/accounts/login/" target="_blank" rel="noopener">Amazon/Sync</a>
+            </div>
+          </div>
+        </div>
         <textarea class="bullet-area" data-key="bills" placeholder="• "></textarea>
       </div>
+    </div>
+
+    <div class="block accountability">
+      <div class="block-head"><h2><span class="icon">🎯</span>Personal Accountability</h2><button class="eta-btn" onclick="addETA('accountability')">⏱ ETA</button></div>
+      <div class="sub">Promises to yourself this week</div>
+      <textarea class="bullet-area" data-key="accountability" placeholder="• "></textarea>
     </div>
 
     <div class="quote-wrap">
@@ -589,20 +688,36 @@ track.innerHTML=bannerHTML+bannerHTML;
 
 // load/save per-week bullet content
 const areas=document.querySelectorAll('.bullet-area');
+const debtChecks=document.querySelectorAll('.debt-check');
 let saved={};
 try{const raw=localStorage.getItem(STORE_KEY);if(raw)saved=JSON.parse(raw);}catch(e){}
 areas.forEach(a=>{
   a.value=saved[a.dataset.key]!==undefined?saved[a.dataset.key]:'\u2022 ['+nowStamp()+'] ';
 });
+debtChecks.forEach(c=>{
+  const on=!!(saved.debtChecks&&saved.debtChecks[c.dataset.key]);
+  c.checked=on;
+  const link=c.nextElementSibling;
+  if(link)link.classList.toggle('checked',on);
+});
 
 function persist(){
   const data={};
   areas.forEach(a=>{data[a.dataset.key]=a.value;});
+  const dc={};
+  debtChecks.forEach(c=>{dc[c.dataset.key]=c.checked;});
+  data.debtChecks=dc;
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
   const note=document.getElementById('saveNote');
   note.textContent='Saved just now';
   clearTimeout(persist._t);
   persist._t=setTimeout(()=>{note.textContent='Auto-saves as you type';},1400);
+}
+
+function toggleDebtCheck(cb){
+  const link=cb.nextElementSibling;
+  if(link)link.classList.toggle('checked',cb.checked);
+  persist();
 }
 
 areas.forEach(a=>{
@@ -623,7 +738,12 @@ areas.forEach(a=>{
 
 function clearWeek(){
   if(!confirm('Clear everything filled in for this week?'))return;
-  areas.forEach(a=>{a.value='\u2022 ';});
+  areas.forEach(a=>{a.value='\u2022 ['+nowStamp()+'] ';});
+  debtChecks.forEach(c=>{
+    c.checked=false;
+    const link=c.nextElementSibling;
+    if(link)link.classList.remove('checked');
+  });
   persist();
 }
 </script>
