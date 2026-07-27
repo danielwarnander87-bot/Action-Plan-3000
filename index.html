@@ -146,24 +146,77 @@
     opacity:0.55;
     margin-bottom:12px;
   }
-  textarea.bullet-area{
-    width:100%;
-    min-height:180px;
+  .bullet-list{
     flex:1;
-    resize:vertical;
-    border:none;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:10px;
+    min-height:40px;
+  }
+  .bullet-row{
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
     background:rgba(255,255,255,0.55);
-    border-radius:14px;
-    padding:14px 16px;
+    border-radius:12px;
+    padding:9px 11px;
+  }
+  .bullet-row.done{opacity:0.55;}
+  .bullet-check{
+    width:19px;height:19px;
+    margin-top:3px;
+    accent-color:var(--pink-deep);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .bullet-body{flex:1;min-width:0;}
+  .bullet-stamp{
+    display:block;
+    font-size:10px;
+    font-weight:800;
+    opacity:0.5;
+    margin-bottom:2px;
+  }
+  .bullet-text{
+    width:100%;
+    border:none;
+    background:transparent;
     font-family:'Nunito',sans-serif;
     font-weight:600;
     font-size:15px;
-    line-height:1.65;
     color:var(--ink);
     outline:none;
+    padding:0;
   }
-  textarea.bullet-area:focus{background:rgba(255,255,255,0.85);}
-  textarea.bullet-area::placeholder{color:rgba(35,20,40,0.35);font-weight:600;}
+  .bullet-text::placeholder{color:rgba(35,20,40,0.35);font-weight:600;}
+  .bullet-row.done .bullet-text{text-decoration:line-through;}
+  .bullet-del{
+    border:none;
+    background:transparent;
+    color:var(--ink);
+    opacity:0.3;
+    font-size:18px;
+    font-weight:800;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+    padding:2px 3px;
+  }
+  .bullet-del:active{opacity:0.8;}
+  .bullet-add-btn{
+    align-self:flex-start;
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    border:2px dashed rgba(35,20,40,0.35);
+    background:transparent;
+    color:var(--ink);
+    padding:7px 14px;
+    border-radius:100px;
+    cursor:pointer;
+  }
+  .bullet-add-btn:active{background:rgba(255,255,255,0.6);}
   .budget-link{
     display:inline-flex;
     align-items:center;
@@ -238,7 +291,7 @@
     flex-direction:column;
   }
   .block.accountability h2{color:var(--ink);}
-  .block.accountability textarea.bullet-area{min-height:130px;}
+  .block.accountability .bullet-list{min-height:60px;}
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
@@ -438,20 +491,20 @@
     .block h2{font-size:15px;}
     .block .icon{font-size:15px;}
     .block .sub{font-size:9px;margin-bottom:5px;}
-    .save-note,.print-btn,footer .clear-btn:last-child,.budget-link,.eta-btn,.eta-overlay,.debt-links{display:none!important;}
-    textarea.bullet-area{
+    .save-note,.print-btn,footer .clear-btn:last-child,.budget-link,.eta-btn,.eta-overlay,.debt-links,.bullet-add-btn,.bullet-del{display:none!important;}
+    .bullet-list{gap:3px;margin-bottom:4px;}
+    .bullet-row{
       background:#fff!important;
       border:1.2px solid rgba(35,20,40,0.25);
-      resize:none;
-      overflow:hidden;
-      min-height:62px;
-      padding:8px 10px;
-      font-size:11px;
-      line-height:1.4;
-      border-radius:8px;
+      border-radius:6px;
+      padding:4px 7px;
+      gap:6px;
     }
+    .bullet-check{width:13px;height:13px;margin-top:1px;}
+    .bullet-stamp{font-size:8px;margin-bottom:0;}
+    .bullet-text{font-size:11px;}
     .block.accountability{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
-    .block.accountability textarea.bullet-area{min-height:56px;}
+    .block.accountability .bullet-list{min-height:auto;}
     .quote-wrap{margin-top:10px;padding:12px 16px 10px;box-shadow:none;border-radius:14px;page-break-inside:avoid;break-inside:avoid;}
     .quote-label{font-size:9px;margin-bottom:4px;}
     .quote-text{font-size:14px;}
@@ -473,17 +526,20 @@
       <div class="block green">
         <div class="block-head"><h2><span class="icon">💼</span>Work</h2><button class="eta-btn" onclick="addETA('work')">⏱ ETA</button></div>
         <div class="sub">Priorities &amp; follow-ups</div>
-        <textarea class="bullet-area" data-key="work" placeholder="• "></textarea>
+        <div class="bullet-list" data-key="work"></div>
+        <button class="bullet-add-btn" type="button" onclick="addBulletItem('work',true)">+ Add item</button>
       </div>
       <div class="block pink">
         <div class="block-head"><h2><span class="icon">💰</span>Finances</h2><button class="eta-btn" onclick="addETA('finances')">⏱ ETA</button></div>
         <div class="sub">Budget, savings, debt moves</div>
-        <textarea class="bullet-area" data-key="finances" placeholder="• "></textarea>
+        <div class="bullet-list" data-key="finances"></div>
+        <button class="bullet-add-btn" type="button" onclick="addBulletItem('finances',true)">+ Add item</button>
       </div>
       <div class="block pink">
         <div class="block-head"><h2><span class="icon">📅</span>Appointments</h2><button class="eta-btn" onclick="addETA('appointments')">⏱ ETA</button></div>
         <div class="sub">Where you need to be, and when</div>
-        <textarea class="bullet-area" data-key="appointments" placeholder="• "></textarea>
+        <div class="bullet-list" data-key="appointments"></div>
+        <button class="bullet-add-btn" type="button" onclick="addBulletItem('appointments',true)">+ Add item</button>
       </div>
       <div class="block green">
         <div class="block-head"><h2><span class="icon">🧾</span>Bills</h2><button class="eta-btn" onclick="addETA('bills')">⏱ ETA</button></div>
@@ -506,14 +562,16 @@
             </div>
           </div>
         </div>
-        <textarea class="bullet-area" data-key="bills" placeholder="• "></textarea>
+        <div class="bullet-list" data-key="bills"></div>
+        <button class="bullet-add-btn" type="button" onclick="addBulletItem('bills',true)">+ Add item</button>
       </div>
     </div>
 
     <div class="block accountability">
       <div class="block-head"><h2><span class="icon">🎯</span>Personal Accountability</h2><button class="eta-btn" onclick="addETA('accountability')">⏱ ETA</button></div>
       <div class="sub">Promises to yourself this week</div>
-      <textarea class="bullet-area" data-key="accountability" placeholder="• "></textarea>
+      <div class="bullet-list" data-key="accountability"></div>
+      <button class="bullet-add-btn" type="button" onclick="addBulletItem('accountability',true)">+ Add item</button>
     </div>
 
     <div class="quote-wrap">
@@ -649,8 +707,6 @@ function etaCancel(){
 }
 function etaConfirm(){
   if(!etaTargetKey||!etaSelectedDate)return;
-  const a=document.querySelector('.bullet-area[data-key="'+etaTargetKey+'"]');
-  if(!a){etaCancel();return;}
   let dateLabel=etaSelectedDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   const timeVal=document.getElementById('etaTimeInput').value;
   if(timeVal){
@@ -658,12 +714,25 @@ function etaConfirm(){
     const t=new Date();t.setHours(hh,mm,0,0);
     dateLabel+=', '+t.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   }
-  a.focus();
-  const pos=a.selectionEnd!=null?a.selectionEnd:a.value.length;
+  let input=lastFocused[etaTargetKey];
+  if(!input||!document.body.contains(input)){
+    const arr=BLOCK_DATA[etaTargetKey]||[];
+    if(arr.length){
+      const lastItem=arr[arr.length-1];
+      input=document.querySelector('.bullet-row[data-id="'+lastItem.id+'"] .bullet-text');
+    }
+  }
+  if(!input){etaCancel();return;}
+  input.focus();
+  const pos=input.selectionEnd!=null?input.selectionEnd:input.value.length;
   const insert=' \u2192 ETA: '+dateLabel+' ';
-  a.value=a.value.slice(0,pos)+insert+a.value.slice(pos);
+  input.value=input.value.slice(0,pos)+insert+input.value.slice(pos);
   const newPos=pos+insert.length;
-  a.selectionStart=a.selectionEnd=newPos;
+  input.selectionStart=input.selectionEnd=newPos;
+  const row=input.closest('.bullet-row');
+  const arr=BLOCK_DATA[etaTargetKey];
+  const item=row&&arr&&arr.find(i=>i.id===row.dataset.id);
+  if(item)item.text=input.value;
   persist();
   etaCancel();
 }
@@ -686,14 +755,98 @@ let bannerHTML='';
 for(let i=0;i<8;i++)bannerHTML+='<span>ACTION PLAN 3000 \u2605</span>';
 track.innerHTML=bannerHTML+bannerHTML;
 
-// load/save per-week bullet content
-const areas=document.querySelectorAll('.bullet-area');
+const BLOCK_KEYS=['work','finances','appointments','bills','accountability'];
 const debtChecks=document.querySelectorAll('.debt-check');
+const lastFocused={};
+const BLOCK_DATA={};
 let saved={};
 try{const raw=localStorage.getItem(STORE_KEY);if(raw)saved=JSON.parse(raw);}catch(e){}
-areas.forEach(a=>{
-  a.value=saved[a.dataset.key]!==undefined?saved[a.dataset.key]:'\u2022 ['+nowStamp()+'] ';
+
+function uid(){return 'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+
+function renderBulletList(key){
+  const container=document.querySelector('.bullet-list[data-key="'+key+'"]');
+  if(!container)return;
+  container.innerHTML='';
+  const items=BLOCK_DATA[key]||[];
+  items.forEach(item=>{
+    const row=document.createElement('div');
+    row.className='bullet-row'+(item.done?' done':'');
+    row.dataset.id=item.id;
+
+    const chk=document.createElement('input');
+    chk.type='checkbox';chk.className='bullet-check';chk.checked=item.done;
+    chk.onchange=()=>{item.done=chk.checked;row.classList.toggle('done',item.done);persist();};
+    row.appendChild(chk);
+
+    const body=document.createElement('div');body.className='bullet-body';
+    const stamp=document.createElement('span');stamp.className='bullet-stamp';stamp.textContent=item.stamp;
+    body.appendChild(stamp);
+    const txt=document.createElement('input');
+    txt.type='text';txt.className='bullet-text';txt.value=item.text;txt.placeholder='Type here...';
+    txt.oninput=()=>{item.text=txt.value;persist();};
+    txt.onfocus=()=>{lastFocused[key]=txt;};
+    txt.onkeydown=e=>{
+      if(e.key==='Enter'){
+        e.preventDefault();
+        addBulletItem(key,true,item.id);
+      }else if(e.key==='Backspace'&&txt.value===''&&items.length>1){
+        e.preventDefault();
+        removeBulletItem(key,item.id);
+      }
+    };
+    body.appendChild(txt);
+    row.appendChild(body);
+
+    const del=document.createElement('button');
+    del.className='bullet-del';del.type='button';del.textContent='\u00d7';
+    del.onclick=()=>removeBulletItem(key,item.id);
+    row.appendChild(del);
+
+    container.appendChild(row);
+  });
+}
+
+function addBulletItem(key,focusNew,afterId){
+  if(!BLOCK_DATA[key])BLOCK_DATA[key]=[];
+  const newItem={id:uid(),stamp:nowStamp(),text:'',done:false};
+  const arr=BLOCK_DATA[key];
+  if(afterId){
+    const idx=arr.findIndex(i=>i.id===afterId);
+    arr.splice(idx+1,0,newItem);
+  }else{
+    arr.push(newItem);
+  }
+  renderBulletList(key);
+  persist();
+  if(focusNew){
+    const el=document.querySelector('.bullet-row[data-id="'+newItem.id+'"] .bullet-text');
+    if(el)el.focus();
+  }
+}
+
+function removeBulletItem(key,id){
+  const arr=BLOCK_DATA[key];
+  if(!arr)return;
+  const idx=arr.findIndex(i=>i.id===id);
+  if(idx===-1)return;
+  arr.splice(idx,1);
+  if(arr.length===0)arr.push({id:uid(),stamp:nowStamp(),text:'',done:false});
+  renderBulletList(key);
+  persist();
+  const prevItem=arr[Math.max(0,idx-1)];
+  if(prevItem){
+    const el=document.querySelector('.bullet-row[data-id="'+prevItem.id+'"] .bullet-text');
+    if(el)el.focus();
+  }
+}
+
+BLOCK_KEYS.forEach(key=>{
+  const savedVal=saved[key];
+  BLOCK_DATA[key]=(Array.isArray(savedVal)&&savedVal.length)?savedVal:[{id:uid(),stamp:nowStamp(),text:'',done:false}];
+  renderBulletList(key);
 });
+
 debtChecks.forEach(c=>{
   const on=!!(saved.debtChecks&&saved.debtChecks[c.dataset.key]);
   c.checked=on;
@@ -703,7 +856,7 @@ debtChecks.forEach(c=>{
 
 function persist(){
   const data={};
-  areas.forEach(a=>{data[a.dataset.key]=a.value;});
+  BLOCK_KEYS.forEach(key=>{data[key]=BLOCK_DATA[key]||[];});
   const dc={};
   debtChecks.forEach(c=>{dc[c.dataset.key]=c.checked;});
   data.debtChecks=dc;
@@ -720,25 +873,12 @@ function toggleDebtCheck(cb){
   persist();
 }
 
-areas.forEach(a=>{
-  a.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){
-      e.preventDefault();
-      const start=a.selectionStart,end=a.selectionEnd;
-      const val=a.value;
-      const insert='\n\u2022 ['+nowStamp()+'] ';
-      a.value=val.slice(0,start)+insert+val.slice(end);
-      const pos=start+insert.length;
-      a.selectionStart=a.selectionEnd=pos;
-      persist();
-    }
-  });
-  a.addEventListener('input',persist);
-});
-
 function clearWeek(){
   if(!confirm('Clear everything filled in for this week?'))return;
-  areas.forEach(a=>{a.value='\u2022 ['+nowStamp()+'] ';});
+  BLOCK_KEYS.forEach(key=>{
+    BLOCK_DATA[key]=[{id:uid(),stamp:nowStamp(),text:'',done:false}];
+    renderBulletList(key);
+  });
   debtChecks.forEach(c=>{
     c.checked=false;
     const link=c.nextElementSibling;
