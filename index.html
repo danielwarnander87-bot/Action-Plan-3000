@@ -179,15 +179,21 @@
     margin-bottom:2px;
   }
   .bullet-text{
+    display:block;
     width:100%;
     border:none;
     background:transparent;
     font-family:'Nunito',sans-serif;
     font-weight:600;
     font-size:15px;
+    line-height:1.4;
     color:var(--ink);
     outline:none;
     padding:0;
+    resize:none;
+    overflow:hidden;
+    white-space:pre-wrap;
+    word-break:break-word;
   }
   .bullet-text::placeholder{color:rgba(35,20,40,0.35);font-weight:600;}
   .bullet-row.done .bullet-text{text-decoration:line-through;}
@@ -292,6 +298,59 @@
   }
   .block.accountability h2{color:var(--ink);}
   .block.accountability .bullet-list{min-height:60px;}
+  .block.girlsblock{
+    margin-top:22px;
+    background:#fff;
+    border-radius:22px;
+    border:3px solid var(--ink);
+    padding:20px 20px 18px;
+    box-shadow:6px 6px 0 rgba(35,20,40,0.9);
+    display:flex;
+    flex-direction:column;
+    transition:background 0.2s ease;
+  }
+  .block.girlsblock.is-pink{background:var(--pink-soft);}
+  .block.girlsblock.is-green{background:var(--green-soft);}
+  .block.girlsblock h2{
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:22px;
+    margin:0;
+    color:var(--ink);
+    letter-spacing:0.5px;
+  }
+  .girls-current{
+    font-size:13px;
+    font-weight:700;
+    margin:6px 0 14px;
+    opacity:0.7;
+  }
+  .girls-btn-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .girls-btn{
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:13px;
+    padding:9px 16px;
+    border-radius:100px;
+    border:2.5px solid var(--ink);
+    cursor:pointer;
+  }
+  .girls-btn.girls-pink{background:var(--pink);color:#fff;}
+  .girls-btn.girls-green{background:var(--green);color:#fff;}
+  .girls-btn.girls-clear{background:#fff;color:var(--ink);}
+  .girls-btn:active{transform:translate(1px,1px);}
+  .girls-hint{
+    font-size:11px;
+    font-weight:700;
+    opacity:0.6;
+    text-align:center;
+    margin-top:8px;
+  }
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
@@ -505,6 +564,10 @@
     .bullet-text{font-size:11px;}
     .block.accountability{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
     .block.accountability .bullet-list{min-height:auto;}
+    .block.girlsblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
+    .block.girlsblock h2{font-size:15px;}
+    .girls-current{font-size:11px;margin:3px 0 4px;}
+    .girls-btn-row,.girls-hint{display:none!important;}
     .quote-wrap{margin-top:10px;padding:12px 16px 10px;box-shadow:none;border-radius:14px;page-break-inside:avoid;break-inside:avoid;}
     .quote-label{font-size:9px;margin-bottom:4px;}
     .quote-text{font-size:14px;}
@@ -574,6 +637,17 @@
       <button class="bullet-add-btn" type="button" onclick="addBulletItem('accountability',true)">+ Add item</button>
     </div>
 
+    <div class="block girlsblock" id="girlsBlock">
+      <div class="block-head"><h2 id="girlsTitle">GIRLS / NO GIRLS</h2></div>
+      <div class="girls-current">This week: <span id="girlsCurrentStatus">Not set</span></div>
+      <div class="girls-btn-row">
+        <button class="girls-btn girls-pink" onclick="setThisWeekGirls('girls')">👧 Girls Week</button>
+        <button class="girls-btn girls-green" onclick="setThisWeekGirls('noGirls')">🌿 No Girls</button>
+        <button class="girls-btn girls-clear" onclick="setThisWeekGirls(null)">Clear</button>
+      </div>
+      <button class="bullet-add-btn" type="button" onclick="openGirlsCalendar()">📅 Plan future weeks</button>
+    </div>
+
     <div class="quote-wrap">
       <div class="quote-label">Quote of the Week</div>
       <div class="quote-text" id="quoteText"></div>
@@ -607,6 +681,29 @@
       <div class="eta-modal-actions">
         <button class="eta-cancel" onclick="etaCancel()">Cancel</button>
         <button class="eta-insert" id="etaInsertBtn" onclick="etaConfirm()" disabled>Insert ETA</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="eta-overlay" id="girlsCalOverlay" onclick="if(event.target===this)closeGirlsCalendar();">
+    <div class="eta-modal">
+      <div class="eta-modal-head">
+        <button class="eta-nav" onclick="girlsChangeMonth(-1)">‹</button>
+        <div class="eta-month-label" id="girlsMonthLabel"></div>
+        <button class="eta-nav" onclick="girlsChangeMonth(1)">›</button>
+      </div>
+      <div class="eta-weekdays">
+        <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+      </div>
+      <div class="eta-days" id="girlsDaysGrid"></div>
+      <div class="eta-legend">
+        <span class="dot" style="background:var(--pink-soft);border:1.5px solid var(--pink-deep);"></span> Girls &nbsp;
+        <span class="dot" style="background:var(--green-soft);border:1.5px solid var(--green-deep);"></span> No Girls &nbsp;
+        <span class="dot today"></span> Today
+      </div>
+      <div class="girls-hint">Tap a week to cycle: blank → Girls → No Girls → blank</div>
+      <div class="eta-modal-actions">
+        <button class="eta-cancel" onclick="closeGirlsCalendar()">Done</button>
       </div>
     </div>
   </div>
@@ -729,6 +826,7 @@ function etaConfirm(){
   input.value=input.value.slice(0,pos)+insert+input.value.slice(pos);
   const newPos=pos+insert.length;
   input.selectionStart=input.selectionEnd=newPos;
+  autoGrow(input);
   const row=input.closest('.bullet-row');
   const arr=BLOCK_DATA[etaTargetKey];
   const item=row&&arr&&arr.find(i=>i.id===row.dataset.id);
@@ -748,6 +846,92 @@ document.getElementById('weekRange').textContent=
 
 const qIdx=isoWeekNum(today)%QUOTES.length;
 document.getElementById('quoteText').textContent='\u201C'+QUOTES[qIdx]+'\u201D';
+
+// Girls / No Girls schedule (global, persists across weeks unlike the bullet blocks)
+const GIRLS_KEY='actionPlan3000_girlsSchedule';
+let girlsSchedule={};
+try{const raw=localStorage.getItem(GIRLS_KEY);if(raw)girlsSchedule=JSON.parse(raw);}catch(e){}
+let girlsViewDate=new Date();
+
+function saveGirlsSchedule(){
+  try{localStorage.setItem(GIRLS_KEY,JSON.stringify(girlsSchedule));}catch(e){}
+}
+function updateGirlsBlockDisplay(){
+  const status=girlsSchedule[wk];
+  const block=document.getElementById('girlsBlock');
+  const title=document.getElementById('girlsTitle');
+  const statusLabel=document.getElementById('girlsCurrentStatus');
+  block.classList.remove('is-pink','is-green');
+  if(status==='girls'){
+    title.textContent='GIRLS';
+    block.classList.add('is-pink');
+    statusLabel.textContent='Girls week \ud83d\udc67';
+  }else if(status==='noGirls'){
+    title.textContent='NO GIRLS';
+    block.classList.add('is-green');
+    statusLabel.textContent='No Girls week \ud83c\udf3f';
+  }else{
+    title.textContent='GIRLS / NO GIRLS';
+    statusLabel.textContent='Not set yet';
+  }
+}
+function setThisWeekGirls(status){
+  if(status)girlsSchedule[wk]=status;
+  else delete girlsSchedule[wk];
+  saveGirlsSchedule();
+  updateGirlsBlockDisplay();
+}
+function openGirlsCalendar(){
+  girlsViewDate=new Date();
+  girlsRenderCalendar();
+  document.getElementById('girlsCalOverlay').classList.add('open');
+}
+function closeGirlsCalendar(){
+  document.getElementById('girlsCalOverlay').classList.remove('open');
+}
+function girlsChangeMonth(delta){
+  girlsViewDate=new Date(girlsViewDate.getFullYear(),girlsViewDate.getMonth()+delta,1);
+  girlsRenderCalendar();
+}
+function girlsRenderCalendar(){
+  const y=girlsViewDate.getFullYear(),m=girlsViewDate.getMonth();
+  document.getElementById('girlsMonthLabel').textContent=
+    girlsViewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const firstOfMonth=new Date(y,m,1);
+  const startOffset=(firstOfMonth.getDay()+6)%7; // Monday-first offset
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const grid=document.getElementById('girlsDaysGrid');
+  grid.innerHTML='';
+  for(let i=0;i<startOffset;i++){
+    const blank=document.createElement('div');
+    blank.className='eta-day blank';
+    grid.appendChild(blank);
+  }
+  const todayNow=new Date();
+  for(let d=1;d<=daysInMonth;d++){
+    const cellDate=new Date(y,m,d);
+    const cellWk=weekKey(mondayOf(cellDate));
+    const status=girlsSchedule[cellWk];
+    const btn=document.createElement('button');
+    btn.className='eta-day';
+    btn.textContent=d;
+    if(status==='girls')btn.style.background='var(--pink-soft)';
+    else if(status==='noGirls')btn.style.background='var(--green-soft)';
+    if(sameDay(cellDate,todayNow))btn.classList.add('today');
+    btn.onclick=()=>cycleGirlsWeek(cellWk);
+    grid.appendChild(btn);
+  }
+}
+function cycleGirlsWeek(cellWk){
+  const cur=girlsSchedule[cellWk];
+  if(!cur)girlsSchedule[cellWk]='girls';
+  else if(cur==='girls')girlsSchedule[cellWk]='noGirls';
+  else delete girlsSchedule[cellWk];
+  saveGirlsSchedule();
+  girlsRenderCalendar();
+  updateGirlsBlockDisplay();
+}
+updateGirlsBlockDisplay();
 
 // scrolling stripe banner text
 const track=document.getElementById('stripeTrack');
@@ -782,9 +966,9 @@ function renderBulletList(key){
     const body=document.createElement('div');body.className='bullet-body';
     const stamp=document.createElement('span');stamp.className='bullet-stamp';stamp.textContent=item.stamp;
     body.appendChild(stamp);
-    const txt=document.createElement('input');
-    txt.type='text';txt.className='bullet-text';txt.value=item.text;txt.placeholder='Type here...';
-    txt.oninput=()=>{item.text=txt.value;persist();};
+    const txt=document.createElement('textarea');
+    txt.rows=1;txt.className='bullet-text';txt.value=item.text;txt.placeholder='Type here...';
+    txt.oninput=()=>{item.text=txt.value;autoGrow(txt);persist();};
     txt.onfocus=()=>{lastFocused[key]=txt;};
     txt.onkeydown=e=>{
       if(e.key==='Enter'){
@@ -804,7 +988,12 @@ function renderBulletList(key){
     row.appendChild(del);
 
     container.appendChild(row);
+    autoGrow(txt);
   });
+}
+function autoGrow(el){
+  el.style.height='auto';
+  el.style.height=el.scrollHeight+'px';
 }
 
 function addBulletItem(key,focusNew,afterId){
