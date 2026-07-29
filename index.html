@@ -39,6 +39,73 @@
     image-rendering:pixelated;
     image-rendering:crisp-edges;
   }
+  .shooting-star{opacity:0;transform-box:fill-box;}
+  @keyframes shoot{
+    0%{transform:translate(0,0);opacity:0;}
+    4%{opacity:1;}
+    22%{transform:translate(70px,42px);opacity:0;}
+    100%{transform:translate(70px,42px);opacity:0;}
+  }
+  .star1{animation:shoot 7s linear infinite;animation-delay:0.5s;}
+  .star2{animation:shoot 9s linear infinite;animation-delay:3.5s;}
+  .star3{animation:shoot 6s linear infinite;animation-delay:6s;}
+
+  /* time-of-day scene defaults (night, as safe fallback before JS assigns a class) */
+  .scene-bg .sky-rect{fill:url(#skyNight);}
+  .scene-bg .celestial-glow{fill:url(#glowNight);}
+  .scene-bg .celestial-body{fill:#FFF3E6;}
+  .scene-bg .craters{display:block;}
+  .scene-bg .cloud-group{display:none;}
+  .scene-bg .star-field{display:block;}
+  .scene-bg .castle{fill:#D9D0EE;opacity:0.3;}
+  .scene-bg .hill-back{fill:#5A2C56;}
+  .scene-bg .hill-mid{fill:#204A38;}
+  .scene-bg .hill-front{fill:#123C29;}
+  .scene-bg .bush-mid{fill:#2C6248;}
+  .scene-bg .bush-front{fill:#1B4E36;}
+
+  /* sunrise */
+  .scene-bg.scene-sunrise .sky-rect{fill:url(#skySunrise);}
+  .scene-bg.scene-sunrise .celestial-glow{fill:url(#glowSunrise);}
+  .scene-bg.scene-sunrise .celestial-body{fill:#FF9F4D;}
+  .scene-bg.scene-sunrise .craters{display:none;}
+  .scene-bg.scene-sunrise .cloud-group{display:block;}
+  .scene-bg.scene-sunrise .star-field{display:none;}
+  .scene-bg.scene-sunrise .castle{fill:#C9A6BE;opacity:0.28;}
+  .scene-bg.scene-sunrise .hill-back{fill:#FFC9E0;}
+  .scene-bg.scene-sunrise .hill-mid{fill:#C9EFB0;}
+  .scene-bg.scene-sunrise .hill-front{fill:#3FAE55;}
+  .scene-bg.scene-sunrise .bush-mid{fill:#A8DB8E;}
+  .scene-bg.scene-sunrise .bush-front{fill:#2E8C42;}
+
+  /* day (cyan blue) */
+  .scene-bg.scene-day .sky-rect{fill:url(#skyDay);}
+  .scene-bg.scene-day .celestial-glow{fill:url(#glowDay);}
+  .scene-bg.scene-day .celestial-body{fill:#FFC93C;}
+  .scene-bg.scene-day .craters{display:none;}
+  .scene-bg.scene-day .cloud-group{display:block;}
+  .scene-bg.scene-day .star-field{display:none;}
+  .scene-bg.scene-day .castle{fill:#231428;opacity:0.16;}
+  .scene-bg.scene-day .hill-back{fill:#FFDCEF;}
+  .scene-bg.scene-day .hill-mid{fill:#D7FFE2;}
+  .scene-bg.scene-day .hill-front{fill:#33CC66;}
+  .scene-bg.scene-day .bush-mid{fill:#B9F0C6;}
+  .scene-bg.scene-day .bush-front{fill:#1C9A48;}
+
+  /* night */
+  .scene-bg.scene-night .sky-rect{fill:url(#skyNight);}
+  .scene-bg.scene-night .celestial-glow{fill:url(#glowNight);}
+  .scene-bg.scene-night .celestial-body{fill:#FFF3E6;}
+  .scene-bg.scene-night .craters{display:block;}
+  .scene-bg.scene-night .cloud-group{display:none;}
+  .scene-bg.scene-night .star-field{display:block;}
+  .scene-bg.scene-night .castle{fill:#D9D0EE;opacity:0.3;}
+  .scene-bg.scene-night .hill-back{fill:#5A2C56;}
+  .scene-bg.scene-night .hill-mid{fill:#204A38;}
+  .scene-bg.scene-night .hill-front{fill:#123C29;}
+  .scene-bg.scene-night .bush-mid{fill:#2C6248;}
+  .scene-bg.scene-night .bush-front{fill:#1B4E36;}
+
   .stripe-band{
     background:repeating-linear-gradient(-45deg,var(--pink) 0 40px,var(--green) 40px 80px);
     padding:6px 0;
@@ -593,39 +660,125 @@
 
   <svg class="scene-bg" viewBox="0 0 320 180" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="skyFade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#EAF6FF"/>
-        <stop offset="100%" stop-color="#FFFCF5"/>
+      <linearGradient id="skySunrise" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#E8D3F5"/>
+        <stop offset="50%" stop-color="#FFB894"/>
+        <stop offset="100%" stop-color="#FFE29A"/>
+      </linearGradient>
+      <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3FB6E0"/>
+        <stop offset="100%" stop-color="#D6F7F2"/>
+      </linearGradient>
+      <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#150B26"/>
+        <stop offset="55%" stop-color="#2C1543"/>
+        <stop offset="100%" stop-color="#4A2050"/>
+      </linearGradient>
+      <radialGradient id="glowSunrise" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFD9A8" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#FFD9A8" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="glowDay" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFF6D0" stop-opacity="0.45"/>
+        <stop offset="100%" stop-color="#FFF6D0" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="glowNight" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFEFE0" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#FFEFE0" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="streakGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
       </linearGradient>
     </defs>
-    <rect x="0" y="0" width="320" height="180" fill="url(#skyFade)"/>
+    <rect class="sky-rect" x="0" y="0" width="320" height="180"/>
 
-    <!-- sun -->
-    <g fill="#FFC93C">
-      <rect x="252" y="14" width="24" height="24"/>
-      <rect x="246" y="20" width="6" height="12"/>
-      <rect x="276" y="20" width="6" height="12"/>
-      <rect x="258" y="8" width="12" height="6"/>
-      <rect x="258" y="38" width="12" height="6"/>
+    <!-- stars (night only) -->
+    <g class="star-field" fill="#FFFFFF">
+      <rect x="18" y="14" width="2" height="2" opacity="0.85"/>
+      <rect x="42" y="30" width="2" height="2" opacity="0.6"/>
+      <rect x="66" y="12" width="2" height="2" opacity="0.9"/>
+      <rect x="90" y="40" width="2" height="2" opacity="0.5"/>
+      <rect x="112" y="20" width="2" height="2" opacity="0.8"/>
+      <rect x="8" y="52" width="2" height="2" opacity="0.55"/>
+      <rect x="140" y="34" width="2" height="2" opacity="0.7"/>
+      <rect x="160" y="10" width="2" height="2" opacity="0.85"/>
+      <rect x="182" y="46" width="2" height="2" opacity="0.5"/>
+      <rect x="204" y="18" width="2" height="2" opacity="0.9"/>
+      <rect x="30" y="66" width="2" height="2" opacity="0.4"/>
+      <rect x="58" y="76" width="2" height="2" opacity="0.6"/>
+      <rect x="100" y="60" width="2" height="2" opacity="0.5"/>
+      <rect x="130" y="70" width="2" height="2" opacity="0.4"/>
+      <rect x="220" y="60" width="2" height="2" opacity="0.7"/>
+      <rect x="238" y="24" width="2" height="2" opacity="0.85"/>
+      <rect x="256" y="44" width="2" height="2" opacity="0.5"/>
+      <rect x="274" y="16" width="2" height="2" opacity="0.8"/>
+      <rect x="296" y="34" width="2" height="2" opacity="0.6"/>
+      <rect x="308" y="58" width="2" height="2" opacity="0.5"/>
+      <rect x="286" y="66" width="2" height="2" opacity="0.4"/>
+      <rect x="4" y="26" width="2" height="2" opacity="0.65"/>
+      <rect x="150" y="52" width="2" height="2" opacity="0.55"/>
+      <rect x="170" y="66" width="2" height="2" opacity="0.45"/>
+      <rect x="76" y="56" width="2" height="2" opacity="0.6"/>
     </g>
 
-    <!-- clouds -->
-    <g fill="#FFFFFF" opacity="0.9">
+    <!-- clouds (sunrise + day only) -->
+    <g class="cloud-group" fill="#FFFFFF" opacity="0.9">
       <rect x="20" y="24" width="30" height="8"/>
       <rect x="26" y="18" width="18" height="8"/>
       <rect x="14" y="30" width="42" height="6"/>
-
       <rect x="120" y="14" width="24" height="7"/>
       <rect x="125" y="9" width="14" height="7"/>
       <rect x="116" y="19" width="32" height="5"/>
-
       <rect x="196" y="46" width="20" height="6"/>
       <rect x="200" y="41" width="12" height="6"/>
       <rect x="192" y="50" width="28" height="5"/>
     </g>
 
+    <!-- sun / moon -->
+    <circle class="celestial-glow" cx="252" cy="34" r="30"/>
+    <g class="celestial-body">
+      <rect x="240" y="18" width="24" height="24"/>
+      <rect x="234" y="24" width="6" height="12"/>
+      <rect x="264" y="24" width="6" height="12"/>
+      <rect x="246" y="12" width="12" height="6"/>
+      <rect x="246" y="42" width="12" height="6"/>
+    </g>
+    <g class="craters" fill="#F0DCC7" opacity="0.6">
+      <rect x="246" y="26" width="5" height="5"/>
+      <rect x="255" y="34" width="4" height="4"/>
+    </g>
+
+    <!-- shooting stars (night only) -->
+    <g class="star-field">
+      <g transform="translate(20,20)">
+        <g class="shooting-star star1">
+          <g transform="rotate(-28)">
+            <polygon points="0,0 44,-1.6 44,1.6" fill="url(#streakGrad)"/>
+            <circle cx="44" cy="0" r="1.6" fill="#FFFFFF"/>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(150,8)">
+        <g class="shooting-star star2">
+          <g transform="rotate(-20)">
+            <polygon points="0,0 36,-1.3 36,1.3" fill="url(#streakGrad)"/>
+            <circle cx="36" cy="0" r="1.3" fill="#FFFFFF"/>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(70,60)">
+        <g class="shooting-star star3">
+          <g transform="rotate(-34)">
+            <polygon points="0,0 30,-1.1 30,1.1" fill="url(#streakGrad)"/>
+            <circle cx="30" cy="0" r="1.1" fill="#FFFFFF"/>
+          </g>
+        </g>
+      </g>
+    </g>
+
     <!-- distant castle silhouette -->
-    <g fill="#231428" opacity="0.16">
+    <g class="castle">
       <rect x="150" y="96" width="30" height="34"/>
       <rect x="146" y="90" width="6" height="6"/>
       <rect x="156" y="90" width="6" height="6"/>
@@ -635,14 +788,14 @@
       <rect x="163" y="74" width="6" height="6"/>
     </g>
 
-    <!-- back hills (pink) -->
-    <polygon fill="#FFDCEF" points="0,140 20,140 20,132 40,132 40,124 70,124 70,132 100,132 100,140 140,140 140,128 170,128 170,138 200,138 200,126 230,126 230,136 260,136 260,128 290,128 290,138 320,138 320,180 0,180"/>
+    <!-- back hills -->
+    <polygon class="hill-back" points="0,140 20,140 20,132 40,132 40,124 70,124 70,132 100,132 100,140 140,140 140,128 170,128 170,138 200,138 200,126 230,126 230,136 260,136 260,128 290,128 290,138 320,138 320,180 0,180"/>
 
-    <!-- mid hills (soft green) -->
-    <polygon fill="#D7FFE2" points="0,156 30,156 30,146 60,146 60,154 90,154 90,142 130,142 130,152 160,152 160,144 190,144 190,154 220,154 220,146 250,146 250,156 280,156 280,148 320,148 320,180 0,180"/>
+    <!-- mid hills -->
+    <polygon class="hill-mid" points="0,156 30,156 30,146 60,146 60,154 90,154 90,142 130,142 130,152 160,152 160,144 190,144 190,154 220,154 220,146 250,146 250,156 280,156 280,148 320,148 320,180 0,180"/>
 
     <!-- bushes on mid hill -->
-    <g fill="#B9F0C6">
+    <g class="bush-mid">
       <rect x="44" y="140" width="10" height="8"/>
       <rect x="40" y="144" width="18" height="6"/>
       <rect x="168" y="136" width="10" height="8"/>
@@ -651,11 +804,11 @@
       <rect x="254" y="144" width="18" height="6"/>
     </g>
 
-    <!-- front hills (green, closest) -->
-    <polygon fill="#33CC66" points="0,172 24,172 24,164 54,164 54,170 84,170 84,160 114,160 114,168 144,168 144,158 180,158 180,168 210,168 210,160 240,160 240,170 270,170 270,162 300,162 300,172 320,172 320,180 0,180"/>
+    <!-- front hills (closest) -->
+    <polygon class="hill-front" points="0,172 24,172 24,164 54,164 54,170 84,170 84,160 114,160 114,168 144,168 144,158 180,158 180,168 210,168 210,160 240,160 240,170 270,170 270,162 300,162 300,172 320,172 320,180 0,180"/>
 
     <!-- bushes on front hill -->
-    <g fill="#1C9A48">
+    <g class="bush-front">
       <rect x="60" y="160" width="12" height="9"/>
       <rect x="56" y="164" width="20" height="6"/>
       <rect x="150" y="152" width="12" height="9"/>
@@ -664,6 +817,7 @@
       <rect x="218" y="158" width="20" height="6"/>
     </g>
   </svg>
+
 
   <div class="stripe-band"><div class="track" id="stripeTrack"></div></div>
 
@@ -1023,6 +1177,20 @@ function cycleGirlsWeek(cellWk){
   updateGirlsBlockDisplay();
 }
 updateGirlsBlockDisplay();
+
+// Day/night background cycle
+function applyTimeOfDayScene(){
+  const svg=document.querySelector('.scene-bg');
+  if(!svg)return;
+  const h=new Date().getHours();
+  let bucket='night';
+  if(h>=5&&h<9)bucket='sunrise';
+  else if(h>=9&&h<18)bucket='day';
+  svg.classList.remove('scene-sunrise','scene-day','scene-night');
+  svg.classList.add('scene-'+bucket);
+}
+applyTimeOfDayScene();
+setInterval(applyTimeOfDayScene,5*60*1000);
 
 // scrolling stripe banner text
 const track=document.getElementById('stripeTrack');
