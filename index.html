@@ -6,7 +6,7 @@
 <title>Action Plan 3000!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=VT323&display=swap" rel="stylesheet">
 <style>
   :root{
     --pink:#FF1F8F;
@@ -159,6 +159,42 @@
     padding:8px 22px;
     box-shadow:4px 4px 0 var(--pink);
   }
+
+  .tab-bar{display:flex;justify-content:center;gap:10px;padding:14px 20px 0;}
+  .tab-btn{font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;padding:9px 20px;border-radius:100px;border:2.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;}
+  .tab-btn.active{background:var(--ink);color:#fff;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .study-wrap{max-width:1040px;margin:0 auto;padding:30px 20px 40px;}
+  .study-head{text-align:center;margin-bottom:20px;}
+  .study-head h1{
+    font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(30px,6vw,46px);margin:0;
+    background:linear-gradient(90deg,var(--pink-deep),var(--green-deep));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .study-head .sub{margin-top:6px;font-size:13px;font-weight:700;opacity:0.6;}
+  .study-form{display:flex;flex-direction:column;gap:8px;max-width:480px;margin:0 auto 20px;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:16px;box-shadow:5px 5px 0 var(--pop-deep);}
+  .study-form input,.study-form textarea{border:1.5px solid rgba(35,20,40,0.25);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--ink);resize:vertical;}
+  .study-form input:focus,.study-form textarea:focus{outline:2px solid var(--pink);}
+  .study-toolbar{display:flex;justify-content:space-between;align-items:center;max-width:480px;margin:0 auto;flex-wrap:wrap;gap:8px;}
+  .study-count{font-size:12px;font-weight:800;opacity:0.6;}
+  .study-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:20px;}
+  .study-card{
+    border:3px solid var(--ink);border-radius:16px;padding:16px;cursor:pointer;
+    background:linear-gradient(135deg,var(--pink-soft),#FFE3F3);
+    box-shadow:4px 4px 0 var(--pink-deep);
+    min-height:110px;display:flex;flex-direction:column;justify-content:center;
+    position:relative;transition:transform 0.12s ease;
+  }
+  .study-card:active{transform:scale(0.97);}
+  .study-card.flipped{background:linear-gradient(135deg,var(--green-soft),#DFFFEC);box-shadow:4px 4px 0 var(--green-deep);}
+  .study-card .card-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:0.5;margin-bottom:6px;}
+  .study-card .card-text{font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;color:var(--ink);word-break:break-word;}
+  .study-card .card-del{position:absolute;top:8px;right:10px;background:none;border:none;font-size:16px;opacity:0.35;cursor:pointer;color:var(--ink);}
+  .study-card .card-del:active{opacity:0.9;}
+  .study-empty{grid-column:1/-1;text-align:center;padding:40px 20px;opacity:0.5;font-weight:700;}
+
   main{
     max-width:1040px;
     margin:0 auto;
@@ -464,40 +500,57 @@
   .files-storage-note{font-size:10px;opacity:0.45;font-weight:700;margin-top:10px;}
   .block.journalblock{
     margin-top:22px;
-    background:#fff;
-    border-radius:22px;
-    border:3px solid var(--ink);
-    padding:20px 20px 18px;
-    box-shadow:6px 6px 0 var(--pop-deep);
+    background:#0A0F0A;
+    border-radius:14px;
+    border:3px solid #1FCF52;
+    padding:18px 20px 18px;
+    box-shadow:6px 6px 0 var(--pop-deep),0 0 24px rgba(31,207,82,0.35);
     display:flex;
     flex-direction:column;
+    position:relative;
+    overflow:hidden;
+  }
+  .block.journalblock::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(31,207,82,0.06) 3px,rgba(31,207,82,0.06) 3px);
+    pointer-events:none;
   }
   .block.journalblock h2{
-    font-family:'Fredoka',sans-serif;
-    font-weight:600;
-    font-size:22px;
+    font-family:'VT323',monospace;
+    font-weight:400;
+    font-size:28px;
     margin:0;
-    color:var(--ink);
+    color:#33FF66;
+    letter-spacing:1px;
+    text-shadow:0 0 6px rgba(51,255,102,0.7);
   }
+  .block.journalblock h2::before{content:"> ";}
+  .block.journalblock .sub{color:#1FCF52;opacity:0.75;}
   .journal-text{
     width:100%;
     min-height:140px;
     margin-top:12px;
-    border:none;
-    background:rgba(0,0,0,0.03);
-    border-radius:14px;
+    border:1.5px solid #1A5C2E;
+    background:#04140A;
+    border-radius:8px;
     padding:14px 16px;
-    font-family:'Nunito',sans-serif;
-    font-weight:600;
-    font-size:15px;
-    line-height:1.6;
-    color:var(--ink);
+    font-family:'VT323',monospace;
+    font-weight:400;
+    font-size:19px;
+    line-height:1.5;
+    color:#33FF66;
+    text-shadow:0 0 4px rgba(51,255,102,0.6);
     outline:none;
     resize:none;
     overflow:hidden;
+    caret-color:#33FF66;
+    position:relative;
+    z-index:1;
   }
-  .journal-text::placeholder{color:rgba(35,20,40,0.35);font-weight:600;}
-  .journal-text:focus{background:rgba(0,0,0,0.06);}
+  .journal-text::placeholder{color:#1FCF52;opacity:0.5;}
+  .journal-text:focus{background:#06190D;border-color:#33FF66;}
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
@@ -687,6 +740,7 @@
     @page{size:letter;margin:0.3in;}
     body{padding:0;background:#fff;}
     .scene-bg{display:none!important;}
+    .no-print{display:none!important;}
     .stripe-band{padding:3px 0;}
     .stripe-band .track{animation:none;}
     .stripe-band span{font-size:10px;padding:0 10px;}
@@ -719,9 +773,12 @@
     .girls-current{font-size:11px;margin:3px 0 4px;}
     .girls-btn-row,.girls-hint{display:none!important;}
     .block.filesblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
-    .block.journalblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
-    .block.journalblock h2{font-size:15px;}
-    .journal-text{min-height:60px;padding:8px 10px;font-size:11px;}
+    .block.journalblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;background:#fff!important;border-color:rgba(35,20,40,0.25)!important;}
+    .block.journalblock::before{display:none!important;}
+    .block.journalblock h2{font-size:15px;font-family:'Fredoka',sans-serif!important;color:var(--ink)!important;text-shadow:none!important;}
+    .block.journalblock h2::before{content:""!important;}
+    .block.journalblock .sub{color:var(--ink)!important;opacity:0.6!important;}
+    .journal-text{min-height:60px;padding:8px 10px;font-size:11px;background:#fff!important;color:var(--ink)!important;border-color:rgba(35,20,40,0.25)!important;font-family:'Nunito',sans-serif!important;text-shadow:none!important;}
     .block.filesblock h2{font-size:15px;}
     .file-actions,.files-storage-note{display:none!important;}
     .file-thumb,.file-icon{width:24px;height:24px;}
@@ -899,6 +956,12 @@
 
   <div class="stripe-band"><div class="track" id="stripeTrack"></div></div>
 
+  <div class="tab-bar no-print">
+    <button class="tab-btn active" id="tabBtnPlanner" onclick="switchView('planner')">📅 Planner</button>
+    <button class="tab-btn" id="tabBtnStudy" onclick="switchView('study')">🧠 Study Session</button>
+  </div>
+
+  <div id="viewPlanner" class="view active">
   <header>
     <h1>ACTION PLAN 3000<span class="bang">!</span></h1>
     <div class="week-range" id="weekRange"></div>
@@ -1054,6 +1117,33 @@
       <div class="eta-modal-actions">
         <button class="eta-cancel" onclick="closeGirlsCalendar()">Done</button>
       </div>
+    </div>
+  </div>
+
+  </div><!-- /viewPlanner -->
+
+  <div id="viewStudy" class="view">
+    <div class="study-wrap">
+      <div class="study-head">
+        <h1>🧠 STUDY SESSION</h1>
+        <div class="sub">Flash cards for the insurance jargon that keeps tripping you up</div>
+      </div>
+
+      <div class="study-form no-print">
+        <input type="text" id="cardTermInput" placeholder="Term (e.g. Coinsurance Clause)" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('cardDefInput').focus();}">
+        <textarea id="cardDefInput" rows="2" placeholder="Definition / what it means..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addStudyCard();}"></textarea>
+        <button class="bullet-add-btn" type="button" onclick="addStudyCard()">+ Add Card</button>
+      </div>
+
+      <div class="study-toolbar no-print">
+        <div class="study-count" id="studyCount">0 cards</div>
+        <div style="display:flex;gap:8px;">
+          <button class="bullet-add-btn" type="button" onclick="shuffleStudyCards()">🔀 Shuffle</button>
+          <button class="bullet-add-btn" type="button" onclick="clearAllStudyCards()">🗑 Clear all cards</button>
+        </div>
+      </div>
+
+      <div class="study-grid" id="studyGrid"></div>
     </div>
   </div>
 
@@ -1369,6 +1459,81 @@ function clearAllFiles(){
   renderFilesList();
 }
 renderFilesList();
+
+// Study Session flashcards
+const STUDY_KEY='actionPlan3000_studyCards';
+let studyCards=[];
+try{const raw=localStorage.getItem(STUDY_KEY);if(raw)studyCards=JSON.parse(raw);}catch(e){}
+
+function saveStudyCards(){
+  try{localStorage.setItem(STUDY_KEY,JSON.stringify(studyCards));return true;}
+  catch(e){alert("Storage is full \u2014 couldn't save that card.");return false;}
+}
+function renderStudyGrid(){
+  const grid=document.getElementById('studyGrid');
+  const count=document.getElementById('studyCount');
+  if(count)count.textContent=studyCards.length+' card'+(studyCards.length===1?'':'s');
+  if(!grid)return;
+  if(!studyCards.length){
+    grid.innerHTML='<div class="study-empty">No cards yet \u2014 add your first term above.</div>';
+    return;
+  }
+  grid.innerHTML=studyCards.map(c=>{
+    return '<div class="study-card'+(c.flipped?' flipped':'')+'" data-id="'+c.id+'" onclick="flipStudyCard(\''+c.id+'\')">'+
+      '<button class="card-del" type="button" onclick="event.stopPropagation();deleteStudyCard(\''+c.id+'\')">\u00d7</button>'+
+      '<div class="card-label">'+(c.flipped?'Definition':'Term')+'</div>'+
+      '<div class="card-text">'+escapeHtml(c.flipped?c.definition:c.term)+'</div>'+
+    '</div>';
+  }).join('');
+}
+function addStudyCard(){
+  const termEl=document.getElementById('cardTermInput');
+  const defEl=document.getElementById('cardDefInput');
+  const term=termEl.value.trim();
+  const def=defEl.value.trim();
+  if(!term){alert('Give the card a term first.');termEl.focus();return;}
+  studyCards.push({id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),term:term,definition:def||'(no definition yet)',flipped:false});
+  if(!saveStudyCards()){studyCards.pop();return;}
+  termEl.value='';defEl.value='';
+  termEl.focus();
+  renderStudyGrid();
+}
+function flipStudyCard(id){
+  const c=studyCards.find(x=>x.id===id);
+  if(!c)return;
+  c.flipped=!c.flipped;
+  saveStudyCards();
+  renderStudyGrid();
+}
+function deleteStudyCard(id){
+  if(!confirm('Delete this card?'))return;
+  studyCards=studyCards.filter(c=>c.id!==id);
+  saveStudyCards();
+  renderStudyGrid();
+}
+function shuffleStudyCards(){
+  for(let i=studyCards.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    const tmp=studyCards[i];studyCards[i]=studyCards[j];studyCards[j]=tmp;
+  }
+  saveStudyCards();
+  renderStudyGrid();
+}
+function clearAllStudyCards(){
+  if(!studyCards.length){alert('No cards to clear.');return;}
+  if(!confirm('Delete all '+studyCards.length+' card(s)? This can\'t be undone.'))return;
+  studyCards=[];
+  saveStudyCards();
+  renderStudyGrid();
+}
+renderStudyGrid();
+
+function switchView(view){
+  document.getElementById('viewPlanner').classList.toggle('active',view==='planner');
+  document.getElementById('viewStudy').classList.toggle('active',view==='study');
+  document.getElementById('tabBtnPlanner').classList.toggle('active',view==='planner');
+  document.getElementById('tabBtnStudy').classList.toggle('active',view==='study');
+}
 
 // scrolling stripe banner text
 const track=document.getElementById('stripeTrack');
