@@ -9,12 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --pink:#FF3E9E;
-    --pink-deep:#C4127A;
-    --pink-soft:#FFDCEF;
-    --green:#33CC66;
-    --green-deep:#1C9A48;
-    --green-soft:#D7FFE2;
+    --pink:#FF1F8F;
+    --pink-deep:#A80D63;
+    --pink-soft:#FFB8E0;
+    --green:#0FE070;
+    --green-deep:#0A8A48;
+    --green-soft:#96FFBE;
+    --pop:#FFD23F;
+    --pop-deep:#E0A800;
     --ink:#231428;
     --cream:#FFFCF5;
     --paper:#FFFFFF;
@@ -107,7 +109,7 @@
   .scene-bg.scene-night .bush-front{fill:#1B4E36;}
 
   .stripe-band{
-    background:repeating-linear-gradient(-45deg,var(--pink) 0 40px,var(--green) 40px 80px);
+    background:repeating-linear-gradient(-45deg,var(--pink) 0 30px,var(--green) 30px 60px,var(--pop) 60px 90px);
     padding:6px 0;
     overflow:hidden;
   }
@@ -179,9 +181,10 @@
     box-shadow:6px 6px 0 rgba(35,20,40,0.9);
     display:flex;
     flex-direction:column;
+    transition:transform 0.15s ease;
   }
-  .block.pink{background:var(--pink-soft);}
-  .block.green{background:var(--green-soft);}
+  .block.pink{background:linear-gradient(135deg,var(--pink-soft) 0%,#FFE3F3 100%);box-shadow:6px 6px 0 var(--pink-deep);}
+  .block.green{background:linear-gradient(135deg,var(--green-soft) 0%,#DFFFEC 100%);box-shadow:6px 6px 0 var(--green-deep);}
   .block-head{
     display:flex;
     align-items:center;
@@ -208,14 +211,14 @@
     letter-spacing:0.3px;
     white-space:nowrap;
     border:2px solid var(--ink);
-    background:#fff;
+    background:var(--pop);
     color:var(--ink);
     padding:5px 10px;
     border-radius:100px;
     cursor:pointer;
     flex-shrink:0;
   }
-  .eta-btn:active{background:var(--pink-soft);}
+  .eta-btn:active{background:var(--pop-deep);}
   .block .sub{
     font-size:12px;
     font-weight:700;
@@ -429,12 +432,78 @@
     text-align:center;
     margin-top:8px;
   }
+  .block.filesblock{
+    margin-top:22px;
+    background:#fff;
+    border-radius:22px;
+    border:3px solid var(--ink);
+    padding:20px 20px 18px;
+    box-shadow:6px 6px 0 rgba(35,20,40,0.9);
+    display:flex;
+    flex-direction:column;
+  }
+  .block.filesblock h2{
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:22px;
+    margin:0;
+    color:var(--ink);
+  }
+  .files-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+  .files-btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .file-row{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.03);border-radius:12px;padding:8px 10px;}
+  .file-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#eee;}
+  .file-icon{width:40px;height:40px;border-radius:8px;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .file-info{flex:1;min-width:0;}
+  .file-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .file-meta{font-size:10px;opacity:0.55;}
+  .file-actions{display:flex;gap:6px;flex-shrink:0;}
+  .file-actions a,.file-actions button{font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;border:2px solid var(--ink);border-radius:100px;padding:4px 11px;text-decoration:none;color:var(--ink);background:#fff;cursor:pointer;}
+  .file-actions a:active,.file-actions button:active{background:var(--pink-soft);}
+  .files-empty{font-size:12px;opacity:0.5;font-weight:700;padding:6px 0;}
+  .files-storage-note{font-size:10px;opacity:0.45;font-weight:700;margin-top:10px;}
+  .block.journalblock{
+    margin-top:22px;
+    background:#fff;
+    border-radius:22px;
+    border:3px solid var(--ink);
+    padding:20px 20px 18px;
+    box-shadow:6px 6px 0 var(--pop-deep);
+    display:flex;
+    flex-direction:column;
+  }
+  .block.journalblock h2{
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:22px;
+    margin:0;
+    color:var(--ink);
+  }
+  .journal-text{
+    width:100%;
+    min-height:140px;
+    margin-top:12px;
+    border:none;
+    background:rgba(0,0,0,0.03);
+    border-radius:14px;
+    padding:14px 16px;
+    font-family:'Nunito',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    line-height:1.6;
+    color:var(--ink);
+    outline:none;
+    resize:none;
+    overflow:hidden;
+  }
+  .journal-text::placeholder{color:rgba(35,20,40,0.35);font-weight:600;}
+  .journal-text:focus{background:rgba(0,0,0,0.06);}
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
     padding:30px 30px 26px;
     text-align:center;
-    background:linear-gradient(120deg,var(--pink) 0%,var(--pink-deep) 45%,var(--green-deep) 75%,var(--green) 100%);
+    background:linear-gradient(120deg,var(--pink) 0%,var(--pink-deep) 35%,var(--pop-deep) 55%,var(--green-deep) 75%,var(--green) 100%);
     box-shadow:6px 6px 0 rgba(35,20,40,0.9);
     border:3px solid var(--ink);
   }
@@ -649,6 +718,15 @@
     .block.girlsblock h2{font-size:15px;}
     .girls-current{font-size:11px;margin:3px 0 4px;}
     .girls-btn-row,.girls-hint{display:none!important;}
+    .block.filesblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
+    .block.journalblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
+    .block.journalblock h2{font-size:15px;}
+    .journal-text{min-height:60px;padding:8px 10px;font-size:11px;}
+    .block.filesblock h2{font-size:15px;}
+    .file-actions,.files-storage-note{display:none!important;}
+    .file-thumb,.file-icon{width:24px;height:24px;}
+    .file-name{font-size:11px;}
+    .file-meta{font-size:9px;}
     .quote-wrap{margin-top:10px;padding:12px 16px 10px;box-shadow:none;border-radius:14px;page-break-inside:avoid;break-inside:avoid;}
     .quote-label{font-size:9px;margin-bottom:4px;}
     .quote-text{font-size:14px;}
@@ -865,6 +943,10 @@
               <input type="checkbox" class="debt-check" data-key="amazonsync" onchange="toggleDebtCheck(this)">
               <a class="debt-link" href="https://asc.syf.com/accounts/login/" target="_blank" rel="noopener">Amazon/Sync</a>
             </div>
+            <div class="debt-item">
+              <input type="checkbox" class="debt-check" data-key="comcast" onchange="toggleDebtCheck(this)">
+              <a class="debt-link" href="https://www.xfinity.com/account" target="_blank" rel="noopener">Comcast</a>
+            </div>
           </div>
         </div>
         <div class="bullet-list" data-key="bills"></div>
@@ -888,6 +970,28 @@
         <button class="girls-btn girls-clear" onclick="setThisWeekGirls(null)">Clear</button>
       </div>
       <button class="bullet-add-btn" type="button" onclick="openGirlsCalendar()">📅 Plan future weeks</button>
+    </div>
+
+    <div class="block filesblock">
+      <div class="block-head"><h2><span class="icon">📎</span>Files</h2></div>
+      <div class="sub">Photos, receipts, quick PDFs — travels with Save/Load to File</div>
+      <input type="file" id="fileUploadInput" accept="image/*,.pdf" style="display:none;" onchange="handleFileUpload(event)">
+      <div class="files-btn-row">
+        <button class="bullet-add-btn" type="button" onclick="document.getElementById('fileUploadInput').click()">+ Add file</button>
+        <button class="bullet-add-btn" type="button" onclick="clearAllFiles()">🗑 Clear all files</button>
+      </div>
+      <div class="files-list" id="filesList"></div>
+      <div class="files-btn-row">
+        <button class="bullet-add-btn" type="button" onclick="saveToFile()">💾 Save to File</button>
+        <button class="bullet-add-btn" type="button" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
+      </div>
+      <div class="files-storage-note">Keep files under ~3MB each — this is browser storage, not the cloud.</div>
+    </div>
+
+    <div class="block journalblock">
+      <div class="block-head"><h2><span class="icon">📔</span>Weekly Journal</h2></div>
+      <div class="sub">Thoughts, wins, whatever's on your mind this week</div>
+      <textarea id="journalText" class="journal-text" placeholder="How's this week going? Wins, frustrations, stuff you want to remember later..."></textarea>
     </div>
 
     <div class="quote-wrap">
@@ -1192,6 +1296,80 @@ function applyTimeOfDayScene(){
 applyTimeOfDayScene();
 setInterval(applyTimeOfDayScene,5*60*1000);
 
+// Files block
+const FILES_KEY='actionPlan3000_files';
+let storedFiles=[];
+try{const raw=localStorage.getItem(FILES_KEY);if(raw)storedFiles=JSON.parse(raw);}catch(e){}
+
+function escapeHtml(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function renderFilesList(){
+  const list=document.getElementById('filesList');
+  if(!list)return;
+  if(!storedFiles.length){
+    list.innerHTML='<div class="files-empty">No files saved yet.</div>';
+    return;
+  }
+  list.innerHTML=storedFiles.map(f=>{
+    const isImage=f.type&&f.type.indexOf('image/')===0;
+    const thumb=isImage?'<img class="file-thumb" src="'+f.dataUrl+'">':'<div class="file-icon">📄</div>';
+    const sizeKb=(f.size/1024).toFixed(0);
+    return '<div class="file-row">'+thumb+
+      '<div class="file-info"><div class="file-name">'+escapeHtml(f.name)+'</div><div class="file-meta">'+sizeKb+' KB \u00b7 added '+f.addedAt+'</div></div>'+
+      '<div class="file-actions"><a href="'+f.dataUrl+'" download="'+escapeHtml(f.name)+'">View</a><button type="button" onclick="deleteFile(\''+f.id+'\')">\u00d7</button></div>'+
+    '</div>';
+  }).join('');
+}
+function saveFiles(){
+  try{
+    localStorage.setItem(FILES_KEY,JSON.stringify(storedFiles));
+    return true;
+  }catch(e){
+    alert("Storage is full \u2014 couldn't save that file. Try removing an older file first, or keep photos/PDFs small.");
+    return false;
+  }
+}
+function handleFileUpload(event){
+  const file=event.target.files&&event.target.files[0];
+  if(!file)return;
+  if(file.size>3*1024*1024){
+    alert('That file is a bit large ('+(file.size/1024/1024).toFixed(1)+'MB). Try to keep files under 3MB so everything stays fast and fits in browser storage.');
+    event.target.value='';
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    storedFiles.push({
+      id:'f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+      name:file.name,
+      type:file.type,
+      size:file.size,
+      dataUrl:reader.result,
+      addedAt:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})
+    });
+    if(!saveFiles())storedFiles.pop();
+    renderFilesList();
+    event.target.value='';
+  };
+  reader.onerror=()=>{alert('Could not read that file.');};
+  reader.readAsDataURL(file);
+}
+function deleteFile(id){
+  if(!confirm('Remove this file?'))return;
+  storedFiles=storedFiles.filter(f=>f.id!==id);
+  saveFiles();
+  renderFilesList();
+}
+function clearAllFiles(){
+  if(!storedFiles.length){alert('No files to clear.');return;}
+  if(!confirm('Remove all '+storedFiles.length+' saved file(s)? This frees up browser storage space.'))return;
+  storedFiles=[];
+  saveFiles();
+  renderFilesList();
+}
+renderFilesList();
+
 // scrolling stripe banner text
 const track=document.getElementById('stripeTrack');
 let bannerHTML='';
@@ -1302,12 +1480,21 @@ debtChecks.forEach(c=>{
   if(link)link.classList.toggle('checked',on);
 });
 
+const journalEl=document.getElementById('journalText');
+if(journalEl){
+  journalEl.value=saved.journal||'';
+  autoGrow(journalEl);
+  journalEl.oninput=()=>{autoGrow(journalEl);persist();};
+}
+
 function persist(){
   const data={};
   BLOCK_KEYS.forEach(key=>{data[key]=BLOCK_DATA[key]||[];});
   const dc={};
   debtChecks.forEach(c=>{dc[c.dataset.key]=c.checked;});
   data.debtChecks=dc;
+  const je=document.getElementById('journalText');
+  data.journal=je?je.value:'';
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
   const note=document.getElementById('saveNote');
   note.textContent='Saved just now';
@@ -1332,6 +1519,8 @@ function clearWeek(){
     const link=c.nextElementSibling;
     if(link)link.classList.remove('checked');
   });
+  const je=document.getElementById('journalText');
+  if(je){je.value='';autoGrow(je);}
   persist();
 }
 
