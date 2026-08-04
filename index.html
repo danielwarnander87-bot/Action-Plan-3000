@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Action Plan 3000!</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB4PSI1MCUiIHk9IjU4JSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI4MCI+8J+SjjwvdGV4dD48L3N2Zz4=">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=VT323&display=swap" rel="stylesheet">
@@ -58,14 +59,14 @@
   /* time-of-day scene defaults (night, as safe fallback before JS assigns a class) */
   .scene-bg .sky-rect{fill:url(#skyNight);}
   .scene-bg .celestial-glow{fill:url(#glowNight);}
-  .scene-bg .celestial-body{fill:#FFF3E6;}
+  .scene-bg .celestial-body{fill:#FFE9FA;}
   .scene-bg .craters{display:block;}
   .scene-bg .cloud-group{display:none;}
   .scene-bg .star-field{display:block;}
-  .scene-bg .castle{fill:#D9D0EE;opacity:0.3;}
-  .scene-bg .hill-back{fill:#5A2C56;}
-  .scene-bg .hill-mid{fill:#204A38;}
-  .scene-bg .hill-front{fill:#123C29;}
+  .scene-bg .castle{fill:#E8DFFF;opacity:0.3;}
+  .scene-bg .hill-back{fill:#3A1F8F;}
+  .scene-bg .hill-mid{fill:#241259;}
+  .scene-bg .hill-front{fill:#150A33;}
   .scene-bg .bush-mid{fill:#2C6248;}
   .scene-bg .bush-front{fill:#1B4E36;}
 
@@ -100,14 +101,14 @@
   /* night */
   .scene-bg.scene-night .sky-rect{fill:url(#skyNight);}
   .scene-bg.scene-night .celestial-glow{fill:url(#glowNight);}
-  .scene-bg.scene-night .celestial-body{fill:#FFF3E6;}
+  .scene-bg.scene-night .celestial-body{fill:#FFE9FA;}
   .scene-bg.scene-night .craters{display:block;}
   .scene-bg.scene-night .cloud-group{display:none;}
   .scene-bg.scene-night .star-field{display:block;}
-  .scene-bg.scene-night .castle{fill:#D9D0EE;opacity:0.3;}
-  .scene-bg.scene-night .hill-back{fill:#5A2C56;}
-  .scene-bg.scene-night .hill-mid{fill:#204A38;}
-  .scene-bg.scene-night .hill-front{fill:#123C29;}
+  .scene-bg.scene-night .castle{fill:#E8DFFF;opacity:0.32;}
+  .scene-bg.scene-night .hill-back{fill:#3A1F8F;}
+  .scene-bg.scene-night .hill-mid{fill:#241259;}
+  .scene-bg.scene-night .hill-front{fill:#150A33;}
   .scene-bg.scene-night .bush-mid{fill:#2C6248;}
   .scene-bg.scene-night .bush-front{fill:#1B4E36;}
 
@@ -614,6 +615,49 @@
     z-index:1;
   }
   .journal-tool-btn:active{background:#1FCF52;color:#04140A;}
+  .block.clockblock{
+    margin-top:22px;
+    background:#0A0A16;
+    border-radius:14px;
+    border:3px solid var(--indigo);
+    padding:18px 20px;
+    box-shadow:6px 6px 0 var(--indigo-deep),0 0 24px rgba(79,42,201,0.4);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .block.clockblock .block-head{width:100%;}
+  .block.clockblock h2{font-family:'VT323',monospace;font-size:26px;color:#C7B8FF;text-shadow:0 0 6px rgba(199,184,255,0.7);margin:0;font-weight:400;}
+  .journal-tool-btn.active{background:#C7B8FF;color:#160B29;border-color:#C7B8FF;}
+  .clock-display{
+    font-family:'VT323',monospace;
+    font-size:56px;
+    letter-spacing:2px;
+    color:#E0119B;
+    text-shadow:0 0 10px rgba(224,17,155,0.85);
+    margin:14px 0 6px;
+    text-align:center;
+  }
+  .clock-display.timer-done{animation:timerFlash 0.6s ease infinite alternate;}
+  @keyframes timerFlash{from{color:#E0119B;}to{color:#FFD23F;}}
+  .timer-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;font-family:'VT323',monospace;color:#C7B8FF;font-size:16px;}
+  .timer-controls input{width:60px;text-align:center;font-family:'VT323',monospace;font-size:16px;background:#160B29;color:#C7B8FF;border:1.5px solid var(--indigo);border-radius:6px;padding:4px 6px;}
+  .block.appointmentsblock{margin-top:22px;}
+  .appointmentsblock.collapsed #apptCalendarBody{display:none;}
+  .appt-week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px;}
+  @media (max-width:720px){.appt-week-strip{grid-template-columns:repeat(4,1fr);}}
+  .appt-day-col{background:rgba(255,255,255,0.55);border-radius:10px;padding:8px 6px;display:flex;flex-direction:column;gap:5px;min-height:100px;}
+  .appt-day-col.is-today{outline:2.5px solid var(--pink-deep);outline-offset:-2px;background:rgba(255,255,255,0.85);}
+  .appt-day-head{text-align:center;font-family:'Fredoka',sans-serif;font-weight:600;font-size:10px;color:var(--ink);opacity:0.65;text-transform:uppercase;letter-spacing:0.5px;}
+  .appt-day-head .num{display:block;font-size:16px;font-weight:700;opacity:1;font-family:'Fredoka',sans-serif;}
+  .appt-chip{background:#fff;border:1.5px solid var(--ink);border-radius:8px;padding:4px 6px;font-size:10px;font-weight:700;color:var(--ink);position:relative;line-height:1.3;}
+  .appt-chip .appt-time{display:block;font-size:9px;opacity:0.55;font-weight:800;}
+  .appt-chip .appt-del{position:absolute;top:1px;right:4px;font-size:11px;opacity:0.4;cursor:pointer;}
+  .appt-chip .appt-del:active{opacity:0.9;}
+  .appt-add-btn-mini{font-size:15px;font-weight:800;border:1.5px dashed rgba(22,11,41,0.35);border-radius:8px;background:none;color:var(--ink);cursor:pointer;padding:3px 0;}
+  .appt-mini-form{display:flex;flex-direction:column;gap:4px;margin-top:2px;}
+  .appt-mini-form input{font-size:10px;border:1px solid rgba(22,11,41,0.3);border-radius:6px;padding:3px 5px;font-family:'Nunito',sans-serif;}
+  .appt-mini-form button{font-size:10px;font-weight:800;border:1.5px solid var(--ink);border-radius:6px;background:var(--pink);color:#fff;padding:3px 0;cursor:pointer;}
   .journal-day-tabs{
     display:flex;
     flex-wrap:wrap;
@@ -829,6 +873,10 @@
     body{padding:0;background:#fff;}
     .scene-bg{display:none!important;}
     .no-print{display:none!important;}
+    .appointmentsblock.collapsed #apptCalendarBody{display:block!important;}
+    .appt-add-btn-mini,.appt-mini-form,.appt-del{display:none!important;}
+    .appt-week-strip{gap:3px;}
+    .appt-day-col{padding:4px 3px;min-height:auto;}
     .stripe-band{padding:3px 0;}
     .stripe-band .track{animation:none;}
     .stripe-band span{font-size:10px;padding:0 10px;}
@@ -907,9 +955,9 @@
         <stop offset="100%" stop-color="#D6F7F2"/>
       </linearGradient>
       <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#150B26"/>
-        <stop offset="55%" stop-color="#2C1543"/>
-        <stop offset="100%" stop-color="#4A2050"/>
+        <stop offset="0%" stop-color="#0D0620"/>
+        <stop offset="45%" stop-color="#3B1568"/>
+        <stop offset="100%" stop-color="#A31E7A"/>
       </linearGradient>
       <radialGradient id="glowSunrise" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stop-color="#FFD9A8" stop-opacity="0.55"/>
@@ -920,8 +968,8 @@
         <stop offset="100%" stop-color="#FFF6D0" stop-opacity="0"/>
       </radialGradient>
       <radialGradient id="glowNight" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#FFEFE0" stop-opacity="0.55"/>
-        <stop offset="100%" stop-color="#FFEFE0" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#FFD9F5" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="#FFD9F5" stop-opacity="0"/>
       </radialGradient>
       <linearGradient id="streakGrad" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
@@ -1083,12 +1131,6 @@
         <div class="bullet-list" data-key="finances"></div>
         <button class="bullet-add-btn" type="button" onclick="addBulletItem('finances',true)">+ Add item</button>
       </div>
-      <div class="block pink">
-        <div class="block-head"><h2><span class="icon">📅</span>Appointments</h2><button class="eta-btn" onclick="addETA('appointments')">⏱ ETA</button></div>
-        <div class="sub">Where you need to be, and when</div>
-        <div class="bullet-list" data-key="appointments"></div>
-        <button class="bullet-add-btn" type="button" onclick="addBulletItem('appointments',true)">+ Add item</button>
-      </div>
       <div class="block green">
         <div class="block-head"><h2><span class="icon">🧾</span>Bills</h2><button class="eta-btn" onclick="addETA('bills')">⏱ ETA</button></div>
         <div class="sub">Due this week</div>
@@ -1119,6 +1161,17 @@
       </div>
     </div>
 
+    <div class="block appointmentsblock pink" id="appointmentsBlock">
+      <div class="block-head">
+        <h2><span class="icon">📅</span>Appointments</h2>
+        <button class="eta-btn" type="button" id="apptCollapseBtn" onclick="toggleAppointmentsCollapse()">▼ Collapse</button>
+      </div>
+      <div class="sub">Tap a day to add where you need to be</div>
+      <div id="apptCalendarBody">
+        <div class="appt-week-strip" id="apptWeekStrip"></div>
+      </div>
+    </div>
+
     <div id="customBlocksContainer"></div>
 
     <div class="add-block-wrap no-print">
@@ -1132,6 +1185,23 @@
           <button type="button" class="color-swatch swatch-gold" data-color="gold" onclick="pickBlockColor('gold')"></button>
         </div>
         <button class="bullet-add-btn" type="button" onclick="createCustomBlock()">Create Block</button>
+      </div>
+    </div>
+
+    <div class="block clockblock no-print">
+      <div class="block-head">
+        <h2><span class="icon">⏰</span>Clock &amp; Timer</h2>
+        <div style="display:flex;gap:6px;">
+          <button class="journal-tool-btn active" type="button" id="clockModeBtn" onclick="setClockMode('clock')">🕐 Clock</button>
+          <button class="journal-tool-btn" type="button" id="timerModeBtn" onclick="setClockMode('timer')">⏱ Timer</button>
+        </div>
+      </div>
+      <div class="clock-display" id="clockDisplay">--:--:--</div>
+      <div class="timer-controls" id="timerControls" style="display:none;">
+        <input type="number" id="timerMinutes" min="1" max="180" value="5"> min
+        <button class="bullet-add-btn" type="button" onclick="startTimer()">▶ Start</button>
+        <button class="bullet-add-btn" type="button" onclick="pauseTimer()">⏸ Pause</button>
+        <button class="bullet-add-btn" type="button" onclick="resetTimer()">↺ Reset</button>
       </div>
     </div>
 
@@ -1666,7 +1736,7 @@ let bannerHTML='';
 for(let i=0;i<8;i++)bannerHTML+='<span>ACTION PLAN 3000 \u2605</span>';
 track.innerHTML=bannerHTML+bannerHTML;
 
-const FIXED_BLOCK_KEYS=['work','finances','appointments','bills','accountability'];
+const FIXED_BLOCK_KEYS=['work','finances','bills','accountability'];
 const debtChecks=document.querySelectorAll('.debt-check');
 const lastFocused={};
 const BLOCK_DATA={};
@@ -1738,6 +1808,94 @@ function deleteCustomBlock(id){
   persist();
 }
 renderCustomBlocksDOM();
+
+// Clock & Timer
+let clockMode='clock';
+let clockInterval=null;
+let timerSeconds=0;
+let timerRunning=false;
+let timerInterval=null;
+function pad2(n){return String(n).padStart(2,'0');}
+function tickClock(){
+  const d=new Date();
+  let h=d.getHours();
+  const ampm=h>=12?'PM':'AM';
+  h=h%12;if(h===0)h=12;
+  const el=document.getElementById('clockDisplay');
+  if(el)el.textContent=pad2(h)+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds())+' '+ampm;
+}
+function renderTimerDisplay(){
+  const m=Math.floor(timerSeconds/60);
+  const s=timerSeconds%60;
+  const el=document.getElementById('clockDisplay');
+  if(el)el.textContent=pad2(m)+':'+pad2(s);
+}
+function setClockMode(mode){
+  clockMode=mode;
+  const cb=document.getElementById('clockModeBtn'),tb=document.getElementById('timerModeBtn'),tc=document.getElementById('timerControls');
+  if(cb)cb.classList.toggle('active',mode==='clock');
+  if(tb)tb.classList.toggle('active',mode==='timer');
+  if(tc)tc.style.display=mode==='timer'?'flex':'none';
+  const disp=document.getElementById('clockDisplay');
+  if(mode==='clock'){
+    clearInterval(timerInterval);timerRunning=false;
+    if(disp)disp.classList.remove('timer-done');
+    tickClock();
+    if(!clockInterval)clockInterval=setInterval(tickClock,1000);
+  }else{
+    clearInterval(clockInterval);clockInterval=null;
+    renderTimerDisplay();
+  }
+}
+function startTimer(){
+  if(timerRunning)return;
+  if(timerSeconds<=0){
+    const mins=parseFloat(document.getElementById('timerMinutes').value)||5;
+    timerSeconds=Math.max(1,Math.round(mins*60));
+  }
+  timerRunning=true;
+  const disp=document.getElementById('clockDisplay');
+  if(disp)disp.classList.remove('timer-done');
+  renderTimerDisplay();
+  timerInterval=setInterval(()=>{
+    timerSeconds--;
+    if(timerSeconds<=0){
+      timerSeconds=0;
+      renderTimerDisplay();
+      clearInterval(timerInterval);
+      timerRunning=false;
+      if(disp)disp.classList.add('timer-done');
+      beepTimer();
+      return;
+    }
+    renderTimerDisplay();
+  },1000);
+}
+function pauseTimer(){
+  timerRunning=false;
+  clearInterval(timerInterval);
+}
+function resetTimer(){
+  timerRunning=false;
+  clearInterval(timerInterval);
+  timerSeconds=0;
+  const disp=document.getElementById('clockDisplay');
+  if(disp)disp.classList.remove('timer-done');
+  renderTimerDisplay();
+}
+function beepTimer(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=880;
+    g.gain.value=0.15;
+    o.start();
+    setTimeout(()=>{o.stop();ctx.close();},700);
+  }catch(e){}
+}
+setClockMode('clock');
 
 function renderBulletList(key){
   const container=document.querySelector('.bullet-list[data-key="'+key+'"]');
@@ -1856,6 +2014,75 @@ if(saved.journal&&typeof saved.journal==='object'){
 const todayKeyForJournal=todayJournalKey();
 let activeJournalDay=todayKeyForJournal;
 
+// Appointments calendar
+let appointmentsData=(saved.appointments&&typeof saved.appointments==='object'&&!Array.isArray(saved.appointments))?saved.appointments:{};
+let apptFormOpenFor=null;
+function apptDateForDay(dayIdx){
+  const d=new Date(monday);
+  d.setDate(monday.getDate()+dayIdx);
+  return d;
+}
+function renderAppointments(){
+  const strip=document.getElementById('apptWeekStrip');
+  if(!strip)return;
+  strip.innerHTML=JOURNAL_DAYS.map((d,i)=>{
+    const dateObj=apptDateForDay(i);
+    const isToday=d.key===todayKeyForJournal;
+    const items=appointmentsData[d.key]||[];
+    const chips=items.map(a=>
+      '<div class="appt-chip">'+
+        '<span class="appt-del" onclick="deleteAppt(\''+d.key+'\',\''+a.id+'\')">\u00d7</span>'+
+        (a.time?'<span class="appt-time">'+escapeHtml(a.time)+'</span>':'')+
+        escapeHtml(a.text)+
+      '</div>'
+    ).join('');
+    const formOpen=apptFormOpenFor===d.key;
+    const miniForm=formOpen?
+      '<div class="appt-mini-form">'+
+        '<input type="text" id="apptTimeInput_'+d.key+'" placeholder="Time (opt)">'+
+        '<input type="text" id="apptTextInput_'+d.key+'" placeholder="What/where" onkeydown="if(event.key===\'Enter\'){event.preventDefault();saveAppt(\''+d.key+'\');}">'+
+        '<button type="button" onclick="saveAppt(\''+d.key+'\')">Save</button>'+
+      '</div>' : '<button class="appt-add-btn-mini" type="button" onclick="toggleApptForm(\''+d.key+'\')">+</button>';
+    return '<div class="appt-day-col'+(isToday?' is-today':'')+'">'+
+      '<div class="appt-day-head">'+d.label+'<span class="num">'+dateObj.getDate()+'</span></div>'+
+      chips+miniForm+
+    '</div>';
+  }).join('');
+  if(apptFormOpenFor){
+    const timeEl=document.getElementById('apptTimeInput_'+apptFormOpenFor);
+    if(timeEl)timeEl.focus();
+  }
+}
+function toggleApptForm(dayKey){
+  apptFormOpenFor=(apptFormOpenFor===dayKey)?null:dayKey;
+  renderAppointments();
+}
+function saveAppt(dayKey){
+  const timeEl=document.getElementById('apptTimeInput_'+dayKey);
+  const textEl=document.getElementById('apptTextInput_'+dayKey);
+  const text=textEl.value.trim();
+  if(!text){textEl.focus();return;}
+  if(!appointmentsData[dayKey])appointmentsData[dayKey]=[];
+  appointmentsData[dayKey].push({id:uid(),time:(timeEl.value||'').trim(),text:text});
+  apptFormOpenFor=null;
+  persist();
+  renderAppointments();
+}
+function deleteAppt(dayKey,id){
+  if(!appointmentsData[dayKey])return;
+  appointmentsData[dayKey]=appointmentsData[dayKey].filter(a=>a.id!==id);
+  persist();
+  renderAppointments();
+}
+function toggleAppointmentsCollapse(){
+  const block=document.getElementById('appointmentsBlock');
+  const btn=document.getElementById('apptCollapseBtn');
+  if(!block||!btn)return;
+  const collapsed=block.classList.toggle('collapsed');
+  btn.textContent=collapsed?'\u25B6 Expand':'\u25BC Collapse';
+}
+renderAppointments();
+
 function buildJournalUI(){
   const tabsEl=document.getElementById('journalDayTabs');
   const panelsEl=document.getElementById('journalDayPanels');
@@ -1912,6 +2139,7 @@ function persist(){
   debtChecks.forEach(c=>{dc[c.dataset.key]=c.checked;});
   data.debtChecks=dc;
   data.journal=journalData;
+  data.appointments=appointmentsData;
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
   const note=document.getElementById('saveNote');
   note.textContent='Saved just now';
@@ -1938,6 +2166,9 @@ function clearWeek(){
   });
   journalData={};
   buildJournalUI();
+  appointmentsData={};
+  apptFormOpenFor=null;
+  renderAppointments();
   persist();
 }
 
