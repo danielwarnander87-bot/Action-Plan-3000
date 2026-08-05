@@ -60,57 +60,59 @@
   .scene-bg .sky-rect{fill:url(#skyNight);}
   .scene-bg .celestial-glow{fill:url(#glowNight);}
   .scene-bg .celestial-body{fill:#FFE9FA;}
-  .scene-bg .craters{display:block;}
+  .scene-bg .sun-stripe{fill:url(#skyNight);}
   .scene-bg .cloud-group{display:none;}
   .scene-bg .star-field{display:block;}
   .scene-bg .castle{fill:#E8DFFF;opacity:0.3;}
   .scene-bg .hill-back{fill:#3A1F8F;}
   .scene-bg .hill-mid{fill:#241259;}
-  .scene-bg .hill-front{fill:#150A33;}
+  .scene-bg .hill-front{fill:#0D0620;}
   .scene-bg .bush-mid{fill:#2C6248;}
-  .scene-bg .bush-front{fill:#1B4E36;}
+  .scene-bg .grid-lines{stroke:#E0119B;stroke-width:0.7;opacity:0.6;}
+  .scene-bg .horizon-glow{fill:#E0119B;opacity:0.85;}
 
   /* sunrise */
   .scene-bg.scene-sunrise .sky-rect{fill:url(#skySunrise);}
   .scene-bg.scene-sunrise .celestial-glow{fill:url(#glowSunrise);}
   .scene-bg.scene-sunrise .celestial-body{fill:#FF9F4D;}
-  .scene-bg.scene-sunrise .craters{display:none;}
-  .scene-bg.scene-sunrise .cloud-group{display:block;}
+  .scene-bg.scene-sunrise .sun-stripe{fill:url(#skySunrise);}
+  .scene-bg.scene-sunrise .cloud-group{display:none;}
   .scene-bg.scene-sunrise .star-field{display:none;}
   .scene-bg.scene-sunrise .castle{fill:#C9A6BE;opacity:0.28;}
   .scene-bg.scene-sunrise .hill-back{fill:#FFC9E0;}
   .scene-bg.scene-sunrise .hill-mid{fill:#C9EFB0;}
-  .scene-bg.scene-sunrise .hill-front{fill:#3FAE55;}
+  .scene-bg.scene-sunrise .hill-front{fill:#3D1240;}
   .scene-bg.scene-sunrise .bush-mid{fill:#A8DB8E;}
-  .scene-bg.scene-sunrise .bush-front{fill:#2E8C42;}
+  .scene-bg.scene-sunrise .grid-lines{stroke:#FF9F4D;stroke-width:0.7;opacity:0.65;}
+  .scene-bg.scene-sunrise .horizon-glow{fill:#FF9F4D;opacity:0.9;}
 
   /* day (cyan blue) */
   .scene-bg.scene-day .sky-rect{fill:url(#skyDay);}
   .scene-bg.scene-day .celestial-glow{fill:url(#glowDay);}
   .scene-bg.scene-day .celestial-body{fill:#FFC93C;}
-  .scene-bg.scene-day .craters{display:none;}
-  .scene-bg.scene-day .cloud-group{display:block;}
+  .scene-bg.scene-day .sun-stripe{fill:url(#skyDay);}
+  .scene-bg.scene-day .cloud-group{display:none;}
   .scene-bg.scene-day .star-field{display:none;}
-  .scene-bg.scene-day .castle{fill:#231428;opacity:0.16;}
+  .scene-bg.scene-day .castle{fill:#0D3B4A;opacity:0.35;}
   .scene-bg.scene-day .hill-back{fill:#FFDCEF;}
   .scene-bg.scene-day .hill-mid{fill:#D7FFE2;}
-  .scene-bg.scene-day .hill-front{fill:#33CC66;}
+  .scene-bg.scene-day .hill-front{fill:#0D3B4A;}
   .scene-bg.scene-day .bush-mid{fill:#B9F0C6;}
-  .scene-bg.scene-day .bush-front{fill:#1C9A48;}
+  .scene-bg.scene-day .grid-lines{stroke:#FFC93C;stroke-width:0.7;opacity:0.6;}
+  .scene-bg.scene-day .horizon-glow{fill:#FFC93C;opacity:0.9;}
 
   /* night */
   .scene-bg.scene-night .sky-rect{fill:url(#skyNight);}
   .scene-bg.scene-night .celestial-glow{fill:url(#glowNight);}
   .scene-bg.scene-night .celestial-body{fill:#FFE9FA;}
-  .scene-bg.scene-night .craters{display:block;}
+  .scene-bg.scene-night .sun-stripe{fill:url(#skyNight);}
   .scene-bg.scene-night .cloud-group{display:none;}
   .scene-bg.scene-night .star-field{display:block;}
   .scene-bg.scene-night .castle{fill:#E8DFFF;opacity:0.32;}
   .scene-bg.scene-night .hill-back{fill:#3A1F8F;}
   .scene-bg.scene-night .hill-mid{fill:#241259;}
-  .scene-bg.scene-night .hill-front{fill:#150A33;}
+  .scene-bg.scene-night .hill-front{fill:#0D0620;}
   .scene-bg.scene-night .bush-mid{fill:#2C6248;}
-  .scene-bg.scene-night .bush-front{fill:#1B4E36;}
 
   .stripe-band{
     background:repeating-linear-gradient(-45deg,var(--pink) 0 24px,var(--indigo) 24px 48px,var(--green) 48px 72px,var(--pop) 72px 96px);
@@ -658,6 +660,12 @@
   .appt-mini-form{display:flex;flex-direction:column;gap:4px;margin-top:2px;}
   .appt-mini-form input{font-size:10px;border:1px solid rgba(22,11,41,0.3);border-radius:6px;padding:3px 5px;font-family:'Nunito',sans-serif;}
   .appt-mini-form button{font-size:10px;font-weight:800;border:1.5px solid var(--ink);border-radius:6px;background:var(--pink);color:#fff;padding:3px 0;cursor:pointer;}
+  .appt-upcoming-label{font-size:11px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;opacity:0.55;margin-top:16px;margin-bottom:6px;}
+  .appt-upcoming{display:flex;flex-direction:column;gap:6px;}
+  .appt-upcoming-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.6);border-radius:10px;padding:7px 10px;font-size:12px;}
+  .appt-upcoming-date{font-family:'Fredoka',sans-serif;font-weight:600;font-size:12px;color:var(--pink-deep);flex-shrink:0;min-width:74px;}
+  .appt-upcoming-text{flex:1;font-weight:700;color:var(--ink);}
+  .appt-upcoming-empty{font-size:12px;opacity:0.5;font-weight:600;}
   .journal-day-tabs{
     display:flex;
     flex-wrap:wrap;
@@ -683,6 +691,7 @@
   .journal-day.active{display:block;}
   .journal-day-label{display:none;}
   .print-only{display:none;}
+  .journalblock.collapsed #journalBody{display:none;}
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
@@ -874,6 +883,7 @@
     .scene-bg{display:none!important;}
     .no-print{display:none!important;}
     .appointmentsblock.collapsed #apptCalendarBody{display:block!important;}
+    .journalblock.collapsed #journalBody{display:block!important;}
     .appt-add-btn-mini,.appt-mini-form,.appt-del{display:none!important;}
     .appt-week-strip{gap:3px;}
     .appt-day-col{padding:4px 3px;min-height:auto;}
@@ -1007,31 +1017,15 @@
       <rect x="76" y="56" width="2" height="2" opacity="0.6"/>
     </g>
 
-    <!-- clouds (sunrise + day only) -->
-    <g class="cloud-group" fill="#FFFFFF" opacity="0.9">
-      <rect x="20" y="24" width="30" height="8"/>
-      <rect x="26" y="18" width="18" height="8"/>
-      <rect x="14" y="30" width="42" height="6"/>
-      <rect x="120" y="14" width="24" height="7"/>
-      <rect x="125" y="9" width="14" height="7"/>
-      <rect x="116" y="19" width="32" height="5"/>
-      <rect x="196" y="46" width="20" height="6"/>
-      <rect x="200" y="41" width="12" height="6"/>
-      <rect x="192" y="50" width="28" height="5"/>
-    </g>
-
-    <!-- sun / moon -->
-    <circle class="celestial-glow" cx="252" cy="34" r="30"/>
-    <g class="celestial-body">
-      <rect x="240" y="18" width="24" height="24"/>
-      <rect x="234" y="24" width="6" height="12"/>
-      <rect x="264" y="24" width="6" height="12"/>
-      <rect x="246" y="12" width="12" height="6"/>
-      <rect x="246" y="42" width="12" height="6"/>
-    </g>
-    <g class="craters" fill="#F0DCC7" opacity="0.6">
-      <rect x="246" y="26" width="5" height="5"/>
-      <rect x="255" y="34" width="4" height="4"/>
+    <!-- sun / star (retro striped) -->
+    <clipPath id="sunClip"><circle cx="252" cy="34" r="26"/></clipPath>
+    <circle class="celestial-glow" cx="252" cy="34" r="36"/>
+    <g clip-path="url(#sunClip)">
+      <circle class="celestial-body" cx="252" cy="34" r="26"/>
+      <rect class="sun-stripe" x="226" y="36" width="52" height="2.5"/>
+      <rect class="sun-stripe" x="226" y="42" width="52" height="3"/>
+      <rect class="sun-stripe" x="226" y="49" width="52" height="3.5"/>
+      <rect class="sun-stripe" x="226" y="57" width="52" height="4"/>
     </g>
 
     <!-- shooting stars (night only) -->
@@ -1062,15 +1056,18 @@
       </g>
     </g>
 
-    <!-- distant castle silhouette -->
+    <!-- distant skyline silhouette -->
     <g class="castle">
-      <rect x="150" y="96" width="30" height="34"/>
-      <rect x="146" y="90" width="6" height="6"/>
-      <rect x="156" y="90" width="6" height="6"/>
-      <rect x="168" y="90" width="6" height="6"/>
-      <rect x="178" y="90" width="6" height="6"/>
-      <rect x="160" y="80" width="12" height="16"/>
-      <rect x="163" y="74" width="6" height="6"/>
+      <rect x="10" y="108" width="12" height="24"/>
+      <rect x="26" y="118" width="9" height="14"/>
+      <rect x="40" y="98" width="14" height="34"/>
+      <rect x="58" y="112" width="10" height="20"/>
+      <rect x="140" y="104" width="13" height="28"/>
+      <rect x="156" y="116" width="9" height="16"/>
+      <rect x="230" y="110" width="11" height="22"/>
+      <rect x="245" y="96" width="15" height="36"/>
+      <rect x="264" y="114" width="9" height="18"/>
+      <rect x="285" y="106" width="12" height="26"/>
     </g>
 
     <!-- back hills -->
@@ -1089,17 +1086,23 @@
       <rect x="254" y="144" width="18" height="6"/>
     </g>
 
-    <!-- front hills (closest) -->
-    <polygon class="hill-front" points="0,172 24,172 24,164 54,164 54,170 84,170 84,160 114,160 114,168 144,168 144,158 180,158 180,168 210,168 210,160 240,160 240,170 270,170 270,162 300,162 300,172 320,172 320,180 0,180"/>
-
-    <!-- bushes on front hill -->
-    <g class="bush-front">
-      <rect x="60" y="160" width="12" height="9"/>
-      <rect x="56" y="164" width="20" height="6"/>
-      <rect x="150" y="152" width="12" height="9"/>
-      <rect x="146" y="156" width="20" height="6"/>
-      <rect x="222" y="154" width="12" height="9"/>
-      <rect x="218" y="158" width="20" height="6"/>
+    <!-- synthwave grid floor (closest) -->
+    <rect class="hill-front" x="0" y="132" width="320" height="48"/>
+    <rect class="horizon-glow" x="0" y="130" width="320" height="2.5"/>
+    <g class="grid-lines">
+      <line x1="0" y1="140" x2="320" y2="140"/>
+      <line x1="0" y1="149" x2="320" y2="149"/>
+      <line x1="0" y1="160" x2="320" y2="160"/>
+      <line x1="0" y1="174" x2="320" y2="174"/>
+      <line x1="160" y1="132" x2="-60" y2="180"/>
+      <line x1="160" y1="132" x2="0" y2="180"/>
+      <line x1="160" y1="132" x2="60" y2="180"/>
+      <line x1="160" y1="132" x2="120" y2="180"/>
+      <line x1="160" y1="132" x2="160" y2="180"/>
+      <line x1="160" y1="132" x2="200" y2="180"/>
+      <line x1="160" y1="132" x2="260" y2="180"/>
+      <line x1="160" y1="132" x2="320" y2="180"/>
+      <line x1="160" y1="132" x2="380" y2="180"/>
     </g>
   </svg>
 
@@ -1164,11 +1167,16 @@
     <div class="block appointmentsblock pink" id="appointmentsBlock">
       <div class="block-head">
         <h2><span class="icon">📅</span>Appointments</h2>
-        <button class="eta-btn" type="button" id="apptCollapseBtn" onclick="toggleAppointmentsCollapse()">▼ Collapse</button>
+        <div style="display:flex;gap:6px;">
+          <button class="eta-btn" type="button" onclick="openFutureApptCalendar()">📅 Future</button>
+          <button class="eta-btn" type="button" id="apptCollapseBtn" onclick="toggleAppointmentsCollapse()">▼ Collapse</button>
+        </div>
       </div>
-      <div class="sub">Tap a day to add where you need to be</div>
+      <div class="sub">This week — tap a day to add where you need to be</div>
       <div id="apptCalendarBody">
         <div class="appt-week-strip" id="apptWeekStrip"></div>
+        <div class="appt-upcoming-label">Coming up</div>
+        <div class="appt-upcoming" id="apptUpcoming"></div>
       </div>
     </div>
 
@@ -1239,17 +1247,20 @@
       <div class="files-storage-note">Keep files under ~3MB each — this is browser storage, not the cloud.</div>
     </div>
 
-    <div class="block journalblock">
+    <div class="block journalblock" id="journalBlock">
       <div class="block-head">
         <h2><span class="icon">📔</span>Weekly Journal</h2>
         <div style="display:flex;gap:6px;">
           <button class="journal-tool-btn" type="button" onclick="stampJournal()">⏱ Stamp</button>
           <button class="journal-tool-btn" type="button" onclick="printJournalOnly()">🖨 Print</button>
+          <button class="journal-tool-btn" type="button" id="journalCollapseBtn" onclick="toggleJournalCollapse()">▼</button>
         </div>
       </div>
       <div class="sub">Thoughts, wins, whatever's on your mind this week</div>
-      <div class="journal-day-tabs no-print" id="journalDayTabs"></div>
-      <div id="journalDayPanels"></div>
+      <div id="journalBody">
+        <div class="journal-day-tabs no-print" id="journalDayTabs"></div>
+        <div id="journalDayPanels"></div>
+      </div>
     </div>
 
     <div class="quote-wrap">
@@ -1311,6 +1322,32 @@
       <div class="girls-hint">Tap a week to cycle: blank → Girls → No Girls → blank</div>
       <div class="eta-modal-actions">
         <button class="eta-cancel" onclick="closeGirlsCalendar()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="eta-overlay" id="futureApptOverlay" onclick="if(event.target===this)closeFutureApptCalendar();">
+    <div class="eta-modal">
+      <div class="eta-modal-head">
+        <button class="eta-nav" onclick="futureApptChangeMonth(-1)">‹</button>
+        <div class="eta-month-label" id="futureApptMonthLabel"></div>
+        <button class="eta-nav" onclick="futureApptChangeMonth(1)">›</button>
+      </div>
+      <div class="eta-weekdays">
+        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+      </div>
+      <div class="eta-days" id="futureApptDaysGrid"></div>
+      <div class="eta-time-row">
+        <label for="futureApptTime">Time (optional)</label>
+        <input type="text" id="futureApptTime" placeholder="e.g. 2:00 PM">
+      </div>
+      <div class="eta-time-row">
+        <label for="futureApptText">What/where</label>
+        <input type="text" id="futureApptText" placeholder="Dentist, PSI retake, etc.">
+      </div>
+      <div class="eta-modal-actions">
+        <button class="eta-cancel" onclick="closeFutureApptCalendar()">Cancel</button>
+        <button class="eta-insert" onclick="saveFutureAppt()">Save Appointment</button>
       </div>
     </div>
   </div>
@@ -2014,35 +2051,67 @@ if(saved.journal&&typeof saved.journal==='object'){
 const todayKeyForJournal=todayJournalKey();
 let activeJournalDay=todayKeyForJournal;
 
-// Appointments calendar
-let appointmentsData=(saved.appointments&&typeof saved.appointments==='object'&&!Array.isArray(saved.appointments))?saved.appointments:{};
+// Appointments calendar (persistent, date-keyed — not weekly reset)
+const APPT_KEY='actionPlan3000_appointments';
+let appointmentsData={};
+try{const raw=localStorage.getItem(APPT_KEY);if(raw)appointmentsData=JSON.parse(raw);}catch(e){}
 let apptFormOpenFor=null;
+let apptViewDate=new Date();
+let apptPickedDate=null;
+
 function apptDateForDay(dayIdx){
   const d=new Date(monday);
   d.setDate(monday.getDate()+dayIdx);
   return d;
 }
+function saveAppointments(){
+  try{localStorage.setItem(APPT_KEY,JSON.stringify(appointmentsData));return true;}
+  catch(e){alert("Storage is full \u2014 couldn't save that appointment.");return false;}
+}
+
+// one-time migration from the old per-week day-keyed format, if present
+(function migrateOldAppointments(){
+  if(saved.appointments&&typeof saved.appointments==='object'&&!Array.isArray(saved.appointments)){
+    const oldKeys=Object.keys(saved.appointments);
+    const looksLikeDayKeys=oldKeys.some(k=>JOURNAL_DAYS.some(d=>d.key===k));
+    if(looksLikeDayKeys){
+      JOURNAL_DAYS.forEach((d,i)=>{
+        const items=saved.appointments[d.key];
+        if(items&&items.length){
+          const dk=weekKey(apptDateForDay(i));
+          if(!appointmentsData[dk])appointmentsData[dk]=[];
+          appointmentsData[dk]=appointmentsData[dk].concat(items);
+        }
+      });
+      saveAppointments();
+    }
+  }
+})();
+
 function renderAppointments(){
   const strip=document.getElementById('apptWeekStrip');
   if(!strip)return;
+  const weekDateKeys=[];
   strip.innerHTML=JOURNAL_DAYS.map((d,i)=>{
     const dateObj=apptDateForDay(i);
+    const dk=weekKey(dateObj);
+    weekDateKeys.push(dk);
     const isToday=d.key===todayKeyForJournal;
-    const items=appointmentsData[d.key]||[];
+    const items=appointmentsData[dk]||[];
     const chips=items.map(a=>
       '<div class="appt-chip">'+
-        '<span class="appt-del" onclick="deleteAppt(\''+d.key+'\',\''+a.id+'\')">\u00d7</span>'+
+        '<span class="appt-del" onclick="deleteAppt(\''+dk+'\',\''+a.id+'\')">\u00d7</span>'+
         (a.time?'<span class="appt-time">'+escapeHtml(a.time)+'</span>':'')+
         escapeHtml(a.text)+
       '</div>'
     ).join('');
-    const formOpen=apptFormOpenFor===d.key;
+    const formOpen=apptFormOpenFor===dk;
     const miniForm=formOpen?
       '<div class="appt-mini-form">'+
-        '<input type="text" id="apptTimeInput_'+d.key+'" placeholder="Time (opt)">'+
-        '<input type="text" id="apptTextInput_'+d.key+'" placeholder="What/where" onkeydown="if(event.key===\'Enter\'){event.preventDefault();saveAppt(\''+d.key+'\');}">'+
-        '<button type="button" onclick="saveAppt(\''+d.key+'\')">Save</button>'+
-      '</div>' : '<button class="appt-add-btn-mini" type="button" onclick="toggleApptForm(\''+d.key+'\')">+</button>';
+        '<input type="text" id="apptTimeInput_'+dk+'" placeholder="Time (opt)">'+
+        '<input type="text" id="apptTextInput_'+dk+'" placeholder="What/where" onkeydown="if(event.key===\'Enter\'){event.preventDefault();saveAppt(\''+dk+'\');}">'+
+        '<button type="button" onclick="saveAppt(\''+dk+'\')">Save</button>'+
+      '</div>' : '<button class="appt-add-btn-mini" type="button" onclick="toggleApptForm(\''+dk+'\')">+</button>';
     return '<div class="appt-day-col'+(isToday?' is-today':'')+'">'+
       '<div class="appt-day-head">'+d.label+'<span class="num">'+dateObj.getDate()+'</span></div>'+
       chips+miniForm+
@@ -2052,6 +2121,33 @@ function renderAppointments(){
     const timeEl=document.getElementById('apptTimeInput_'+apptFormOpenFor);
     if(timeEl)timeEl.focus();
   }
+  renderUpcomingAppointments(weekDateKeys);
+}
+function renderUpcomingAppointments(weekDateKeys){
+  const wrap=document.getElementById('apptUpcoming');
+  if(!wrap)return;
+  const rows=[];
+  Object.keys(appointmentsData).forEach(dk=>{
+    if(weekDateKeys.indexOf(dk)!==-1)return; // already shown in the week strip
+    const parts=dk.split('-').map(Number);
+    const dateObj=new Date(parts[0],parts[1]-1,parts[2]);
+    if(dateObj<monday)return; // don't show past dates
+    (appointmentsData[dk]||[]).forEach(a=>rows.push({dk:dk,dateObj:dateObj,item:a}));
+  });
+  rows.sort((a,b)=>a.dateObj-b.dateObj);
+  if(!rows.length){
+    wrap.innerHTML='<div class="appt-upcoming-empty">Nothing scheduled beyond this week yet.</div>';
+    return;
+  }
+  wrap.innerHTML=rows.map(r=>{
+    const label=r.dateObj.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    return '<div class="appt-upcoming-row">'+
+      '<span class="appt-upcoming-date">'+label+'</span>'+
+      (r.item.time?'<span class="appt-time">'+escapeHtml(r.item.time)+'</span>':'')+
+      '<span class="appt-upcoming-text">'+escapeHtml(r.item.text)+'</span>'+
+      '<span class="appt-del" onclick="deleteAppt(\''+r.dk+'\',\''+r.item.id+'\')">\u00d7</span>'+
+    '</div>';
+  }).join('');
 }
 function toggleApptForm(dayKey){
   apptFormOpenFor=(apptFormOpenFor===dayKey)?null:dayKey;
@@ -2065,13 +2161,14 @@ function saveAppt(dayKey){
   if(!appointmentsData[dayKey])appointmentsData[dayKey]=[];
   appointmentsData[dayKey].push({id:uid(),time:(timeEl.value||'').trim(),text:text});
   apptFormOpenFor=null;
-  persist();
+  saveAppointments();
   renderAppointments();
 }
-function deleteAppt(dayKey,id){
-  if(!appointmentsData[dayKey])return;
-  appointmentsData[dayKey]=appointmentsData[dayKey].filter(a=>a.id!==id);
-  persist();
+function deleteAppt(dateKey,id){
+  if(!appointmentsData[dateKey])return;
+  appointmentsData[dateKey]=appointmentsData[dateKey].filter(a=>a.id!==id);
+  if(!appointmentsData[dateKey].length)delete appointmentsData[dateKey];
+  saveAppointments();
   renderAppointments();
 }
 function toggleAppointmentsCollapse(){
@@ -2081,7 +2178,69 @@ function toggleAppointmentsCollapse(){
   const collapsed=block.classList.toggle('collapsed');
   btn.textContent=collapsed?'\u25B6 Expand':'\u25BC Collapse';
 }
+
+// future-appointment calendar picker
+function openFutureApptCalendar(){
+  apptViewDate=new Date();
+  apptPickedDate=null;
+  document.getElementById('futureApptTime').value='';
+  document.getElementById('futureApptText').value='';
+  renderFutureApptCalendar();
+  document.getElementById('futureApptOverlay').classList.add('open');
+}
+function closeFutureApptCalendar(){
+  document.getElementById('futureApptOverlay').classList.remove('open');
+}
+function futureApptChangeMonth(delta){
+  apptViewDate=new Date(apptViewDate.getFullYear(),apptViewDate.getMonth()+delta,1);
+  renderFutureApptCalendar();
+}
+function renderFutureApptCalendar(){
+  const y=apptViewDate.getFullYear(),m=apptViewDate.getMonth();
+  document.getElementById('futureApptMonthLabel').textContent=apptViewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const firstOfMonth=new Date(y,m,1);
+  const startOffset=firstOfMonth.getDay();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const grid=document.getElementById('futureApptDaysGrid');
+  grid.innerHTML='';
+  for(let i=0;i<startOffset;i++){
+    const blank=document.createElement('div');blank.className='eta-day blank';grid.appendChild(blank);
+  }
+  const now=new Date();
+  for(let d=1;d<=daysInMonth;d++){
+    const cellDate=new Date(y,m,d);
+    const dk=weekKey(cellDate);
+    const btn=document.createElement('button');
+    btn.className='eta-day';
+    btn.textContent=d;
+    if(appointmentsData[dk]&&appointmentsData[dk].length)btn.style.background='var(--pink-soft)';
+    if(sameDay(cellDate,now))btn.classList.add('today');
+    if(apptPickedDate&&sameDay(cellDate,apptPickedDate))btn.classList.add('selected');
+    btn.onclick=()=>{apptPickedDate=cellDate;renderFutureApptCalendar();};
+    grid.appendChild(btn);
+  }
+}
+function saveFutureAppt(){
+  if(!apptPickedDate){alert('Pick a date first.');return;}
+  const text=document.getElementById('futureApptText').value.trim();
+  if(!text){alert('Add a quick description.');return;}
+  const time=document.getElementById('futureApptTime').value.trim();
+  const dk=weekKey(apptPickedDate);
+  if(!appointmentsData[dk])appointmentsData[dk]=[];
+  appointmentsData[dk].push({id:uid(),time:time,text:text});
+  saveAppointments();
+  closeFutureApptCalendar();
+  renderAppointments();
+}
 renderAppointments();
+
+function toggleJournalCollapse(){
+  const block=document.getElementById('journalBlock');
+  const btn=document.getElementById('journalCollapseBtn');
+  if(!block||!btn)return;
+  const collapsed=block.classList.toggle('collapsed');
+  btn.textContent=collapsed?'\u25B6':'\u25BC';
+}
 
 function buildJournalUI(){
   const tabsEl=document.getElementById('journalDayTabs');
@@ -2139,7 +2298,6 @@ function persist(){
   debtChecks.forEach(c=>{dc[c.dataset.key]=c.checked;});
   data.debtChecks=dc;
   data.journal=journalData;
-  data.appointments=appointmentsData;
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
   const note=document.getElementById('saveNote');
   note.textContent='Saved just now';
@@ -2154,7 +2312,7 @@ function toggleDebtCheck(cb){
 }
 
 function clearWeek(){
-  if(!confirm('Clear everything filled in for this week?'))return;
+  if(!confirm('Clear everything filled in for this week? (Appointments stay put since they\'re not week-specific.)'))return;
   BLOCK_KEYS.forEach(key=>{
     BLOCK_DATA[key]=[{id:uid(),stamp:nowStamp(),text:'',done:false}];
     renderBulletList(key);
@@ -2166,9 +2324,6 @@ function clearWeek(){
   });
   journalData={};
   buildJournalUI();
-  appointmentsData={};
-  apptFormOpenFor=null;
-  renderAppointments();
   persist();
 }
 
