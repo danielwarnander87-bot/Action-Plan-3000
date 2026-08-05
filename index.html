@@ -66,10 +66,10 @@
   .scene-bg .castle{fill:#E8DFFF;opacity:0.3;}
   .scene-bg .hill-back{fill:#3A1F8F;}
   .scene-bg .hill-mid{fill:#241259;}
-  .scene-bg .hill-front{fill:url(#groundNight);}
+  .scene-bg .hill-front{fill:#000000;}
   .scene-bg .bush-mid{fill:#2C6248;}
-  .scene-bg .grid-lines{stroke:#E0119B;stroke-width:0.7;opacity:0.6;}
-  .scene-bg .horizon-glow{fill:#E0119B;opacity:0.85;}
+  .scene-bg .grid-lines{stroke:#39FF6B;stroke-width:0.7;opacity:0.7;animation:gridPulse 3.2s ease-in-out infinite;}
+  .scene-bg .horizon-glow{fill:#39FF6B;animation:horizonPulse 3.2s ease-in-out infinite;}
 
   /* sunrise */
   .scene-bg.scene-sunrise .sky-rect{fill:url(#skySunrise);}
@@ -81,11 +81,9 @@
   .scene-bg.scene-sunrise .castle{fill:#C9A6BE;opacity:0.28;}
   .scene-bg.scene-sunrise .hill-back{fill:#FFC9E0;}
   .scene-bg.scene-sunrise .hill-mid{fill:#C9EFB0;}
-  .scene-bg.scene-sunrise .hill-front{fill:url(#groundSunrise);}
+  .scene-bg.scene-sunrise .hill-front{fill:#000000;}
   .scene-bg.scene-sunrise .bush-mid{fill:#A8DB8E;}
-  .scene-bg.scene-sunrise .grid-lines{stroke:#FF9F4D;stroke-width:0.7;opacity:0.65;}
-  .scene-bg.scene-sunrise .horizon-glow{fill:#FF9F4D;opacity:0.9;}
-
+  
   /* day (cyan blue) */
   .scene-bg.scene-day .sky-rect{fill:url(#skyDay);}
   .scene-bg.scene-day .celestial-glow{fill:url(#glowDay);}
@@ -96,11 +94,9 @@
   .scene-bg.scene-day .castle{fill:#0D3B4A;opacity:0.35;}
   .scene-bg.scene-day .hill-back{fill:#FFDCEF;}
   .scene-bg.scene-day .hill-mid{fill:#D7FFE2;}
-  .scene-bg.scene-day .hill-front{fill:url(#groundDay);}
+  .scene-bg.scene-day .hill-front{fill:#000000;}
   .scene-bg.scene-day .bush-mid{fill:#B9F0C6;}
-  .scene-bg.scene-day .grid-lines{stroke:#FFC93C;stroke-width:0.7;opacity:0.6;}
-  .scene-bg.scene-day .horizon-glow{fill:#FFC93C;opacity:0.9;}
-
+  
   /* night */
   .scene-bg.scene-night .sky-rect{fill:url(#skyNight);}
   .scene-bg.scene-night .celestial-glow{fill:url(#glowNight);}
@@ -111,7 +107,7 @@
   .scene-bg.scene-night .castle{fill:#E8DFFF;opacity:0.32;}
   .scene-bg.scene-night .hill-back{fill:#3A1F8F;}
   .scene-bg.scene-night .hill-mid{fill:#241259;}
-  .scene-bg.scene-night .hill-front{fill:url(#groundNight);}
+  .scene-bg.scene-night .hill-front{fill:#000000;}
   .scene-bg.scene-night .bush-mid{fill:#2C6248;}
 
   .stripe-band{
@@ -672,6 +668,8 @@
   }
   .clock-display.timer-done{animation:timerFlash 0.6s ease infinite alternate;}
   @keyframes timerFlash{from{color:#E0119B;}to{color:#FFD23F;}}
+  @keyframes gridPulse{0%,100%{opacity:0.35;}50%{opacity:0.9;}}
+  @keyframes horizonPulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
   .timer-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;font-family:'VT323',monospace;color:#C7B8FF;font-size:16px;}
   .timer-controls input{width:60px;text-align:center;font-family:'VT323',monospace;font-size:16px;background:#160B29;color:#C7B8FF;border:1.5px solid var(--indigo);border-radius:6px;padding:4px 6px;}
   .block.appointmentsblock{margin-top:22px;}
@@ -1002,18 +1000,18 @@
   <svg class="scene-bg" viewBox="0 0 320 180" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="skySunrise" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#E8D3F5"/>
-        <stop offset="50%" stop-color="#FFB894"/>
-        <stop offset="100%" stop-color="#FFE29A"/>
+        <stop offset="0%" stop-color="#180B2E"/>
+        <stop offset="45%" stop-color="#7A2D5C"/>
+        <stop offset="100%" stop-color="#C4652E"/>
       </linearGradient>
       <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#3FB6E0"/>
-        <stop offset="100%" stop-color="#D6F7F2"/>
+        <stop offset="0%" stop-color="#0E5C78"/>
+        <stop offset="100%" stop-color="#79C9C0"/>
       </linearGradient>
       <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#0D0620"/>
-        <stop offset="45%" stop-color="#3B1568"/>
-        <stop offset="100%" stop-color="#A31E7A"/>
+        <stop offset="0%" stop-color="#060310"/>
+        <stop offset="45%" stop-color="#280C4D"/>
+        <stop offset="100%" stop-color="#7A1560"/>
       </linearGradient>
       <radialGradient id="glowSunrise" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stop-color="#FFD9A8" stop-opacity="0.55"/>
@@ -1032,16 +1030,16 @@
         <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
       </linearGradient>
       <linearGradient id="groundSunrise" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#3D1240"/>
-        <stop offset="100%" stop-color="#FF9F4D" stop-opacity="0.4"/>
+        <stop offset="0%" stop-color="#1A0620"/>
+        <stop offset="100%" stop-color="#FF9F4D" stop-opacity="0.35"/>
       </linearGradient>
       <linearGradient id="groundDay" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#0D3B4A"/>
-        <stop offset="100%" stop-color="#FFC93C" stop-opacity="0.4"/>
+        <stop offset="0%" stop-color="#061F28"/>
+        <stop offset="100%" stop-color="#FFC93C" stop-opacity="0.35"/>
       </linearGradient>
       <linearGradient id="groundNight" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#0D0620"/>
-        <stop offset="100%" stop-color="#E0119B" stop-opacity="0.45"/>
+        <stop offset="0%" stop-color="#050210"/>
+        <stop offset="100%" stop-color="#E0119B" stop-opacity="0.4"/>
       </linearGradient>
       <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
         <feGaussianBlur stdDeviation="2.2" result="blur"/>
@@ -1221,6 +1219,10 @@
             <div class="debt-item">
               <input type="checkbox" class="debt-check" data-key="comcast" onchange="toggleDebtCheck(this)">
               <a class="debt-link" href="https://www.xfinity.com/account" target="_blank" rel="noopener">Comcast</a>
+            </div>
+            <div class="debt-item">
+              <input type="checkbox" class="debt-check" data-key="klarna" onchange="toggleDebtCheck(this)">
+              <a class="debt-link" href="https://app.klarna.com/manage-payments" target="_blank" rel="noopener">Klarna</a>
             </div>
           </div>
         </div>
