@@ -235,25 +235,37 @@
     border:2.5px solid var(--ink);
     padding:20px 20px 16px;
     position:relative;
-    box-shadow:6px 6px 0 rgba(22,11,41,0.9);
+    box-shadow:6px 6px 0 rgba(22,11,41,0.9),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);
     display:flex;
     flex-direction:column;
     transition:transform 0.15s ease;
     overflow:hidden;
     color:#EDEDF5;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
   }
   .block::before{
     content:"";
     position:absolute;
-    top:0;left:0;right:0;
-    height:48%;
-    background:linear-gradient(180deg,rgba(255,255,255,0.07) 0%,rgba(255,255,255,0) 100%);
+    top:-60%;left:-28%;
+    width:12%;height:220%;
+    background:rgba(255,255,255,0.14);
+    image-rendering:pixelated;
+    transform:rotate(10deg);
     pointer-events:none;
   }
-  .block.pink{background:linear-gradient(160deg,#1A0512 0%,#26081C 60%,#1A0512 100%);border-color:var(--pink);box-shadow:6px 6px 0 var(--pink-deep),0 0 30px rgba(224,17,155,0.55);}
-  .block.green{background:linear-gradient(160deg,#04140D 0%,#062018 60%,#04140D 100%);border-color:var(--green);box-shadow:6px 6px 0 var(--green-deep),0 0 30px rgba(0,200,120,0.5);}
-  .block.indigo{background:linear-gradient(160deg,#0D0620 0%,#150B33 60%,#0D0620 100%);border-color:var(--indigo);box-shadow:6px 6px 0 var(--indigo-deep),0 0 30px rgba(120,90,255,0.55);}
-  .block.gold{background:linear-gradient(160deg,#1A1405 0%,#26200A 60%,#1A1405 100%);border-color:var(--pop);box-shadow:6px 6px 0 var(--pop-deep),0 0 30px rgba(255,210,63,0.5);}
+  .block::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:22px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);
+    pointer-events:none;
+  }
+  .block.pink{background:linear-gradient(160deg,rgba(26,5,18,0.88) 0%,rgba(38,8,28,0.88) 60%,rgba(26,5,18,0.88) 100%);border-color:var(--pink);box-shadow:6px 6px 0 var(--pink-deep),0 0 30px rgba(224,17,155,0.55),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);}
+  .block.green{background:linear-gradient(160deg,rgba(4,20,13,0.88) 0%,rgba(6,32,24,0.88) 60%,rgba(4,20,13,0.88) 100%);border-color:var(--green);box-shadow:6px 6px 0 var(--green-deep),0 0 30px rgba(0,200,120,0.5),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);}
+  .block.indigo{background:linear-gradient(160deg,rgba(13,6,32,0.88) 0%,rgba(21,11,51,0.88) 60%,rgba(13,6,32,0.88) 100%);border-color:var(--indigo);box-shadow:6px 6px 0 var(--indigo-deep),0 0 30px rgba(120,90,255,0.55),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);}
+  .block.gold{background:linear-gradient(160deg,rgba(26,20,5,0.88) 0%,rgba(38,32,10,0.88) 60%,rgba(26,20,5,0.88) 100%);border-color:var(--pop);box-shadow:6px 6px 0 var(--pop-deep),0 0 30px rgba(255,210,63,0.5),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);}
   .block-head{
     display:flex;
     align-items:center;
@@ -486,45 +498,53 @@
   .debt-link:active{background:rgba(255,255,255,0.2);}
   .block.accountability{
     margin-top:22px;
-    background:linear-gradient(135deg,#1A0512 0%,#0D0620 50%,#04140D 100%);
+    background:linear-gradient(135deg,rgba(26,5,18,0.88) 0%,rgba(13,6,32,0.88) 50%,rgba(4,20,13,0.88) 100%);
     border-radius:22px;
     border:2.5px solid var(--indigo);
     padding:20px 20px 16px;
-    box-shadow:6px 6px 0 var(--indigo-deep),0 0 30px rgba(120,90,255,0.45);
+    box-shadow:6px 6px 0 var(--indigo-deep),0 0 30px rgba(120,90,255,0.45),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);
     display:flex;
     flex-direction:column;
     position:relative;
     overflow:hidden;
     color:#EDEDF5;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
   }
   .block.accountability::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:48%;
-    background:linear-gradient(180deg,rgba(255,255,255,0.07) 0%,rgba(255,255,255,0) 100%);
+    content:"";position:absolute;top:-60%;left:-28%;width:12%;height:220%;
+    background:rgba(255,255,255,0.14);
+    image-rendering:pixelated;
+    transform:rotate(10deg);
     pointer-events:none;
   }
   .block.accountability h2{color:#B9A3FF;text-shadow:0 0 10px rgba(120,90,255,0.8);}
   .block.accountability .bullet-list{min-height:60px;}
   .block.girlsblock{
     margin-top:22px;
-    background:#0d0d14;
+    background:rgba(13,13,20,0.88);
     border-radius:22px;
     border:2.5px solid var(--ink);
     padding:20px 20px 18px;
-    box-shadow:6px 6px 0 rgba(22,11,41,0.9),0 0 22px rgba(22,11,41,0.15);
+    box-shadow:6px 6px 0 rgba(22,11,41,0.9),0 0 22px rgba(22,11,41,0.15),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);
     display:flex;
     flex-direction:column;
     transition:background 0.2s ease,border-color 0.2s ease;
     position:relative;
     overflow:hidden;
     color:#EDEDF5;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
   }
   .block.girlsblock::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:48%;
-    background:linear-gradient(180deg,rgba(255,255,255,0.07) 0%,rgba(255,255,255,0) 100%);
+    content:"";position:absolute;top:-60%;left:-28%;width:12%;height:220%;
+    background:rgba(255,255,255,0.14);
+    image-rendering:pixelated;
+    transform:rotate(10deg);
     pointer-events:none;
   }
-  .block.girlsblock.is-pink{background:linear-gradient(160deg,#1A0512 0%,#26081C 100%);border-color:var(--pink);box-shadow:6px 6px 0 var(--pink-deep),0 0 30px rgba(224,17,155,0.55);}
-  .block.girlsblock.is-green{background:linear-gradient(160deg,#04140D 0%,#062018 100%);border-color:var(--green);box-shadow:6px 6px 0 var(--green-deep),0 0 30px rgba(0,200,120,0.5);}
+  .block.girlsblock.is-pink{background:linear-gradient(160deg,rgba(26,5,18,0.88) 0%,rgba(38,8,28,0.88) 100%);border-color:var(--pink);box-shadow:6px 6px 0 var(--pink-deep),0 0 30px rgba(224,17,155,0.55),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);}
+  .block.girlsblock.is-green{background:linear-gradient(160deg,rgba(4,20,13,0.88) 0%,rgba(6,32,24,0.88) 100%);border-color:var(--green);box-shadow:6px 6px 0 var(--green-deep),0 0 30px rgba(0,200,120,0.5),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);}
   .block.girlsblock h2{
     font-family:'Fredoka',sans-serif;
     font-weight:600;
@@ -569,19 +589,24 @@
   }
   .block.filesblock{
     margin-top:22px;
-    background:#0d0d14;
+    background:rgba(13,13,20,0.88);
     border-radius:22px;
     border:2.5px solid var(--pop);
     padding:20px 20px 18px;
-    box-shadow:6px 6px 0 var(--pop-deep),0 0 24px rgba(255,210,63,0.4);
+    box-shadow:6px 6px 0 var(--pop-deep),0 0 24px rgba(255,210,63,0.4),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -16px 24px -14px rgba(0,0,0,0.55);
     display:flex;
     flex-direction:column;
     position:relative;
     overflow:hidden;
+    color:#EDEDF5;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
   }
   .block.filesblock::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:48%;
-    background:linear-gradient(180deg,rgba(255,255,255,0.07) 0%,rgba(255,255,255,0) 100%);
+    content:"";position:absolute;top:-60%;left:-28%;width:12%;height:220%;
+    background:rgba(255,255,255,0.14);
+    image-rendering:pixelated;
+    transform:rotate(10deg);
     pointer-events:none;
   }
   .block.filesblock h2{
@@ -723,6 +748,21 @@
   .appt-upcoming-date{font-family:'Fredoka',sans-serif;font-weight:600;font-size:12px;color:#FF7FD4;flex-shrink:0;min-width:74px;}
   .appt-upcoming-text{flex:1;font-weight:700;color:#F5F5FA;}
   .appt-upcoming-empty{font-size:12px;opacity:0.6;font-weight:600;color:#EDEDF5;}
+  .countdown-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+  .countdown-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;}
+  .countdown-days{font-family:'Fredoka',sans-serif;font-weight:700;font-size:26px;line-height:1;text-align:center;min-width:56px;flex-shrink:0;}
+  .countdown-days .unit{display:block;font-size:9px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;opacity:0.75;margin-top:2px;}
+  .countdown-days.urgent{color:var(--pink);text-shadow:0 0 8px rgba(224,17,155,0.7);}
+  .countdown-days.soon{color:var(--pop);text-shadow:0 0 8px rgba(255,210,63,0.6);}
+  .countdown-days.later{color:var(--green);text-shadow:0 0 8px rgba(0,200,120,0.5);}
+  .countdown-days.pastday{color:#8a8a97;text-shadow:none;}
+  .countdown-info{flex:1;min-width:0;}
+  .countdown-title{font-weight:700;font-size:14px;color:#F5F5FA;}
+  .countdown-date{font-size:11px;opacity:0.65;color:#EDEDF5;margin-top:2px;}
+  .countdown-goal{font-size:11px;font-weight:700;color:#5CFFAE;margin-top:4px;}
+  .countdown-del{background:none;border:none;color:#EDEDF5;opacity:0.45;font-size:17px;cursor:pointer;flex-shrink:0;}
+  .countdown-del:active{opacity:0.9;}
+  .countdown-empty{font-size:12px;opacity:0.6;font-weight:600;color:#EDEDF5;}
   .journal-day-tabs{
     display:flex;
     flex-wrap:wrap;
@@ -968,7 +1008,8 @@
     main{padding:0 14px;}
     .grid{gap:10px;margin-top:4px;}
     .block{padding:10px 12px 8px;border-radius:14px;box-shadow:none;page-break-inside:avoid;break-inside:avoid;background:#fff!important;color:var(--ink)!important;border-color:rgba(22,11,41,0.25)!important;}
-    .block::before{display:none!important;}
+    .block::before,.block::after,.block.accountability::before,.block.girlsblock::before,.block.filesblock::before{display:none!important;}
+    .block,.block.accountability,.block.girlsblock,.block.filesblock{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
     .block h2,.block.pink h2,.block.green h2,.block.indigo h2,.block.gold h2,.block.accountability h2,.block.girlsblock h2,.block.filesblock h2{color:var(--ink)!important;text-shadow:none!important;}
     .block .sub{color:var(--ink)!important;}
     .bullet-stamp,.bullet-text,.bullet-del,.bullet-add-btn{color:var(--ink)!important;}
@@ -982,6 +1023,8 @@
     .file-row{background:#fff!important;border-color:rgba(22,11,41,0.2)!important;}
     .study-card{background:#fff!important;color:var(--ink)!important;box-shadow:none!important;border-color:rgba(22,11,41,0.3)!important;}
     .study-card .card-text,.study-card .card-label,.study-card .card-del,.study-empty{color:var(--ink)!important;}
+    .countdown-item{background:#fff!important;border-color:rgba(22,11,41,0.2)!important;}
+    .countdown-days,.countdown-title,.countdown-date,.countdown-empty,.countdown-goal{color:var(--ink)!important;text-shadow:none!important;}
     .block-head{margin-bottom:2px;}
     .block h2{font-size:15px;}
     .block .icon{font-size:15px;}
@@ -1290,6 +1333,15 @@
       </div>
     </div>
 
+    <div class="block countdownblock indigo">
+      <div class="block-head">
+        <h2><span class="icon">⏳</span>Countdown</h2>
+        <button class="eta-btn no-print" type="button" onclick="openCountdownCalendar()">+ Add Event</button>
+      </div>
+      <div class="sub">Big events, deadlines, whatever you're counting down to</div>
+      <div class="countdown-list" id="countdownList"></div>
+    </div>
+
     <div id="customBlocksContainer"></div>
 
     <div class="add-block-wrap no-print">
@@ -1458,6 +1510,32 @@
       <div class="eta-modal-actions">
         <button class="eta-cancel" onclick="closeFutureApptCalendar()">Cancel</button>
         <button class="eta-insert" onclick="saveFutureAppt()">Save Appointment</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="eta-overlay" id="countdownOverlay" onclick="if(event.target===this)closeCountdownCalendar();">
+    <div class="eta-modal">
+      <div class="eta-modal-head">
+        <button class="eta-nav" onclick="countdownChangeMonth(-1)">‹</button>
+        <div class="eta-month-label" id="countdownMonthLabel"></div>
+        <button class="eta-nav" onclick="countdownChangeMonth(1)">›</button>
+      </div>
+      <div class="eta-weekdays">
+        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+      </div>
+      <div class="eta-days" id="countdownDaysGrid"></div>
+      <div class="eta-time-row">
+        <label for="countdownTitle">Event</label>
+        <input type="text" id="countdownTitle" placeholder="P&amp;C exam retake, road trip, etc.">
+      </div>
+      <div class="eta-time-row">
+        <label for="countdownGoal">Savings goal $ (optional)</label>
+        <input type="number" id="countdownGoal" min="0" step="1" placeholder="e.g. 450">
+      </div>
+      <div class="eta-modal-actions">
+        <button class="eta-cancel" onclick="closeCountdownCalendar()">Cancel</button>
+        <button class="eta-insert" onclick="saveCountdownEvent()">Save Event</button>
       </div>
     </div>
   </div>
@@ -2352,6 +2430,119 @@ function saveFutureAppt(){
   renderAppointments();
 }
 renderAppointments();
+
+// Countdown events (persistent, not weekly-reset)
+const COUNTDOWN_KEY='actionPlan3000_countdowns';
+let countdownEvents=[];
+try{const raw=localStorage.getItem(COUNTDOWN_KEY);if(raw)countdownEvents=JSON.parse(raw);}catch(e){}
+let countdownViewDate=new Date();
+let countdownPickedDate=null;
+
+function saveCountdowns(){
+  try{localStorage.setItem(COUNTDOWN_KEY,JSON.stringify(countdownEvents));return true;}
+  catch(e){alert("Storage is full \u2014 couldn't save that event.");return false;}
+}
+function daysUntil(dateObj){
+  const t0=new Date();t0.setHours(0,0,0,0);
+  const d0=new Date(dateObj);d0.setHours(0,0,0,0);
+  return Math.round((d0-t0)/86400000);
+}
+function renderCountdownList(){
+  const wrap=document.getElementById('countdownList');
+  if(!wrap)return;
+  if(!countdownEvents.length){
+    wrap.innerHTML='<div class="countdown-empty">No events yet \u2014 tap + Add Event to start counting down to something.</div>';
+    return;
+  }
+  const items=countdownEvents.map(ev=>{
+    const parts=ev.dateKey.split('-').map(Number);
+    const dateObj=new Date(parts[0],parts[1]-1,parts[2]);
+    return {ev,dateObj,days:daysUntil(dateObj)};
+  });
+  items.sort((a,b)=>a.days-b.days);
+  wrap.innerHTML=items.map(it=>{
+    const dLabel=it.dateObj.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    let cls,big,unit;
+    if(it.days<0){cls='pastday';big=Math.abs(it.days);unit=it.days===-1?'day ago':'days ago';}
+    else if(it.days===0){cls='urgent';big='\ud83c\udf89';unit='today';}
+    else if(it.days<=3){cls='urgent';big=it.days;unit=it.days===1?'day':'days';}
+    else if(it.days<=14){cls='soon';big=it.days;unit='days';}
+    else{cls='later';big=it.days;unit='days';}
+    let goalLine='';
+    const goal=parseFloat(it.ev.goal)||0;
+    if(goal>0){
+      if(it.days>0){
+        const weeksLeft=Math.max(1,Math.ceil(it.days/7));
+        const perWeek=goal/weeksLeft;
+        goalLine='<div class="countdown-goal">\ud83d\udcb0 $'+perWeek.toFixed(2)+'/wk to save $'+goal.toFixed(0)+' by then ('+weeksLeft+' wk'+(weeksLeft===1?'':'s')+' left)</div>';
+      }else if(it.days===0){
+        goalLine='<div class="countdown-goal">\ud83d\udcb0 Goal was $'+goal.toFixed(0)+'</div>';
+      }else{
+        goalLine='<div class="countdown-goal">\ud83d\udcb0 Goal was $'+goal.toFixed(0)+'</div>';
+      }
+    }
+    return '<div class="countdown-item">'+
+      '<div class="countdown-days '+cls+'">'+big+'<span class="unit">'+unit+'</span></div>'+
+      '<div class="countdown-info"><div class="countdown-title">'+escapeHtml(it.ev.title)+'</div><div class="countdown-date">'+dLabel+'</div>'+goalLine+'</div>'+
+      '<button class="countdown-del" type="button" onclick="deleteCountdownEvent(\''+it.ev.id+'\')">\u00d7</button>'+
+    '</div>';
+  }).join('');
+}
+function openCountdownCalendar(){
+  countdownViewDate=new Date();
+  countdownPickedDate=null;
+  document.getElementById('countdownTitle').value='';
+  document.getElementById('countdownGoal').value='';
+  renderCountdownCalendar();
+  document.getElementById('countdownOverlay').classList.add('open');
+}
+function closeCountdownCalendar(){
+  document.getElementById('countdownOverlay').classList.remove('open');
+}
+function countdownChangeMonth(delta){
+  countdownViewDate=new Date(countdownViewDate.getFullYear(),countdownViewDate.getMonth()+delta,1);
+  renderCountdownCalendar();
+}
+function renderCountdownCalendar(){
+  const y=countdownViewDate.getFullYear(),m=countdownViewDate.getMonth();
+  document.getElementById('countdownMonthLabel').textContent=countdownViewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const firstOfMonth=new Date(y,m,1);
+  const startOffset=firstOfMonth.getDay();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const grid=document.getElementById('countdownDaysGrid');
+  grid.innerHTML='';
+  for(let i=0;i<startOffset;i++){
+    const blank=document.createElement('div');blank.className='eta-day blank';grid.appendChild(blank);
+  }
+  const now=new Date();
+  for(let d=1;d<=daysInMonth;d++){
+    const cellDate=new Date(y,m,d);
+    const btn=document.createElement('button');
+    btn.className='eta-day';
+    btn.textContent=d;
+    if(sameDay(cellDate,now))btn.classList.add('today');
+    if(countdownPickedDate&&sameDay(cellDate,countdownPickedDate))btn.classList.add('selected');
+    btn.onclick=()=>{countdownPickedDate=cellDate;renderCountdownCalendar();};
+    grid.appendChild(btn);
+  }
+}
+function saveCountdownEvent(){
+  if(!countdownPickedDate){alert('Pick a date first.');return;}
+  const title=document.getElementById('countdownTitle').value.trim();
+  if(!title){alert('Give the event a name.');return;}
+  const goal=parseFloat(document.getElementById('countdownGoal').value)||0;
+  countdownEvents.push({id:uid(),title:title,dateKey:weekKey(countdownPickedDate),goal:goal});
+  if(!saveCountdowns()){countdownEvents.pop();return;}
+  closeCountdownCalendar();
+  renderCountdownList();
+}
+function deleteCountdownEvent(id){
+  if(!confirm('Delete this event?'))return;
+  countdownEvents=countdownEvents.filter(ev=>ev.id!==id);
+  saveCountdowns();
+  renderCountdownList();
+}
+renderCountdownList();
 
 function toggleJournalCollapse(){
   const block=document.getElementById('journalBlock');
