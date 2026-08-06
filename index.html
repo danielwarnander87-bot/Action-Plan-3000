@@ -726,6 +726,42 @@
   @keyframes horizonPulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
   .timer-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;font-family:'VT323',monospace;color:#C7B8FF;font-size:16px;}
   .timer-controls input{width:60px;text-align:center;font-family:'VT323',monospace;font-size:16px;background:#160B29;color:#C7B8FF;border:1.5px solid var(--indigo);border-radius:6px;padding:4px 6px;}
+  .calc-display{
+    font-family:'VT323',monospace;
+    font-size:38px;
+    text-align:right;
+    color:#FFE066;
+    text-shadow:0 0 10px rgba(255,210,63,0.75);
+    background:rgba(0,0,0,0.35);
+    border:1.5px solid rgba(255,255,255,0.15);
+    border-radius:10px;
+    padding:10px 14px;
+    margin-top:10px;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  .calc-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-top:12px;
+  }
+  .calc-btn{
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:16px;
+    padding:12px 0;
+    border-radius:10px;
+    border:1.5px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.08);
+    color:#F5F5FA;
+    cursor:pointer;
+  }
+  .calc-btn:active{background:rgba(255,255,255,0.2);}
+  .calc-btn.calc-fn{background:rgba(255,255,255,0.05);color:#FFE066;}
+  .calc-btn.calc-op{background:rgba(255,210,63,0.18);color:#FFE066;border-color:var(--pop);}
+  .calc-btn.calc-eq{background:var(--pop);color:#241a00;border-color:var(--pop);}
+  .calc-btn.calc-zero{grid-column:span 2;}
   .block.appointmentsblock{margin-top:22px;}
   .appointmentsblock.collapsed #apptCalendarBody{display:none;}
   .appt-week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px;}
@@ -1372,6 +1408,35 @@
         <button class="bullet-add-btn" type="button" onclick="startTimer()">▶ Start</button>
         <button class="bullet-add-btn" type="button" onclick="pauseTimer()">⏸ Pause</button>
         <button class="bullet-add-btn" type="button" onclick="resetTimer()">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="block calculatorblock gold no-print">
+      <div class="block-head">
+        <h2><span class="icon">🧮</span>Calculator</h2>
+      </div>
+      <div class="sub" style="margin-bottom:0;">Keyboard works too — numbers, + − × ÷, Enter, Backspace, Esc</div>
+      <div class="calc-display" id="calcDisplay">0</div>
+      <div class="calc-grid">
+        <button class="calc-btn calc-fn" type="button" onclick="calcClear()">C</button>
+        <button class="calc-btn calc-fn" type="button" onclick="calcBackspace()">⌫</button>
+        <button class="calc-btn calc-fn" type="button" onclick="calcPercent()">%</button>
+        <button class="calc-btn calc-op" type="button" onclick="calcSetOp('÷')">÷</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('7')">7</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('8')">8</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('9')">9</button>
+        <button class="calc-btn calc-op" type="button" onclick="calcSetOp('×')">×</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('4')">4</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('5')">5</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('6')">6</button>
+        <button class="calc-btn calc-op" type="button" onclick="calcSetOp('-')">−</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('1')">1</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('2')">2</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('3')">3</button>
+        <button class="calc-btn calc-op" type="button" onclick="calcSetOp('+')">+</button>
+        <button class="calc-btn calc-zero" type="button" onclick="calcDigit('0')">0</button>
+        <button class="calc-btn" type="button" onclick="calcDigit('.')">.</button>
+        <button class="calc-btn calc-eq" type="button" onclick="calcEquals()">=</button>
       </div>
     </div>
 
@@ -2130,6 +2195,82 @@ function beepTimer(){
   }catch(e){}
 }
 setClockMode('clock');
+
+// Calculator
+let calcCurrent='0';
+let calcPrevVal=null;
+let calcPendingOp=null;
+let calcResetNext=false;
+function calcRender(){
+  const el=document.getElementById('calcDisplay');
+  if(el)el.textContent=calcCurrent;
+}
+function calcDigit(d){
+  if(calcResetNext){calcCurrent='0';calcResetNext=false;}
+  if(d==='.'&&calcCurrent.includes('.'))return;
+  if(calcCurrent==='0'&&d!=='.')calcCurrent=d;
+  else calcCurrent+=d;
+  calcRender();
+}
+function calcBackspace(){
+  if(calcResetNext)return;
+  calcCurrent=calcCurrent.length>1?calcCurrent.slice(0,-1):'0';
+  calcRender();
+}
+function calcClear(){
+  calcCurrent='0';calcPrevVal=null;calcPendingOp=null;calcResetNext=false;
+  calcRender();
+}
+function calcCompute(a,b,op){
+  a=parseFloat(a);b=parseFloat(b);
+  if(op==='+')return a+b;
+  if(op==='-')return a-b;
+  if(op==='\u00d7')return a*b;
+  if(op==='\u00f7')return b===0?NaN:a/b;
+  return b;
+}
+function calcFormat(n){
+  if(isNaN(n)||!isFinite(n))return 'Error';
+  const rounded=Math.round(n*1e8)/1e8;
+  return String(rounded);
+}
+function calcSetOp(op){
+  if(calcPendingOp&&!calcResetNext){
+    calcCurrent=calcFormat(calcCompute(calcPrevVal,calcCurrent,calcPendingOp));
+    calcPrevVal=calcCurrent;
+  }else{
+    calcPrevVal=calcCurrent;
+  }
+  calcPendingOp=op;
+  calcResetNext=true;
+  calcRender();
+}
+function calcEquals(){
+  if(!calcPendingOp||calcPrevVal===null)return;
+  calcCurrent=calcFormat(calcCompute(calcPrevVal,calcCurrent,calcPendingOp));
+  calcPendingOp=null;calcPrevVal=null;calcResetNext=true;
+  calcRender();
+}
+function calcPercent(){
+  calcCurrent=calcFormat(parseFloat(calcCurrent)/100);
+  calcRender();
+}
+document.addEventListener('keydown',e=>{
+  const active=document.activeElement;
+  const tag=active?active.tagName:'';
+  const isEditable=tag==='INPUT'||tag==='TEXTAREA'||(active&&active.isContentEditable);
+  if(isEditable)return;
+  if(e.key>='0'&&e.key<='9'){calcDigit(e.key);e.preventDefault();return;}
+  if(e.key==='.'){calcDigit('.');e.preventDefault();return;}
+  if(e.key==='+'){calcSetOp('+');e.preventDefault();return;}
+  if(e.key==='-'){calcSetOp('-');e.preventDefault();return;}
+  if(e.key==='*'){calcSetOp('\u00d7');e.preventDefault();return;}
+  if(e.key==='/'){calcSetOp('\u00f7');e.preventDefault();return;}
+  if(e.key==='Enter'||e.key==='='){calcEquals();e.preventDefault();return;}
+  if(e.key==='Backspace'){calcBackspace();e.preventDefault();return;}
+  if(e.key==='Escape'||e.key==='c'||e.key==='C'){calcClear();e.preventDefault();return;}
+  if(e.key==='%'){calcPercent();e.preventDefault();return;}
+});
 
 function renderBulletList(key){
   const container=document.querySelector('.bullet-list[data-key="'+key+'"]');
