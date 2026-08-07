@@ -164,9 +164,42 @@
     box-shadow:4px 4px 0 var(--pink);
   }
 
+  .sticky-nav-wrap{
+    position:sticky;
+    top:0;
+    z-index:80;
+    background:rgba(6,6,10,0.82);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    padding-bottom:8px;
+  }
   .tab-bar{display:flex;justify-content:center;gap:10px;padding:14px 20px 0;}
-  .tab-btn{font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;padding:9px 20px;border-radius:100px;border:2.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;}
-  .tab-btn.active{background:var(--ink);color:#fff;}
+  .tab-btn{font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;padding:9px 20px;border-radius:100px;border:2.5px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);color:#F5F5FA;cursor:pointer;}
+  .tab-btn.active{background:var(--pop);color:#241a00;border-color:var(--pop);}
+  .block-nav{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:10px 16px 2px;
+    scrollbar-width:none;
+  }
+  .block-nav::-webkit-scrollbar{display:none;}
+  .block-nav-btn{
+    flex-shrink:0;
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:12px;
+    white-space:nowrap;
+    padding:7px 14px;
+    border-radius:100px;
+    border:1.5px solid rgba(255,255,255,0.25);
+    background:rgba(255,255,255,0.06);
+    color:#F5F5FA;
+    cursor:pointer;
+  }
+  .block-nav-btn:active{background:rgba(255,255,255,0.18);}
+  .block{scroll-margin-top:92px;}
   .board.reorder-mode .block{outline:2px dashed rgba(255,255,255,0.35);outline-offset:4px;}
   .board.reorder-mode .block.picked-for-move{outline:3px solid var(--pop);outline-offset:4px;box-shadow:0 0 24px rgba(255,210,63,0.7)!important;}
   .block-grip{
@@ -1342,10 +1375,13 @@
 
   <div class="stripe-band"><div class="track" id="stripeTrack"></div></div>
 
-  <div class="tab-bar no-print">
-    <button class="tab-btn active" id="tabBtnPlanner" onclick="switchView('planner')">📅 Planner</button>
-    <button class="tab-btn" id="tabBtnStudy" onclick="switchView('study')">🧠 Study Session</button>
-    <button class="tab-btn" id="rearrangeBtn" onclick="toggleRearrangeMode()">🔀 Rearrange</button>
+  <div class="sticky-nav-wrap no-print">
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabBtnPlanner" onclick="switchView('planner')">📅 Planner</button>
+      <button class="tab-btn" id="tabBtnStudy" onclick="switchView('study')">🧠 Study Session</button>
+      <button class="tab-btn" id="rearrangeBtn" onclick="toggleRearrangeMode()">🔀 Rearrange</button>
+    </div>
+    <div class="block-nav" id="blockNav"></div>
   </div>
 
   <div id="viewPlanner" class="view active">
@@ -2120,6 +2156,8 @@ function switchView(view){
   document.getElementById('viewStudy').classList.toggle('active',view==='study');
   document.getElementById('tabBtnPlanner').classList.toggle('active',view==='planner');
   document.getElementById('tabBtnStudy').classList.toggle('active',view==='study');
+  const nav=document.getElementById('blockNav');
+  if(nav)nav.style.display=view==='planner'?'flex':'none';
 }
 
 // scrolling stripe banner text
@@ -2155,7 +2193,7 @@ function renderCustomBlocksDOM(){
   if(!container)return;
   container.innerHTML=customBlocks.map(b=>{
     const key=customBlockKey(b.id);
-    return '<div class="block '+b.color+'">'+
+    return '<div class="block '+b.color+'" id="customblock_'+b.id+'">'+
       '<div class="block-head"><h2><span class="icon">\u2728</span>'+escapeHtml(b.title)+'</h2>'+
       '<div style="display:flex;gap:6px;">'+
       '<button class="eta-btn" onclick="addETA(\''+key+'\')">\u23f1 ETA</button>'+
@@ -2188,6 +2226,7 @@ function createCustomBlock(){
   titleEl.value='';
   document.getElementById('addBlockForm').classList.remove('open');
   persist();
+  renderBlockNav();
 }
 function deleteCustomBlock(id){
   if(!confirm('Delete this block and everything in it?'))return;
@@ -2198,6 +2237,7 @@ function deleteCustomBlock(id){
   renderCustomBlocksDOM();
   customBlocks.forEach(b=>renderBulletList(customBlockKey(b.id)));
   persist();
+  renderBlockNav();
 }
 renderCustomBlocksDOM();
 
@@ -3063,6 +3103,40 @@ function saveBlockOrder(){
   if(!board)return;
   const order=Array.from(board.querySelectorAll(':scope > .block[data-block-id]')).map(b=>b.dataset.blockId);
   try{localStorage.setItem(BLOCK_ORDER_KEY,JSON.stringify(order));}catch(e){}
+  renderBlockNav();
+}
+const BLOCK_NAV_META={
+  work:{icon:'\ud83d\udcbc',label:'Work'},
+  finances:{icon:'\ud83d\udcb0',label:'Finances'},
+  bills:{icon:'\ud83e\uddfe',label:'Bills'},
+  keytasks:{icon:'\ud83c\udfaf',label:'Key Tasks'},
+  appointments:{icon:'\ud83d\udcc5',label:'Appts'},
+  countdown:{icon:'\u23f3',label:'Countdown'},
+  clock:{icon:'\u23f0',label:'Clock'},
+  calculator:{icon:'\ud83e\uddee',label:'Calc'},
+  accountability:{icon:'\ud83c\udfaf',label:'Goals'},
+  girlsblock:{icon:'\ud83d\udc67',label:'Girls'},
+  files:{icon:'\ud83d\udcce',label:'Files'},
+  journal:{icon:'\ud83d\udcd4',label:'Journal'}
+};
+function renderBlockNav(){
+  const nav=document.getElementById('blockNav');
+  const board=document.getElementById('planBoard');
+  if(!nav||!board)return;
+  let html='';
+  board.querySelectorAll(':scope > .block[data-block-id]').forEach(block=>{
+    const id=block.dataset.blockId;
+    const meta=BLOCK_NAV_META[id]||{icon:'\u2728',label:id};
+    html+='<button class="block-nav-btn" type="button" onclick="jumpToBlock(\'core\',\''+id+'\')">'+meta.icon+' '+meta.label+'</button>';
+  });
+  customBlocks.forEach(b=>{
+    html+='<button class="block-nav-btn" type="button" onclick="jumpToBlock(\'custom\',\''+b.id+'\')">\u2728 '+escapeHtml(b.title)+'</button>';
+  });
+  nav.innerHTML=html;
+}
+function jumpToBlock(type,id){
+  const el=type==='custom'?document.getElementById('customblock_'+id):document.querySelector('#planBoard > .block[data-block-id="'+id+'"]');
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function toggleRearrangeMode(){
   rearrangeMode=!rearrangeMode;
@@ -3113,6 +3187,7 @@ function pickBlockForMove(block,e){
   pickedBlockForMove=null;
 }
 applyBlockOrder();
+renderBlockNav();
 </script>
 </body>
 </html>
