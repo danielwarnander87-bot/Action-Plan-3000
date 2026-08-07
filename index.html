@@ -828,6 +828,19 @@
   .countdown-title{font-weight:700;font-size:14px;color:#F5F5FA;}
   .countdown-date{font-size:11px;opacity:0.65;color:#EDEDF5;margin-top:2px;}
   .countdown-goal{font-size:11px;font-weight:700;color:#5CFFAE;margin-top:4px;}
+  .keytask-list{display:flex;flex-direction:column;gap:8px;margin-top:4px;margin-bottom:10px;}
+  .keytask-row{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:11px 13px;cursor:pointer;transition:background 0.15s;}
+  .keytask-row:active{background:rgba(255,255,255,0.14);}
+  .keytask-row.stage1{background:rgba(255,210,63,0.16);border-color:var(--pop);}
+  .keytask-row.stage2{opacity:0.5;}
+  .keytask-row.stage2 .keytask-title{text-decoration:line-through;}
+  .keytask-row-inner{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .keytask-title{font-weight:700;font-size:14px;color:#F5F5FA;word-break:break-word;}
+  .keytask-meta{font-size:11px;opacity:0.75;color:#EDEDF5;margin-top:5px;line-height:1.6;}
+  .keytask-meta span{display:block;}
+  .keytask-del{background:none;border:none;color:#EDEDF5;opacity:0.4;font-size:16px;cursor:pointer;flex-shrink:0;}
+  .keytask-del:active{opacity:0.9;}
+  .keytask-empty{font-size:12px;opacity:0.6;font-weight:600;color:#EDEDF5;}
   .countdown-del{background:none;border:none;color:#EDEDF5;opacity:0.45;font-size:17px;cursor:pointer;flex-shrink:0;}
   .countdown-del:active{opacity:0.9;}
   .countdown-empty{font-size:12px;opacity:0.6;font-weight:600;color:#EDEDF5;}
@@ -1095,6 +1108,8 @@
     .study-card .card-text,.study-card .card-label,.study-card .card-del,.study-empty{color:var(--ink)!important;}
     .countdown-item{background:#fff!important;border-color:rgba(22,11,41,0.2)!important;}
     .countdown-days,.countdown-title,.countdown-date,.countdown-empty,.countdown-goal{color:var(--ink)!important;text-shadow:none!important;}
+    .keytask-row{background:#fff!important;border-color:rgba(22,11,41,0.2)!important;}
+    .keytask-title,.keytask-meta,.keytask-empty{color:var(--ink)!important;}
     .block-head{margin-bottom:2px;}
     .block h2{font-size:15px;}
     .block .icon{font-size:15px;}
@@ -1386,6 +1401,13 @@
         <button class="bullet-add-btn" type="button" onclick="addBulletItem('bills',true)">+ Add item</button>
       </div>
 
+      <div class="block gold" data-block-id="keytasks">
+        <div class="block-head"><h2><span class="icon">🎯</span>Key Tasks</h2></div>
+        <div class="sub" id="keyTasksSub">Today's priorities — tap once to log how you finished it, tap again to cross it off</div>
+        <div class="keytask-list" id="keyTaskList"></div>
+        <button class="bullet-add-btn" type="button" onclick="addKeyTask()">+ Add Task</button>
+      </div>
+
       <div class="block appointmentsblock pink full-width" id="appointmentsBlock" data-block-id="appointments">
       <div class="block-head">
         <h2><span class="icon">📅</span>Appointments</h2>
@@ -1636,6 +1658,42 @@
       <div class="eta-modal-actions">
         <button class="eta-cancel" onclick="closeCountdownCalendar()">Cancel</button>
         <button class="eta-insert" onclick="saveCountdownEvent()">Save Event</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="eta-overlay" id="addTaskOverlay" onclick="if(event.target===this)closeAddTaskModal();">
+    <div class="eta-modal">
+      <div class="eta-month-label" style="text-align:center;margin-bottom:10px;">New Key Task</div>
+      <div class="eta-time-row">
+        <label for="newTaskText">Task</label>
+        <input type="text" id="newTaskText" placeholder="Call the recruiter back">
+      </div>
+      <div class="eta-time-row">
+        <label for="newTaskDeadline">Finish by (optional)</label>
+        <input type="text" id="newTaskDeadline" placeholder="5:00 PM today, Friday, etc.">
+      </div>
+      <div class="eta-time-row">
+        <label for="newTaskPlan">How will you do it? (optional)</label>
+        <input type="text" id="newTaskPlan" placeholder="Block off 20 min after lunch" onkeydown="if(event.key==='Enter'){event.preventDefault();saveNewKeyTask();}">
+      </div>
+      <div class="eta-modal-actions">
+        <button class="eta-cancel" onclick="closeAddTaskModal()">Cancel</button>
+        <button class="eta-insert" onclick="saveNewKeyTask()">Add Task</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="eta-overlay" id="finishTaskOverlay" onclick="if(event.target===this)closeFinishTaskModal();">
+    <div class="eta-modal">
+      <div class="eta-month-label" style="text-align:center;margin-bottom:10px;">How was this finished?</div>
+      <div class="eta-time-row">
+        <label for="finishTaskInput">Wrap-up note</label>
+        <input type="text" id="finishTaskInput" placeholder="Left a voicemail, sent the follow-up email..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveFinishedTask();}">
+      </div>
+      <div class="eta-modal-actions">
+        <button class="eta-cancel" onclick="closeFinishTaskModal()">Cancel</button>
+        <button class="eta-insert" onclick="saveFinishedTask()">Save</button>
       </div>
     </div>
   </div>
@@ -2424,6 +2482,103 @@ if(saved.journal&&typeof saved.journal==='object'){
 const todayKeyForJournal=todayJournalKey();
 let activeJournalDay=todayKeyForJournal;
 
+// Key Tasks (weekly, resets like journal/bullets)
+let keyTasksData=(Array.isArray(saved.keyTasks))?saved.keyTasks:[];
+function renderKeyTasks(){
+  const wrap=document.getElementById('keyTaskList');
+  if(!wrap)return;
+  if(!keyTasksData.length){
+    wrap.innerHTML='<div class="keytask-empty">No key tasks yet \u2014 tap + Add Task to set today\'s priorities.</div>';
+  }else{
+    wrap.innerHTML=keyTasksData.map(t=>{
+      const title=t.stage>=1?(t.finishedHow||t.text):t.text;
+      let meta='';
+      if(t.stage===0){
+        if(t.deadline)meta+='<span>\u23f0 Due: '+escapeHtml(t.deadline)+'</span>';
+        if(t.plan)meta+='<span>\ud83e\udde0 Plan: '+escapeHtml(t.plan)+'</span>';
+      }
+      return '<div class="keytask-row stage'+t.stage+'" onclick="advanceKeyTask(\''+t.id+'\')">'+
+        '<div class="keytask-row-inner">'+
+          '<div><div class="keytask-title">'+escapeHtml(title)+'</div>'+
+          (meta?'<div class="keytask-meta">'+meta+'</div>':'')+
+          '</div>'+
+          '<button class="keytask-del" type="button" onclick="event.stopPropagation();deleteKeyTask(\''+t.id+'\')">\u00d7</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+  const doneCount=keyTasksData.filter(t=>t.stage===2).length;
+  const sub=document.getElementById('keyTasksSub');
+  if(sub)sub.textContent=keyTasksData.length?(doneCount+' of '+keyTasksData.length+' done \u2014 tap a task to log how you finished it, tap again to cross it off'):"Today's priorities \u2014 tap once to log how you finished it, tap again to cross it off";
+}
+function addKeyTask(){
+  const textEl=document.getElementById('newTaskText');
+  textEl.value='';textEl.style.borderColor='';
+  document.getElementById('newTaskDeadline').value='';
+  document.getElementById('newTaskPlan').value='';
+  document.getElementById('addTaskOverlay').classList.add('open');
+  setTimeout(()=>{textEl.focus();},30);
+}
+function closeAddTaskModal(){
+  document.getElementById('addTaskOverlay').classList.remove('open');
+}
+function saveNewKeyTask(){
+  const textEl=document.getElementById('newTaskText');
+  const text=textEl.value.trim();
+  if(!text){textEl.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()||'#E0119B';textEl.focus();return;}
+  const deadline=document.getElementById('newTaskDeadline').value.trim();
+  const plan=document.getElementById('newTaskPlan').value.trim();
+  keyTasksData.push({id:uid(),text:text,deadline:deadline,plan:plan,stage:0,finishedHow:''});
+  persist();
+  renderKeyTasks();
+  closeAddTaskModal();
+}
+let pendingFinishTaskId=null;
+function advanceKeyTask(id){
+  const t=keyTasksData.find(x=>x.id===id);
+  if(!t)return;
+  if(t.stage===0){
+    pendingFinishTaskId=id;
+    const inputEl=document.getElementById('finishTaskInput');
+    inputEl.value='';inputEl.style.borderColor='';
+    document.getElementById('finishTaskOverlay').classList.add('open');
+    setTimeout(()=>{inputEl.focus();},30);
+  }else if(t.stage===1){
+    t.stage=2;
+    persist();
+    renderKeyTasks();
+  }else{
+    t.stage=1;
+    persist();
+    renderKeyTasks();
+  }
+}
+function closeFinishTaskModal(){
+  document.getElementById('finishTaskOverlay').classList.remove('open');
+  pendingFinishTaskId=null;
+}
+function saveFinishedTask(){
+  if(!pendingFinishTaskId)return;
+  const inputEl=document.getElementById('finishTaskInput');
+  const how=inputEl.value.trim();
+  if(!how){inputEl.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()||'#E0119B';inputEl.focus();return;}
+  const t=keyTasksData.find(x=>x.id===pendingFinishTaskId);
+  if(t){
+    t.finishedHow=how;
+    t.stage=1;
+    persist();
+    renderKeyTasks();
+  }
+  closeFinishTaskModal();
+}
+function deleteKeyTask(id){
+  if(!confirm('Delete this task?'))return;
+  keyTasksData=keyTasksData.filter(t=>t.id!==id);
+  persist();
+  renderKeyTasks();
+}
+renderKeyTasks();
+
 // Appointments calendar (persistent, date-keyed — not weekly reset)
 const APPT_KEY='actionPlan3000_appointments';
 let appointmentsData={};
@@ -2821,6 +2976,7 @@ function persist(){
   debtChecks.forEach(c=>{dc[c.dataset.key]=c.checked;});
   data.debtChecks=dc;
   data.journal=journalData;
+  data.keyTasks=keyTasksData;
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
   const note=document.getElementById('saveNote');
   note.textContent='Saved just now';
@@ -2847,6 +3003,8 @@ function clearWeek(){
   });
   journalData={};
   buildJournalUI();
+  keyTasksData=[];
+  renderKeyTasks();
   persist();
 }
 
