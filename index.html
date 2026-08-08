@@ -874,6 +874,15 @@
   .keytask-del{background:none;border:none;color:#EDEDF5;opacity:0.4;font-size:16px;cursor:pointer;flex-shrink:0;}
   .keytask-del:active{opacity:0.9;}
   .keytask-empty{font-size:12px;opacity:0.6;font-weight:600;color:#EDEDF5;}
+  .mealplan-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+  .dish-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 14px;}
+  .dish-card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .dish-name{font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;color:#5CFFAE;}
+  .dish-del{background:none;border:none;color:#EDEDF5;opacity:0.45;font-size:16px;cursor:pointer;flex-shrink:0;}
+  .dish-del:active{opacity:0.9;}
+  .dish-ingredients{margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:#EDEDF5;}
+  .dish-ingredients li{margin-bottom:2px;}
+  .mealplan-empty{font-size:12px;opacity:0.6;font-weight:600;color:#EDEDF5;}
   .countdown-del{background:none;border:none;color:#EDEDF5;opacity:0.45;font-size:17px;cursor:pointer;flex-shrink:0;}
   .countdown-del:active{opacity:0.9;}
   .countdown-empty{font-size:12px;opacity:0.6;font-weight:600;color:#EDEDF5;}
@@ -1143,6 +1152,8 @@
     .countdown-days,.countdown-title,.countdown-date,.countdown-empty,.countdown-goal{color:var(--ink)!important;text-shadow:none!important;}
     .keytask-row{background:#fff!important;border-color:rgba(22,11,41,0.2)!important;}
     .keytask-title,.keytask-meta,.keytask-empty{color:var(--ink)!important;}
+    .dish-card{background:#fff!important;border-color:rgba(22,11,41,0.2)!important;}
+    .dish-name,.dish-ingredients,.mealplan-empty{color:var(--ink)!important;}
     .block-head{margin-bottom:2px;}
     .block h2{font-size:15px;}
     .block .icon{font-size:15px;}
@@ -1186,6 +1197,17 @@
     body.print-journal-only footer,
     body.print-journal-only #viewStudy{display:none!important;}
     body.print-journal-only .block.journalblock{margin-top:0;}
+
+    body.print-mealplan-only .scene-bg,
+    body.print-mealplan-only .tab-bar,
+    body.print-mealplan-only header,
+    body.print-mealplan-only .board>.block:not([data-block-id="mealplan"]),
+    body.print-mealplan-only #customBlocksContainer,
+    body.print-mealplan-only .quote-wrap,
+    body.print-mealplan-only footer,
+    body.print-mealplan-only .budget-link,
+    body.print-mealplan-only #viewStudy{display:none!important;}
+    body.print-mealplan-only [data-block-id="mealplan"]{margin-top:0;}
     .block.filesblock h2{font-size:15px;}
     .file-actions,.files-storage-note{display:none!important;}
     .file-thumb,.file-icon{width:24px;height:24px;}
@@ -1442,6 +1464,17 @@
         <div class="sub" id="keyTasksSub">Today's priorities — tap once to log how you finished it, tap again to cross it off</div>
         <div class="keytask-list" id="keyTaskList"></div>
         <button class="bullet-add-btn" type="button" onclick="addKeyTask()">+ Add Task</button>
+      </div>
+
+      <div class="block green" data-block-id="mealplan">
+        <div class="block-head">
+          <h2><span class="icon">🍳</span>Meal Plan</h2>
+          <button class="eta-btn no-print" type="button" onclick="printMealPlanOnly()">🖨 Print List</button>
+        </div>
+        <div class="sub">Dishes you're planning — with a clean printable ingredient list for the store</div>
+        <a class="budget-link" href="https://danielwarnander87-bot.github.io/Party-Invoice-/" target="_blank" rel="noopener">🧮 Open Grocery/Budget Tool →</a>
+        <div class="mealplan-list" id="mealPlanList"></div>
+        <button class="bullet-add-btn no-print" type="button" onclick="openAddDishModal()">+ Add Dish</button>
       </div>
 
       <div class="block appointmentsblock pink full-width" id="appointmentsBlock" data-block-id="appointments">
@@ -1730,6 +1763,24 @@
       <div class="eta-modal-actions">
         <button class="eta-cancel" onclick="closeFinishTaskModal()">Cancel</button>
         <button class="eta-insert" onclick="saveFinishedTask()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="eta-overlay" id="addDishOverlay" onclick="if(event.target===this)closeAddDishModal();">
+    <div class="eta-modal">
+      <div class="eta-month-label" style="text-align:center;margin-bottom:10px;">New Dish</div>
+      <div class="eta-time-row">
+        <label for="newDishName">Dish</label>
+        <input type="text" id="newDishName" placeholder="Chicken tacos">
+      </div>
+      <div class="eta-time-row">
+        <label for="newDishIngredients">Ingredients (one per line)</label>
+        <textarea id="newDishIngredients" rows="5" style="border:1.5px solid rgba(22,11,41,0.25);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--ink);resize:vertical;" placeholder="Chicken thighs&#10;Tortillas&#10;Shredded cheese&#10;Salsa"></textarea>
+      </div>
+      <div class="eta-modal-actions">
+        <button class="eta-cancel" onclick="closeAddDishModal()">Cancel</button>
+        <button class="eta-insert" onclick="saveNewDish()">Add Dish</button>
       </div>
     </div>
   </div>
@@ -2619,6 +2670,56 @@ function deleteKeyTask(id){
 }
 renderKeyTasks();
 
+// Meal Plan / Grocery List (weekly, resets like journal/key tasks)
+let mealPlanData=(Array.isArray(saved.mealPlan))?saved.mealPlan:[];
+function renderMealPlan(){
+  const wrap=document.getElementById('mealPlanList');
+  if(!wrap)return;
+  if(!mealPlanData.length){
+    wrap.innerHTML='<div class="mealplan-empty">No dishes planned yet \u2014 tap + Add Dish to start building your list.</div>';
+    return;
+  }
+  wrap.innerHTML=mealPlanData.map(d=>
+    '<div class="dish-card">'+
+      '<div class="dish-card-head"><span class="dish-name">'+escapeHtml(d.name)+'</span>'+
+      '<button class="dish-del no-print" type="button" onclick="deleteDish(\''+d.id+'\')">\u00d7</button></div>'+
+      (d.ingredients.length?'<ul class="dish-ingredients">'+d.ingredients.map(i=>'<li>'+escapeHtml(i)+'</li>').join('')+'</ul>':'')+
+    '</div>'
+  ).join('');
+}
+function openAddDishModal(){
+  const nameEl=document.getElementById('newDishName');
+  nameEl.value='';nameEl.style.borderColor='';
+  document.getElementById('newDishIngredients').value='';
+  document.getElementById('addDishOverlay').classList.add('open');
+  setTimeout(()=>{nameEl.focus();},30);
+}
+function closeAddDishModal(){
+  document.getElementById('addDishOverlay').classList.remove('open');
+}
+function saveNewDish(){
+  const nameEl=document.getElementById('newDishName');
+  const name=nameEl.value.trim();
+  if(!name){nameEl.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--pink').trim()||'#E0119B';nameEl.focus();return;}
+  const ingredients=document.getElementById('newDishIngredients').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  mealPlanData.push({id:uid(),name:name,ingredients:ingredients});
+  persist();
+  renderMealPlan();
+  closeAddDishModal();
+}
+function deleteDish(id){
+  if(!confirm('Delete this dish from the plan?'))return;
+  mealPlanData=mealPlanData.filter(d=>d.id!==id);
+  persist();
+  renderMealPlan();
+}
+function printMealPlanOnly(){
+  document.body.classList.add('print-mealplan-only');
+  window.print();
+  setTimeout(()=>{document.body.classList.remove('print-mealplan-only');},500);
+}
+renderMealPlan();
+
 // Appointments calendar (persistent, date-keyed — not weekly reset)
 const APPT_KEY='actionPlan3000_appointments';
 let appointmentsData={};
@@ -3017,6 +3118,7 @@ function persist(){
   data.debtChecks=dc;
   data.journal=journalData;
   data.keyTasks=keyTasksData;
+  data.mealPlan=mealPlanData;
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
   const note=document.getElementById('saveNote');
   note.textContent='Saved just now';
@@ -3045,6 +3147,8 @@ function clearWeek(){
   buildJournalUI();
   keyTasksData=[];
   renderKeyTasks();
+  mealPlanData=[];
+  renderMealPlan();
   persist();
 }
 
@@ -3110,6 +3214,7 @@ const BLOCK_NAV_META={
   finances:{icon:'\ud83d\udcb0',label:'Finances'},
   bills:{icon:'\ud83e\uddfe',label:'Bills'},
   keytasks:{icon:'\ud83c\udfaf',label:'Key Tasks'},
+  mealplan:{icon:'\ud83c\udf73',label:'Meal Plan'},
   appointments:{icon:'\ud83d\udcc5',label:'Appts'},
   countdown:{icon:'\u23f3',label:'Countdown'},
   clock:{icon:'\u23f0',label:'Clock'},
