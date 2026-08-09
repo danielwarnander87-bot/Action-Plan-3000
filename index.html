@@ -929,6 +929,34 @@
     position:relative;
     z-index:1;
   }
+  .weekly-focus-panel{
+    background:rgba(255,224,94,0.1);
+    border:1.5px dashed rgba(255,224,94,0.5);
+    border-radius:14px;
+    padding:10px 14px;
+    margin-top:10px;
+  }
+  .weekly-focus-label{
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.5px;
+    color:#FFE05E;
+    margin-bottom:4px;
+  }
+  .weekly-focus-text{
+    width:100%;
+    border:none;
+    background:transparent;
+    font-family:'Nunito',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color:var(--ink);
+    resize:none;
+    outline:none;
+    line-height:1.4;
+  }
+  .weekly-focus-text::placeholder{color:rgba(237,237,245,0.4);}
   .jd-tab{
     font-family:'VT323',monospace;
     font-size:15px;
@@ -1639,6 +1667,10 @@
         </div>
       </div>
       <div class="sub">Thoughts, wins, whatever's on your mind this week</div>
+      <div class="weekly-focus-panel">
+        <div class="weekly-focus-label">🎯 This Week's Focus</div>
+        <textarea id="weeklyFocusText" class="weekly-focus-text" rows="1" placeholder="What's the pattern you're watching for this week?"></textarea>
+      </div>
       <div id="journalBody">
         <div class="journal-day-tabs no-print" id="journalDayTabs"></div>
         <div id="journalDayPanels"></div>
@@ -2664,6 +2696,17 @@ if(saved.journal&&typeof saved.journal==='object'){
 }else if(typeof saved.journal==='string'&&saved.journal){
   journalData={mon:saved.journal};
 }
+let weeklyFocusData=typeof saved.weeklyFocus==='string'?saved.weeklyFocus:'';
+const weeklyFocusEl=document.getElementById('weeklyFocusText');
+if(weeklyFocusEl){
+  weeklyFocusEl.value=weeklyFocusData;
+  autoGrow(weeklyFocusEl);
+  weeklyFocusEl.addEventListener('input',()=>{
+    weeklyFocusData=weeklyFocusEl.value;
+    autoGrow(weeklyFocusEl);
+    persist();
+  });
+}
 const todayKeyForJournal=todayJournalKey();
 let activeJournalDay=todayKeyForJournal;
 
@@ -3211,6 +3254,7 @@ function persist(){
   debtChecks.forEach(c=>{dc[c.dataset.key]=c.checked;});
   data.debtChecks=dc;
   data.journal=journalData;
+  data.weeklyFocus=weeklyFocusData;
   data.keyTasks=keyTasksData;
   data.mealPlan=mealPlanData;
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
@@ -3239,6 +3283,8 @@ function clearWeek(){
   });
   journalData={};
   buildJournalUI();
+  weeklyFocusData='';
+  if(weeklyFocusEl){weeklyFocusEl.value='';autoGrow(weeklyFocusEl);}
   keyTasksData=[];
   renderKeyTasks();
   mealPlanData=[];
