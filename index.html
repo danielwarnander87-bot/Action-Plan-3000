@@ -1007,6 +1007,14 @@
     color:var(--ink);
     opacity:0.5;
   }
+  .backup-toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--indigo,#2E1A6B); color:#fff; padding:12px 20px; border-radius:12px;
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:13px; max-width:90vw;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4); z-index:999; opacity:0; pointer-events:none;
+    transition:opacity .3s, transform .3s; text-align:center;
+  }
+  .backup-toast.show{opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto;}
   .clear-btn{
     font-family:'Nunito',sans-serif;
     font-weight:800;
@@ -3255,6 +3263,35 @@ function saveToFile(){
   URL.revokeObjectURL(url);
 }
 
+function showBackupToast(msg){
+  const t=document.getElementById('backupToast');
+  if(!t)return;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(showBackupToast._t);
+  showBackupToast._t=setTimeout(()=>{t.classList.remove('show');},6000);
+}
+
+// Auto-backup: since each week already saves under its own storage key permanently,
+// nothing is ever lost between weeks automatically. This just makes an external
+// backup file the first time you open the app in a new week, so you don't have
+// to remember to hit the button yourself.
+const AUTO_BACKUP_KEY='actionPlan3000_autoBackupLastWk';
+function checkAutoBackup(){
+  try{
+    const lastBackedUpWk=localStorage.getItem(AUTO_BACKUP_KEY);
+    if(lastBackedUpWk!==wk){
+      const hasAnyData=Object.keys(localStorage).some(k=>k.indexOf('actionPlan3000::')===0);
+      if(hasAnyData){
+        saveToFile();
+        showBackupToast('📥 New week started — full backup downloaded automatically. Check your Downloads folder.');
+      }
+      localStorage.setItem(AUTO_BACKUP_KEY,wk);
+    }
+  }catch(e){}
+}
+setTimeout(checkAutoBackup,1500);
+
 function loadFromFile(event){
   const file=event.target.files&&event.target.files[0];
   if(!file)return;
@@ -3380,5 +3417,6 @@ function pickBlockForMove(block,e){
 applyBlockOrder();
 renderBlockNav();
 </script>
+  <div class="backup-toast" id="backupToast"></div>
 </body>
 </html>
