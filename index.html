@@ -3667,7 +3667,7 @@ function checkAutoBackup(){
 }
 setTimeout(checkAutoBackup,1500);
 
-function weekKeyRegex(){return /^actionPlan3000::(\d{4}-W\d{2})$/;}
+function weekKeyRegex(){return /^actionPlan3000::(\d{4}-\d{2}-\d{2})$/;}
 
 function findMostRecentPriorWeekKeyIn(sourceObjOrStorage,currentKey){
   // sourceObjOrStorage: either a plain object (parsed file) or 'localStorage'
@@ -3711,6 +3711,25 @@ function mergeUnfinishedFromParsedData(sourceData){
     });
     renderBulletList(key);
   });
+
+  // Meal Plan isn't a done/not-done task list — carry every recipe forward that isn't already here by name
+  let mealsCarried=0;
+  if(Array.isArray(sourceData.mealPlan)){
+    sourceData.mealPlan.forEach(srcMeal=>{
+      if(srcMeal && srcMeal.name && srcMeal.name.trim()){
+        const nm=srcMeal.name.trim();
+        const alreadyExists=mealPlanData.some(x=>x.name && x.name.trim().toLowerCase()===nm.toLowerCase());
+        if(!alreadyExists){
+          mealPlanData.push({id:uid(),name:nm,ingredients:Array.isArray(srcMeal.ingredients)?srcMeal.ingredients.slice():[]});
+          mealsCarried++;
+          carriedItems.push({block:'Meal Plan',text:nm});
+        }
+      }
+    });
+    if(mealsCarried)renderMealPlan();
+  }
+  carried+=mealsCarried;
+
   persist();
   updatePriorityBanner();
   return {carried,carriedItems};
