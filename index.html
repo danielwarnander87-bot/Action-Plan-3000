@@ -1881,9 +1881,31 @@
       <button class="clear-btn sync-btn" onclick="saveToFile()">💾 Save to File</button>
       <button class="clear-btn sync-btn" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
       <input type="file" id="loadFileInput" accept="application/json" style="display:none;" onchange="loadFromFile(event)">
+      <button class="clear-btn sync-btn" onclick="carryOverUnfinishedClick()">⬅️ Carry Over Unfinished</button>
+      <button class="clear-btn sync-btn" onclick="viewLastWeekJournal()">📔 View Last Week's Journal</button>
       <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
     </div>
   </footer>
+
+  <div class="eta-overlay" id="lastWeekJournalOverlay" onclick="if(event.target===this)document.getElementById('lastWeekJournalOverlay').classList.remove('open');">
+    <div class="eta-modal" style="max-width:560px;max-height:80vh;overflow-y:auto;">
+      <div class="eta-modal-head">
+        <span>📔 Last Week's Journal &amp; Focus</span>
+        <button class="clear-btn" onclick="document.getElementById('lastWeekJournalOverlay').classList.remove('open');">✕</button>
+      </div>
+      <div id="lastWeekJournalBody" style="padding:14px 4px;font-size:14px;line-height:1.5;"></div>
+    </div>
+  </div>
+
+  <div class="eta-overlay" id="carryOverOverlay" onclick="if(event.target===this)document.getElementById('carryOverOverlay').classList.remove('open');">
+    <div class="eta-modal" style="max-width:520px;max-height:80vh;overflow-y:auto;">
+      <div class="eta-modal-head">
+        <span>⬅️ Carry Over Unfinished Tasks</span>
+        <button class="clear-btn" onclick="document.getElementById('carryOverOverlay').classList.remove('open');">✕</button>
+      </div>
+      <div id="carryOverBody" style="padding:14px 4px;font-size:14px;line-height:1.5;"></div>
+    </div>
+  </div>
 
   <div class="eta-overlay" id="etaOverlay" onclick="if(event.target===this)etaCancel();">
     <div class="eta-modal">
@@ -3645,6 +3667,55 @@ function checkAutoBackup(){
 }
 setTimeout(checkAutoBackup,1500);
 
+function weekKeyRegex(){return /^actionPlan3000::(\d{4}-W\d{2})$/;}
+
+function findMostRecentPriorWeekKeyIn(sourceObjOrStorage,currentKey){
+  // sourceObjOrStorage: either a plain object (parsed file) or 'localStorage'
+  const keys = sourceObjOrStorage==='localStorage'
+    ? Object.keys(localStorage)
+    : Object.keys(sourceObjOrStorage);
+  let best=null;
+  keys.forEach(k=>{
+    if(weekKeyRegex().test(k) && k!==currentKey){
+      if(!best || k > best) if(k < currentKey) best=k; // most recent key strictly before current week
+    }
+  });
+  // fallback: if nothing strictly before current (e.g. clock skew), just take the most recent different week key
+  if(!best){
+    keys.forEach(k=>{
+      if(weekKeyRegex().test(k) && k!==currentKey){
+        if(!best || k > best) best=k;
+      }
+    });
+  }
+  return best;
+}
+
+function mergeUnfinishedFromParsedData(sourceData){
+  let carried=0;
+  const carriedItems=[];
+  BLOCK_KEYS.forEach(key=>{
+    const sourceArr=sourceData[key];
+    if(!Array.isArray(sourceArr))return;
+    const currentArr=BLOCK_DATA[key]||(BLOCK_DATA[key]=[]);
+    sourceArr.forEach(srcItem=>{
+      if(srcItem && !srcItem.done && srcItem.text && srcItem.text.trim()){
+        const t=srcItem.text.trim();
+        const alreadyExists=currentArr.some(x=>x.text && x.text.trim()===t);
+        if(!alreadyExists){
+          currentArr.push({id:uid(),stamp:nowStamp(),text:t,done:false,priority:srcItem.priority||0});
+          carried++;
+          carriedItems.push({block:wallBlockLabel(key),text:t});
+        }
+      }
+    });
+    renderBulletList(key);
+  });
+  persist();
+  updatePriorityBanner();
+  return {carried,carriedItems};
+}
+
 function loadFromFile(event){
   const file=event.target.files&&event.target.files[0];
   if(!file)return;
@@ -3655,11 +3726,85 @@ function loadFromFile(event){
     const keys=Object.keys(data).filter(k=>k.indexOf('actionPlan3000')===0);
     if(!keys.length){alert('No Action Plan 3000 data found in that file.');event.target.value='';return;}
     keys.forEach(k=>{try{localStorage.setItem(k,data[k]);}catch(e){}});
-    alert('Loaded! The page will refresh to show your synced data.');
+
+    // Auto-carry unfinished tasks from the most recent prior week found in the file into THIS week
+    const bestKey=findMostRecentPriorWeekKeyIn(data,STORE_KEY);
+    let carriedMsg='';
+    if(bestKey && data[bestKey]){
+      try{
+        const sourceData=typeof data[bestKey]==='string'?JSON.parse(data[bestKey]):data[bestKey];
+        const result=mergeUnfinishedFromParsedData(sourceData);
+        if(result.carried){
+          carriedMsg='\n\nAlso carried over '+result.carried+' unfinished task(s) from '+bestKey.replace('actionPlan3000::','')+' into this week.';
+        }
+      }catch(e){}
+    }
+    alert('Loaded!'+carriedMsg+' The page will refresh to show your synced data.');
     location.reload();
   };
   reader.onerror=()=>{alert('Could not read that file.');};
   reader.readAsText(file);
+}
+
+function carryOverUnfinishedClick(){
+  const bestKey=findMostRecentPriorWeekKeyIn('localStorage',STORE_KEY);
+  const overlay=document.getElementById('carryOverOverlay');
+  const body=document.getElementById('carryOverBody');
+  if(!bestKey){
+    body.innerHTML='<p>No prior week\u2019s data found in this browser.</p><p>If you cleared your browser or you\u2019re on a new device, use <b>\ud83d\udcc2 Load from File</b> with your saved backup instead \u2014 it now automatically carries over unfinished tasks too.</p>';
+    overlay.classList.add('open');
+    return;
+  }
+  let sourceData;
+  try{sourceData=JSON.parse(localStorage.getItem(bestKey));}catch(e){
+    body.innerHTML='<p>Found a prior week but couldn\u2019t read it \u2014 the data may be corrupted.</p>';
+    overlay.classList.add('open');
+    return;
+  }
+  const result=mergeUnfinishedFromParsedData(sourceData);
+  if(!result.carried){
+    body.innerHTML='<p>Checked '+bestKey.replace('actionPlan3000::','')+' \u2014 nothing unfinished to carry over. Either everything got done, or it\u2019s already been carried in.</p>';
+  }else{
+    body.innerHTML='<p><b>'+result.carried+' task(s)</b> carried over from '+bestKey.replace('actionPlan3000::','')+':</p><ul style="margin:8px 0 0 18px;padding:0;">'
+      +result.carriedItems.map(c=>'<li><b>'+c.block+':</b> '+c.text.replace(/</g,'&lt;')+'</li>').join('')
+      +'</ul>';
+  }
+  overlay.classList.add('open');
+}
+
+function viewLastWeekJournal(){
+  const bestKey=findMostRecentPriorWeekKeyIn('localStorage',STORE_KEY);
+  const overlay=document.getElementById('lastWeekJournalOverlay');
+  const body=document.getElementById('lastWeekJournalBody');
+  if(!bestKey){
+    body.innerHTML='<p>No prior week\u2019s data found in this browser. Load your saved backup file first if you\u2019re on a new device.</p>';
+    overlay.classList.add('open');
+    return;
+  }
+  let sourceData;
+  try{sourceData=JSON.parse(localStorage.getItem(bestKey));}catch(e){
+    body.innerHTML='<p>Found a prior week but couldn\u2019t read it.</p>';
+    overlay.classList.add('open');
+    return;
+  }
+  let html='<p style="color:#8a7fb8;font-size:12px;margin-top:0;">'+bestKey.replace('actionPlan3000::','')+'</p>';
+  if(sourceData.weeklyFocus && sourceData.weeklyFocus.trim()){
+    html+='<div style="background:rgba(255,224,94,0.12);border:1.5px dashed rgba(255,224,94,0.5);border-radius:10px;padding:10px 12px;margin-bottom:12px;"><b style="color:#FFE05E;font-size:12px;">\ud83c\udfaf LAST WEEK\'S FOCUS</b><div style="margin-top:4px;">'+sourceData.weeklyFocus.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div></div>';
+  }
+  const journal=sourceData.journal;
+  if(journal && typeof journal==='object' && Object.keys(journal).length){
+    JOURNAL_DAYS.forEach(d=>{
+      const entry=journal[d.key];
+      if(entry && entry.trim()){
+        html+='<div style="margin-bottom:10px;"><b>'+d.label+'</b><div style="margin-top:2px;white-space:pre-wrap;">'+entry.replace(/</g,'&lt;')+'</div></div>';
+      }
+    });
+  }
+  if(html.indexOf('LAST WEEK')===-1 && html.indexOf('white-space:pre-wrap')===-1){
+    html+='<p>No journal entries or focus notes were saved for that week.</p>';
+  }
+  body.innerHTML=html;
+  overlay.classList.add('open');
 }
 
 // Block rearranging (tap-to-pick-up, tap-to-place)
