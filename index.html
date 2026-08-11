@@ -783,6 +783,51 @@
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
   }
+
+  .block.comfortblock{
+    background:linear-gradient(135deg,rgba(38,28,10,0.88) 0%,rgba(20,14,8,0.88) 50%,rgba(10,20,18,0.88) 100%);
+    border-radius:22px;
+    border:2.5px solid #D9A441;
+    padding:20px 20px 18px;
+    box-shadow:6px 6px 0 #8a6420,0 0 30px rgba(217,164,65,0.3),inset 0 1px 0 rgba(255,255,255,0.15),inset 0 -16px 24px -14px rgba(0,0,0,0.5);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    overflow:hidden;
+    color:#F5EBD6;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .comfort-verse-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin:10px 0 14px;
+  }
+  .comfort-verse{
+    background:rgba(255,255,255,0.05);
+    border-left:3px solid #D9A441;
+    border-radius:0 10px 10px 0;
+    padding:10px 14px;
+  }
+  .comfort-verse p{
+    margin:0 0 4px;
+    font-family:'Nunito',sans-serif;
+    font-style:italic;
+    font-size:14px;
+    line-height:1.5;
+    color:#F5EBD6;
+  }
+  .comfort-verse span{
+    font-family:'Fredoka',sans-serif;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    color:#D9A441;
+  }
+  .block.comfortblock .budget-link{
+    align-self:flex-start;
+  }
   .block.accountability::before{
     content:"";position:absolute;top:-60%;left:-28%;width:12%;height:220%;
     background:rgba(255,255,255,0.14);
@@ -1416,6 +1461,7 @@
     .bullet-stamp{font-size:8px;margin-bottom:0;}
     .bullet-text{font-size:11px;}
     .block.accountability{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
+    .block.comfortblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
     .block.accountability .bullet-list{min-height:auto;}
     .block.girlsblock{margin-top:10px;padding:10px 12px 8px;box-shadow:none;}
     .block.girlsblock h2{font-size:15px;}
@@ -1801,6 +1847,19 @@
       <div class="sub">Promises to yourself this week</div>
       <div class="bullet-list" data-key="accountability"></div>
       <button class="bullet-add-btn" type="button" onclick="addBulletItem('accountability',true)">+ Add item</button>
+    </div>
+
+    <div class="block comfortblock" data-block-id="comfort">
+      <div class="block-head"><h2><span class="icon">🙏</span>Comfort &amp; Scripture</h2></div>
+      <div class="sub">For the heavy days</div>
+      <div class="comfort-verse-list">
+        <div class="comfort-verse"><p>"The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit."</p><span>Psalm 34:18, KJV</span></div>
+        <div class="comfort-verse"><p>"Come unto me, all ye that labour and are heavy laden, and I will give you rest."</p><span>Matthew 11:28, KJV</span></div>
+        <div class="comfort-verse"><p>"Weeping may endure for a night, but joy cometh in the morning."</p><span>Psalm 30:5, KJV</span></div>
+        <div class="comfort-verse"><p>"Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me."</p><span>Psalm 23:4, KJV</span></div>
+        <div class="comfort-verse"><p>"Cast thy burden upon the LORD, and he shall sustain thee."</p><span>Psalm 55:22, KJV</span></div>
+      </div>
+      <a class="budget-link" href="https://www.biblestudytools.com/topical-verses/bible-verses-about-sadness/" target="_blank" rel="noopener">📖 More verses on Bible Study Tools →</a>
     </div>
 
     <div class="block girlsblock" id="girlsBlock" data-block-id="girlsblock">
