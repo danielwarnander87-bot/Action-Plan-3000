@@ -712,6 +712,81 @@
     cursor:pointer;
   }
   .bullet-add-btn:active{background:rgba(255,255,255,0.15);}
+
+  /* ---------- Order Pads (Vendor + PLCB) ---------- */
+  .order-pad{
+    background:rgba(255,255,255,0.05);
+    border:1.5px solid rgba(255,255,255,0.14);
+    border-radius:16px;
+    padding:14px 14px 12px;
+    margin-bottom:14px;
+  }
+  .order-pad:last-of-type{margin-bottom:10px;}
+  .order-pad-head{
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px;
+  }
+  .order-title-input{
+    font-family:'Fredoka',sans-serif;font-weight:700;font-size:16px;color:#FFE066;
+    background:transparent;border:none;border-bottom:1.5px dashed rgba(255,255,255,0.3);
+    padding:2px 2px 4px;flex:1;min-width:140px;outline:none;
+  }
+  .order-title-input::placeholder{color:rgba(255,255,255,0.4);}
+  .order-title-input:focus{border-bottom-color:var(--pop);}
+  .order-phone-input,.order-meta-input{
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:#F5F5FA;
+    background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.16);border-radius:100px;
+    padding:6px 12px;outline:none;min-width:120px;
+  }
+  .order-phone-input::placeholder,.order-meta-input::placeholder{color:rgba(255,255,255,0.4);}
+  .order-phone-input:focus,.order-meta-input:focus{border-color:var(--pop);}
+  .order-pad-meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+  .order-pad-title-static{
+    font-family:'Fredoka',sans-serif;font-weight:700;font-size:16px;color:#FFE066;
+  }
+  .order-subsection{margin-bottom:12px;}
+  .order-subsection-label{
+    font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:0.65;
+    margin-bottom:8px;color:#EDEDF5;
+  }
+  .order-items{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;min-height:8px;}
+  .order-item-row{
+    display:flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.08);
+    border-radius:10px;padding:7px 9px;
+  }
+  .oi-label{
+    flex:1;min-width:0;border:none;background:transparent;font-family:'Nunito',sans-serif;
+    font-weight:600;font-size:14px;color:#F5F5FA;outline:none;
+  }
+  .oi-label::placeholder{color:rgba(255,255,255,0.35);}
+  .oi-qty{
+    width:46px;flex-shrink:0;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);
+    border-radius:6px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:#F5F5FA;
+    text-align:center;padding:4px 2px;outline:none;
+  }
+  .oi-qty::placeholder{color:rgba(255,255,255,0.35);}
+  .oi-unit{
+    flex-shrink:0;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);
+    border-radius:6px;font-family:'Nunito',sans-serif;font-weight:700;font-size:11.5px;color:#F5F5FA;
+    padding:4px 3px;outline:none;max-width:76px;
+  }
+  .oi-unit option{color:#161029;}
+  .oi-del{
+    border:none;background:transparent;color:#EDEDF5;opacity:0.4;font-size:17px;font-weight:800;
+    line-height:1;cursor:pointer;flex-shrink:0;padding:2px 2px;
+  }
+  .oi-del:active{opacity:0.9;}
+  .order-pad-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;}
+  .order-copy-btn,.order-clear-btn{
+    font-family:'Nunito',sans-serif;font-weight:800;font-size:11.5px;
+    border:2px solid var(--ink);padding:6px 13px;border-radius:100px;cursor:pointer;
+  }
+  .order-copy-btn{background:var(--pop);color:var(--ink);}
+  .order-copy-btn:active{background:var(--pop-deep);}
+  .order-clear-btn{background:transparent;color:#EDEDF5;border-color:rgba(255,255,255,0.35);}
+  .order-clear-btn:active{background:rgba(255,255,255,0.15);}
+  .order-copy-flash{color:#5CFFAE;font-size:11.5px;font-weight:800;margin-left:2px;}
+
   .budget-link{
     display:inline-flex;
     align-items:center;
@@ -1783,6 +1858,53 @@
         <a class="budget-link" href="https://danielwarnander87-bot.github.io/Inventory-bar/" target="_blank" rel="noopener">📦 Inventory →</a>
         <div class="bullet-list" data-key="work"></div>
         <button class="bullet-add-btn" type="button" onclick="addBulletItem('work',true)">+ Add item</button>
+      </div>
+      <div class="block indigo orderblock full-width" id="ordersBlock" data-block-id="orders">
+        <div class="block-head"><h2><span class="icon">📋</span>Order Pads</h2></div>
+        <div class="sub">Call-in orders — vendor &amp; PLCB</div>
+
+        <div class="order-pad" id="vendorOrderPad">
+          <div class="order-pad-head">
+            <input type="text" id="vendorTitleInput" class="order-title-input" placeholder="Vendor name (e.g. Produce Junction)" onchange="updateVendorMeta()">
+            <input type="tel" id="vendorPhoneInput" class="order-meta-input order-phone-input" placeholder="Phone number" onchange="updateVendorMeta()">
+          </div>
+          <div class="order-items" id="vendorItemsList"></div>
+          <div class="order-pad-actions">
+            <button class="bullet-add-btn" type="button" onclick="addVendorItem()">+ Add item</button>
+            <button class="order-copy-btn" type="button" onclick="copyVendorOrder()">📋 Copy order</button>
+            <button class="order-clear-btn" type="button" onclick="clearVendorOrder()">🗑 Clear items</button>
+            <span class="order-copy-flash" id="vendorCopyFlash"></span>
+          </div>
+        </div>
+
+        <div class="order-pad plcb-pad" id="plcbOrderPad">
+          <div class="order-pad-head">
+            <div class="order-pad-title-static">🍷 PLCB Wine &amp; Spirits Order</div>
+            <a class="budget-link" style="margin-bottom:0;" href="https://www.pa.gov/services/lcb/order-wine-and-spirits-online-loop-portal" target="_blank" rel="noopener">🔗 Open LOOP Portal →</a>
+          </div>
+          <div class="order-pad-meta-row">
+            <input type="text" id="plcbStoreInput" class="order-meta-input" placeholder="Store #" onchange="updateVendorMeta()">
+            <input type="text" id="plcbLocationInput" class="order-meta-input" placeholder="Location" onchange="updateVendorMeta()">
+          </div>
+
+          <div class="order-subsection">
+            <div class="order-subsection-label">🥃 Liquor</div>
+            <div class="order-items" id="plcbLiquorItemsList"></div>
+            <button class="bullet-add-btn" type="button" onclick="addPlcbItem('liquor')">+ Add liquor item</button>
+          </div>
+
+          <div class="order-subsection">
+            <div class="order-subsection-label">🍇 Wine</div>
+            <div class="order-items" id="plcbWineItemsList"></div>
+            <button class="bullet-add-btn" type="button" onclick="addPlcbItem('wine')">+ Add wine item</button>
+          </div>
+
+          <div class="order-pad-actions">
+            <button class="order-copy-btn" type="button" onclick="copyPlcbOrder()">📋 Copy order</button>
+            <button class="order-clear-btn" type="button" onclick="clearPlcbOrder()">🗑 Clear items</button>
+            <span class="order-copy-flash" id="plcbCopyFlash"></span>
+          </div>
+        </div>
       </div>
       <div class="block pink" data-block-id="finances">
         <div class="block-head"><h2><span class="icon">💰</span>Finances</h2><button class="eta-btn" onclick="addETA('finances')">⏱ ETA</button></div>
@@ -4151,6 +4273,198 @@ function viewLastWeekJournal(){
 }
 
 // Block rearranging (tap-to-pick-up, tap-to-place)
+/* ============================================================
+   ORDER PADS — vendor call-in order + PLCB Wine & Spirits order
+   Persistent across weeks (not tied to the weekly STORE_KEY) since
+   vendor info / store # rarely changes and orders may span sessions.
+   ============================================================ */
+const ORDERS_KEY='actionPlan3000::workOrders';
+const VENDOR_UNITS=['Case','Pints','Each'];
+const PLCB_UNITS=['750 ml','Liter','1.5 L','5 L'];
+let workOrders={vendorTitle:'',vendorPhone:'',vendorItems:[],plcbStore:'',plcbLocation:'',plcbLiquorItems:[],plcbWineItems:[]};
+function loadWorkOrders(){
+  try{
+    const raw=localStorage.getItem(ORDERS_KEY);
+    if(raw){
+      const d=JSON.parse(raw);
+      workOrders={
+        vendorTitle:d.vendorTitle||'',
+        vendorPhone:d.vendorPhone||'',
+        vendorItems:Array.isArray(d.vendorItems)?d.vendorItems:[],
+        plcbStore:d.plcbStore||'',
+        plcbLocation:d.plcbLocation||'',
+        plcbLiquorItems:Array.isArray(d.plcbLiquorItems)?d.plcbLiquorItems:[],
+        plcbWineItems:Array.isArray(d.plcbWineItems)?d.plcbWineItems:[]
+      };
+    }
+  }catch(e){}
+}
+function saveWorkOrders(){
+  try{ localStorage.setItem(ORDERS_KEY, JSON.stringify(workOrders)); }catch(e){}
+}
+function unitOptionsHtml(units,selected){
+  return units.map(u=>'<option value="'+u+'"'+(selected===u?' selected':'')+'>'+u+'</option>').join('');
+}
+function renderOrderItemRow(item,units,updateFn,delFn){
+  return '<div class="order-item-row">'+
+    '<input type="text" class="oi-label" placeholder="Item" value="'+escapeHtml(item.label||'')+'" onchange="'+updateFn+'(\''+item.id+'\',\'label\',this.value)">'+
+    '<input type="number" class="oi-qty" placeholder="Qty" min="0" step="1" value="'+(item.qty!==undefined&&item.qty!==null?item.qty:'')+'" onchange="'+updateFn+'(\''+item.id+'\',\'qty\',this.value)">'+
+    '<select class="oi-unit" onchange="'+updateFn+'(\''+item.id+'\',\'unit\',this.value)">'+unitOptionsHtml(units,item.unit||units[0])+'</select>'+
+    '<button class="oi-del" type="button" onclick="'+delFn+'(\''+item.id+'\')">×</button>'+
+  '</div>';
+}
+function renderOrderPads(){
+  const titleEl=document.getElementById('vendorTitleInput');
+  const phoneEl=document.getElementById('vendorPhoneInput');
+  const storeEl=document.getElementById('plcbStoreInput');
+  const locEl=document.getElementById('plcbLocationInput');
+  if(titleEl) titleEl.value=workOrders.vendorTitle;
+  if(phoneEl) phoneEl.value=workOrders.vendorPhone;
+  if(storeEl) storeEl.value=workOrders.plcbStore;
+  if(locEl) locEl.value=workOrders.plcbLocation;
+
+  const vendorList=document.getElementById('vendorItemsList');
+  if(vendorList){
+    vendorList.innerHTML = workOrders.vendorItems.map(it=>renderOrderItemRow(it,VENDOR_UNITS,'updateVendorItem','deleteVendorItem')).join('');
+  }
+  const liquorList=document.getElementById('plcbLiquorItemsList');
+  if(liquorList){
+    liquorList.innerHTML = workOrders.plcbLiquorItems.map(it=>renderOrderItemRow(it,PLCB_UNITS,'updatePlcbLiquorItem','deletePlcbLiquorItem')).join('');
+  }
+  const wineList=document.getElementById('plcbWineItemsList');
+  if(wineList){
+    wineList.innerHTML = workOrders.plcbWineItems.map(it=>renderOrderItemRow(it,PLCB_UNITS,'updatePlcbWineItem','deletePlcbWineItem')).join('');
+  }
+}
+function updateVendorMeta(){
+  const titleEl=document.getElementById('vendorTitleInput');
+  const phoneEl=document.getElementById('vendorPhoneInput');
+  const storeEl=document.getElementById('plcbStoreInput');
+  const locEl=document.getElementById('plcbLocationInput');
+  if(titleEl) workOrders.vendorTitle=titleEl.value;
+  if(phoneEl) workOrders.vendorPhone=phoneEl.value;
+  if(storeEl) workOrders.plcbStore=storeEl.value;
+  if(locEl) workOrders.plcbLocation=locEl.value;
+  saveWorkOrders();
+}
+function addVendorItem(){
+  workOrders.vendorItems.push({id:uid(),label:'',qty:'',unit:VENDOR_UNITS[0]});
+  saveWorkOrders();
+  renderOrderPads();
+}
+function updateVendorItem(id,field,value){
+  const it=workOrders.vendorItems.find(x=>x.id===id);
+  if(!it) return;
+  it[field]=value;
+  saveWorkOrders();
+}
+function deleteVendorItem(id){
+  workOrders.vendorItems=workOrders.vendorItems.filter(x=>x.id!==id);
+  saveWorkOrders();
+  renderOrderPads();
+}
+function clearVendorOrder(){
+  if(!workOrders.vendorItems.length) return;
+  workOrders.vendorItems=[];
+  saveWorkOrders();
+  renderOrderPads();
+}
+function addPlcbItem(section){
+  const arr = section==='wine' ? workOrders.plcbWineItems : workOrders.plcbLiquorItems;
+  arr.push({id:uid(),label:'',qty:'',unit:PLCB_UNITS[0]});
+  saveWorkOrders();
+  renderOrderPads();
+}
+function updatePlcbLiquorItem(id,field,value){
+  const it=workOrders.plcbLiquorItems.find(x=>x.id===id);
+  if(!it) return;
+  it[field]=value;
+  saveWorkOrders();
+}
+function updatePlcbWineItem(id,field,value){
+  const it=workOrders.plcbWineItems.find(x=>x.id===id);
+  if(!it) return;
+  it[field]=value;
+  saveWorkOrders();
+}
+function deletePlcbLiquorItem(id){
+  workOrders.plcbLiquorItems=workOrders.plcbLiquorItems.filter(x=>x.id!==id);
+  saveWorkOrders();
+  renderOrderPads();
+}
+function deletePlcbWineItem(id){
+  workOrders.plcbWineItems=workOrders.plcbWineItems.filter(x=>x.id!==id);
+  saveWorkOrders();
+  renderOrderPads();
+}
+function clearPlcbOrder(){
+  if(!workOrders.plcbLiquorItems.length && !workOrders.plcbWineItems.length) return;
+  workOrders.plcbLiquorItems=[];
+  workOrders.plcbWineItems=[];
+  saveWorkOrders();
+  renderOrderPads();
+}
+function flashCopyNote(elId){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  el.textContent='✓ Copied!';
+  clearTimeout(flashCopyNote._t);
+  flashCopyNote._t=setTimeout(()=>{ el.textContent=''; },2200);
+}
+function copyToClipboardFallback(text){
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }catch(e){}
+}
+function copyVendorOrder(){
+  const lines=[];
+  const title=workOrders.vendorTitle||'Vendor Order';
+  lines.push(title);
+  if(workOrders.vendorPhone) lines.push('Phone: '+workOrders.vendorPhone);
+  lines.push('');
+  const items=workOrders.vendorItems.filter(it=>it.label&&it.label.trim());
+  if(!items.length) lines.push('(no items yet)');
+  items.forEach(it=>{
+    lines.push('- '+(it.qty||'?')+' '+(it.unit||'')+' — '+it.label);
+  });
+  const text=lines.join('\n');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>flashCopyNote('vendorCopyFlash')).catch(()=>{copyToClipboardFallback(text);flashCopyNote('vendorCopyFlash');});
+  } else {
+    copyToClipboardFallback(text);
+    flashCopyNote('vendorCopyFlash');
+  }
+}
+function copyPlcbOrder(){
+  const lines=[];
+  lines.push('PLCB Wine & Spirits Order');
+  if(workOrders.plcbStore) lines.push('Store #: '+workOrders.plcbStore);
+  if(workOrders.plcbLocation) lines.push('Location: '+workOrders.plcbLocation);
+  lines.push('');
+  const liquor=workOrders.plcbLiquorItems.filter(it=>it.label&&it.label.trim());
+  lines.push('Liquor:');
+  if(!liquor.length) lines.push('  (no items yet)');
+  liquor.forEach(it=>{ lines.push('- '+(it.qty||'?')+' '+(it.unit||'')+' — '+it.label); });
+  lines.push('');
+  const wine=workOrders.plcbWineItems.filter(it=>it.label&&it.label.trim());
+  lines.push('Wine:');
+  if(!wine.length) lines.push('  (no items yet)');
+  wine.forEach(it=>{ lines.push('- '+(it.qty||'?')+' '+(it.unit||'')+' — '+it.label); });
+  const text=lines.join('\n');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>flashCopyNote('plcbCopyFlash')).catch(()=>{copyToClipboardFallback(text);flashCopyNote('plcbCopyFlash');});
+  } else {
+    copyToClipboardFallback(text);
+    flashCopyNote('plcbCopyFlash');
+  }
+}
+
 const BLOCK_ORDER_KEY='actionPlan3000_blockOrder';
 let rearrangeMode=false;
 let pickedBlockForMove=null;
@@ -4184,6 +4498,7 @@ const BLOCK_NAV_META={
   clock:{icon:'\u23f0',label:'Clock'},
   calculator:{icon:'\ud83e\uddee',label:'Calc'},
   accountability:{icon:'\ud83c\udfaf',label:'Goals'},
+  orders:{icon:'\ud83d\udccb',label:'Orders'},
   girlsblock:{icon:'\ud83d\udc67',label:'Girls'},
   files:{icon:'\ud83d\udcce',label:'Files'},
   journal:{icon:'\ud83d\udcd4',label:'Journal'}
@@ -4261,6 +4576,8 @@ renderBlockNav();
   const btn=document.getElementById('sfxMuteBtn');
   if(btn){ btn.textContent=sfxMuted?'🔇 Sound':'🔊 Sound'; btn.classList.toggle('is-muted',sfxMuted); }
 })();
+loadWorkOrders();
+renderOrderPads();
 </script>
   <div class="backup-toast" id="backupToast"></div>
 </body>
