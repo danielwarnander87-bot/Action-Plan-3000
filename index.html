@@ -765,6 +765,12 @@
     text-align:center;padding:4px 2px;outline:none;
   }
   .oi-qty::placeholder{color:rgba(255,255,255,0.35);}
+  .oi-code{
+    width:64px;flex-shrink:0;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);
+    border-radius:6px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;color:#FFE066;
+    text-align:center;padding:4px 3px;outline:none;
+  }
+  .oi-code::placeholder{color:rgba(255,255,255,0.35);}
   .oi-unit{
     flex-shrink:0;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);
     border-radius:6px;font-family:'Nunito',sans-serif;font-weight:700;font-size:11.5px;color:#F5F5FA;
@@ -1644,6 +1650,28 @@
     body.print-mealplan-only .budget-link,
     body.print-mealplan-only #viewStudy{display:none!important;}
     body.print-mealplan-only [data-block-id="mealplan"]{margin-top:0;}
+
+    body.print-vendor-order .scene-bg,
+    body.print-vendor-order .tab-bar,
+    body.print-vendor-order header,
+    body.print-vendor-order .board>.block:not([data-block-id="orders"]),
+    body.print-vendor-order #customBlocksContainer,
+    body.print-vendor-order .quote-wrap,
+    body.print-vendor-order footer,
+    body.print-vendor-order #viewStudy,
+    body.print-vendor-order #plcbOrderPad{display:none!important;}
+    body.print-vendor-order [data-block-id="orders"]{margin-top:0;}
+
+    body.print-plcb-order .scene-bg,
+    body.print-plcb-order .tab-bar,
+    body.print-plcb-order header,
+    body.print-plcb-order .board>.block:not([data-block-id="orders"]),
+    body.print-plcb-order #customBlocksContainer,
+    body.print-plcb-order .quote-wrap,
+    body.print-plcb-order footer,
+    body.print-plcb-order #viewStudy,
+    body.print-plcb-order #vendorOrderPad{display:none!important;}
+    body.print-plcb-order [data-block-id="orders"]{margin-top:0;}
     .block.filesblock h2{font-size:15px;}
     .file-actions,.files-storage-note{display:none!important;}
     .file-thumb,.file-icon{width:24px;height:24px;}
@@ -1870,9 +1898,10 @@
           </div>
           <div class="order-items" id="vendorItemsList"></div>
           <div class="order-pad-actions">
-            <button class="bullet-add-btn" type="button" onclick="addVendorItem()">+ Add item</button>
-            <button class="order-copy-btn" type="button" onclick="copyVendorOrder()">📋 Copy order</button>
-            <button class="order-clear-btn" type="button" onclick="clearVendorOrder()">🗑 Clear items</button>
+            <button class="bullet-add-btn no-print" type="button" onclick="addVendorItem()">+ Add item</button>
+            <button class="order-copy-btn no-print" type="button" onclick="copyVendorOrder()">📋 Copy order</button>
+            <button class="order-clear-btn no-print" type="button" onclick="clearVendorOrder()">🗑 Clear items</button>
+            <button class="order-copy-btn no-print" type="button" onclick="printVendorOrder()">🖨 Print</button>
             <span class="order-copy-flash" id="vendorCopyFlash"></span>
           </div>
         </div>
@@ -1880,7 +1909,7 @@
         <div class="order-pad plcb-pad" id="plcbOrderPad">
           <div class="order-pad-head">
             <div class="order-pad-title-static">🍷 PLCB Wine &amp; Spirits Order</div>
-            <a class="budget-link" style="margin-bottom:0;" href="https://www.pa.gov/services/lcb/order-wine-and-spirits-online-loop-portal" target="_blank" rel="noopener">🔗 Open LOOP Portal →</a>
+            <a class="budget-link no-print" style="margin-bottom:0;" href="https://www.pa.gov/services/lcb/order-wine-and-spirits-online-loop-portal" target="_blank" rel="noopener">🔗 Open LOOP Portal →</a>
           </div>
           <div class="order-pad-meta-row">
             <input type="text" id="plcbStoreInput" class="order-meta-input" placeholder="Store #" onchange="updateVendorMeta()">
@@ -1890,18 +1919,19 @@
           <div class="order-subsection">
             <div class="order-subsection-label">🥃 Liquor</div>
             <div class="order-items" id="plcbLiquorItemsList"></div>
-            <button class="bullet-add-btn" type="button" onclick="addPlcbItem('liquor')">+ Add liquor item</button>
+            <button class="bullet-add-btn no-print" type="button" onclick="addPlcbItem('liquor')">+ Add liquor item</button>
           </div>
 
           <div class="order-subsection">
             <div class="order-subsection-label">🍇 Wine</div>
             <div class="order-items" id="plcbWineItemsList"></div>
-            <button class="bullet-add-btn" type="button" onclick="addPlcbItem('wine')">+ Add wine item</button>
+            <button class="bullet-add-btn no-print" type="button" onclick="addPlcbItem('wine')">+ Add wine item</button>
           </div>
 
           <div class="order-pad-actions">
-            <button class="order-copy-btn" type="button" onclick="copyPlcbOrder()">📋 Copy order</button>
-            <button class="order-clear-btn" type="button" onclick="clearPlcbOrder()">🗑 Clear items</button>
+            <button class="order-copy-btn no-print" type="button" onclick="copyPlcbOrder()">📋 Copy order</button>
+            <button class="order-clear-btn no-print" type="button" onclick="clearPlcbOrder()">🗑 Clear items</button>
+            <button class="order-copy-btn no-print" type="button" onclick="printPlcbOrder()">🖨 Print</button>
             <span class="order-copy-flash" id="plcbCopyFlash"></span>
           </div>
         </div>
@@ -4305,12 +4335,16 @@ function saveWorkOrders(){
 function unitOptionsHtml(units,selected){
   return units.map(u=>'<option value="'+u+'"'+(selected===u?' selected':'')+'>'+u+'</option>').join('');
 }
-function renderOrderItemRow(item,units,updateFn,delFn){
+function renderOrderItemRow(item,units,updateFn,delFn,withCode){
+  const codeHtml = withCode
+    ? '<input type="text" class="oi-code" placeholder="Code" value="'+escapeHtml(item.code||'')+'" onchange="'+updateFn+'(\''+item.id+'\',\'code\',this.value)">'
+    : '';
   return '<div class="order-item-row">'+
     '<input type="text" class="oi-label" placeholder="Item" value="'+escapeHtml(item.label||'')+'" onchange="'+updateFn+'(\''+item.id+'\',\'label\',this.value)">'+
+    codeHtml+
     '<input type="number" class="oi-qty" placeholder="Qty" min="0" step="1" value="'+(item.qty!==undefined&&item.qty!==null?item.qty:'')+'" onchange="'+updateFn+'(\''+item.id+'\',\'qty\',this.value)">'+
     '<select class="oi-unit" onchange="'+updateFn+'(\''+item.id+'\',\'unit\',this.value)">'+unitOptionsHtml(units,item.unit||units[0])+'</select>'+
-    '<button class="oi-del" type="button" onclick="'+delFn+'(\''+item.id+'\')">×</button>'+
+    '<button class="oi-del no-print" type="button" onclick="'+delFn+'(\''+item.id+'\')">×</button>'+
   '</div>';
 }
 function renderOrderPads(){
@@ -4325,15 +4359,15 @@ function renderOrderPads(){
 
   const vendorList=document.getElementById('vendorItemsList');
   if(vendorList){
-    vendorList.innerHTML = workOrders.vendorItems.map(it=>renderOrderItemRow(it,VENDOR_UNITS,'updateVendorItem','deleteVendorItem')).join('');
+    vendorList.innerHTML = workOrders.vendorItems.map(it=>renderOrderItemRow(it,VENDOR_UNITS,'updateVendorItem','deleteVendorItem',false)).join('');
   }
   const liquorList=document.getElementById('plcbLiquorItemsList');
   if(liquorList){
-    liquorList.innerHTML = workOrders.plcbLiquorItems.map(it=>renderOrderItemRow(it,PLCB_UNITS,'updatePlcbLiquorItem','deletePlcbLiquorItem')).join('');
+    liquorList.innerHTML = workOrders.plcbLiquorItems.map(it=>renderOrderItemRow(it,PLCB_UNITS,'updatePlcbLiquorItem','deletePlcbLiquorItem',true)).join('');
   }
   const wineList=document.getElementById('plcbWineItemsList');
   if(wineList){
-    wineList.innerHTML = workOrders.plcbWineItems.map(it=>renderOrderItemRow(it,PLCB_UNITS,'updatePlcbWineItem','deletePlcbWineItem')).join('');
+    wineList.innerHTML = workOrders.plcbWineItems.map(it=>renderOrderItemRow(it,PLCB_UNITS,'updatePlcbWineItem','deletePlcbWineItem',true)).join('');
   }
 }
 function updateVendorMeta(){
@@ -4371,7 +4405,7 @@ function clearVendorOrder(){
 }
 function addPlcbItem(section){
   const arr = section==='wine' ? workOrders.plcbWineItems : workOrders.plcbLiquorItems;
-  arr.push({id:uid(),label:'',qty:'',unit:PLCB_UNITS[0]});
+  arr.push({id:uid(),label:'',qty:'',unit:PLCB_UNITS[0],code:''});
   saveWorkOrders();
   renderOrderPads();
 }
@@ -4450,12 +4484,12 @@ function copyPlcbOrder(){
   const liquor=workOrders.plcbLiquorItems.filter(it=>it.label&&it.label.trim());
   lines.push('Liquor:');
   if(!liquor.length) lines.push('  (no items yet)');
-  liquor.forEach(it=>{ lines.push('- '+(it.qty||'?')+' '+(it.unit||'')+' — '+it.label); });
+  liquor.forEach(it=>{ lines.push('- '+(it.qty||'?')+' '+(it.unit||'')+(it.code?' [Code: '+it.code+']':'')+' — '+it.label); });
   lines.push('');
   const wine=workOrders.plcbWineItems.filter(it=>it.label&&it.label.trim());
   lines.push('Wine:');
   if(!wine.length) lines.push('  (no items yet)');
-  wine.forEach(it=>{ lines.push('- '+(it.qty||'?')+' '+(it.unit||'')+' — '+it.label); });
+  wine.forEach(it=>{ lines.push('- '+(it.qty||'?')+' '+(it.unit||'')+(it.code?' [Code: '+it.code+']':'')+' — '+it.label); });
   const text=lines.join('\n');
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).then(()=>flashCopyNote('plcbCopyFlash')).catch(()=>{copyToClipboardFallback(text);flashCopyNote('plcbCopyFlash');});
@@ -4463,6 +4497,16 @@ function copyPlcbOrder(){
     copyToClipboardFallback(text);
     flashCopyNote('plcbCopyFlash');
   }
+}
+function printVendorOrder(){
+  document.body.classList.add('print-vendor-order');
+  window.print();
+  setTimeout(()=>{document.body.classList.remove('print-vendor-order');},500);
+}
+function printPlcbOrder(){
+  document.body.classList.add('print-plcb-order');
+  window.print();
+  setTimeout(()=>{document.body.classList.remove('print-plcb-order');},500);
 }
 
 const BLOCK_ORDER_KEY='actionPlan3000_blockOrder';
