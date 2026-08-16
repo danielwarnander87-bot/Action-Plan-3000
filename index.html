@@ -154,7 +154,15 @@
   header{
     text-align:center;
     padding:34px 20px 22px;
+    position:relative;
   }
+  .sfx-toggle-btn{
+    position:absolute; top:14px; right:14px; z-index:5;
+    background:rgba(255,255,255,0.65); border:1.5px solid rgba(22,11,41,0.18); border-radius:20px;
+    padding:6px 12px; font-family:'Fredoka',sans-serif; font-weight:700; font-size:12px; color:var(--ink);
+    cursor:pointer; box-shadow:0 2px 6px rgba(22,11,41,0.12);
+  }
+  .sfx-toggle-btn.is-muted{opacity:0.55;}
   h1{
     font-family:'Fredoka',sans-serif;
     font-weight:700;
@@ -1200,6 +1208,68 @@
   .journal-summary-day-label{font-family:'VT323',monospace;font-size:16px;color:#FFD23F;letter-spacing:1px;margin-bottom:4px;}
   .journal-summary-day-text{font-family:'VT323',monospace;font-size:16px;line-height:1.4;color:#33FF66;text-shadow:0 0 4px rgba(51,255,102,0.5);white-space:pre-wrap;}
   .journal-summary-empty{font-family:'VT323',monospace;font-size:16px;color:#1FCF52;opacity:0.6;margin-top:12px;}
+
+  /* ---------- Weekly Summary Archive ---------- */
+  .weekly-summary-panel{
+    background:rgba(31,207,82,0.08);
+    border:1.5px dashed rgba(31,207,82,0.5);
+    border-radius:14px;
+    padding:10px 14px;
+    margin-top:10px;
+  }
+  .weekly-summary-label{
+    font-family:'VT323',monospace;
+    font-size:16px;
+    letter-spacing:0.5px;
+    color:#33FF66;
+    text-shadow:0 0 4px rgba(51,255,102,0.4);
+    margin-bottom:4px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .weekly-summary-text{
+    width:100%;
+    min-height:70px;
+    border:1.5px solid #1A5C2E;
+    background:#04140A;
+    border-radius:8px;
+    padding:8px 10px;
+    font-family:'VT323',monospace;
+    font-size:16px;
+    color:#33FF66;
+    text-shadow:0 0 4px rgba(51,255,102,0.3);
+    resize:vertical;
+    outline:none;
+    line-height:1.4;
+  }
+  .weekly-summary-text::placeholder{color:#1FCF52;opacity:0.5;}
+  .weekly-summary-text:focus{background:#06190D;border-color:#33FF66;}
+  .weekly-summary-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+  .ws-archive-status{font-family:'VT323',monospace;font-size:14px;color:#FFD23F;margin-top:6px;min-height:16px;}
+  .ws-streak-badge{
+    font-family:'VT323',monospace; font-size:13px; color:#04140A; background:#FFD23F;
+    border-radius:10px; padding:2px 9px; letter-spacing:0.5px; white-space:nowrap;
+  }
+  .ws-archive-entry{margin-top:12px;padding-top:10px;border-top:1px solid #1A5C2E;}
+  .ws-archive-entry:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+  .ws-archive-entry-head{
+    display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap;
+    font-family:'VT323',monospace; font-size:16px; color:#FFD23F; letter-spacing:0.5px; margin-bottom:4px;
+  }
+  .ws-archive-entry-del{
+    background:none; border:1px solid #5C1A1A; color:#FF6B6B; font-family:'VT323',monospace;
+    font-size:13px; border-radius:5px; padding:1px 8px; cursor:pointer;
+  }
+  .ws-archive-entry-text{font-family:'VT323',monospace;font-size:16px;line-height:1.4;color:#33FF66;text-shadow:0 0 4px rgba(51,255,102,0.4);white-space:pre-wrap;}
+  .ws-archive-empty{font-family:'VT323',monospace;font-size:16px;color:#1FCF52;opacity:0.6;}
+  .ws-archive-stats-row{
+    display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #1A5C2E;
+  }
+  .ws-archive-stat{font-family:'VT323',monospace; font-size:15px; color:#1FCF52;}
+  .ws-archive-stat b{color:#FFD23F; font-size:18px;}
   .quote-wrap{
     margin-top:30px;
     border-radius:22px;
@@ -1700,6 +1770,7 @@
 
   <div id="viewPlanner" class="view active">
   <header>
+    <button class="sfx-toggle-btn" id="sfxMuteBtn" type="button" onclick="toggleSfxMute()">🔊 Sound</button>
     <h1>ACTION PLAN 3000<span class="bang">!</span></h1>
     <div class="week-range" id="weekRange"></div>
   </header>
@@ -1903,6 +1974,17 @@
         <div class="weekly-focus-label">🎯 This Week's Focus</div>
         <textarea id="weeklyFocusText" class="weekly-focus-text" rows="1" placeholder="What's the pattern you're watching for this week?"></textarea>
       </div>
+      <div class="weekly-summary-panel">
+        <div class="weekly-summary-label">
+          <span>📈 Weekly Summary <span id="wsStreakBadgeWrap"></span></span>
+          <button class="journal-tool-btn" type="button" onclick="viewWeeklySummaryArchive()">📚 View Archive</button>
+        </div>
+        <textarea id="weeklySummaryText" class="weekly-summary-text" rows="3" placeholder="End-of-week recap — what actually happened, good or bad. Save it and it stays logged even after the week resets."></textarea>
+        <div class="weekly-summary-actions">
+          <button class="journal-tool-btn" type="button" onclick="saveWeeklySummaryToArchive()">💾 Save to Archive</button>
+        </div>
+        <div class="ws-archive-status" id="wsArchiveStatus"></div>
+      </div>
       <div id="journalBody">
         <div class="journal-day-tabs no-print" id="journalDayTabs"></div>
         <div id="journalDayPanels"></div>
@@ -1945,6 +2027,16 @@
       <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
     </div>
   </footer>
+
+  <div class="eta-overlay" id="weeklySummaryArchiveOverlay" onclick="if(event.target===this)document.getElementById('weeklySummaryArchiveOverlay').classList.remove('open');">
+    <div class="eta-modal" style="max-width:560px;max-height:80vh;overflow-y:auto;">
+      <div class="eta-modal-head">
+        <span>📈 Weekly Summary Archive</span>
+        <button class="clear-btn" onclick="document.getElementById('weeklySummaryArchiveOverlay').classList.remove('open');">✕</button>
+      </div>
+      <div id="weeklySummaryArchiveBody" style="padding:14px 4px;font-size:14px;line-height:1.5;"></div>
+    </div>
+  </div>
 
   <div class="eta-overlay" id="lastWeekJournalOverlay" onclick="if(event.target===this)document.getElementById('lastWeekJournalOverlay').classList.remove('open');">
     <div class="eta-modal" style="max-width:560px;max-height:80vh;overflow-y:auto;">
@@ -2190,6 +2282,72 @@
   </div>
 
 <script>
+/* ============================================================
+   SOUND ENGINE — click ticks on every button + soft journal typing
+   ============================================================ */
+let __sfxCtx=null;
+function __sfxGetCtx(){
+  if(!__sfxCtx){
+    try{ __sfxCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+  }
+  if(__sfxCtx.state==='suspended'){ try{__sfxCtx.resume();}catch(e){} }
+  return __sfxCtx;
+}
+function __playTone(freq,delay,dur,type,vol){
+  const ctx=__sfxGetCtx();
+  if(!ctx) return;
+  try{
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.type=type||'sine';
+    o.frequency.value=freq;
+    o.connect(g); g.connect(ctx.destination);
+    const t0=ctx.currentTime+(delay||0);
+    g.gain.setValueAtTime(0,t0);
+    g.gain.linearRampToValueAtTime(vol||0.12,t0+0.008);
+    g.gain.exponentialRampToValueAtTime(0.001,t0+(dur||0.09));
+    o.start(t0);
+    o.stop(t0+(dur||0.09)+0.02);
+  }catch(e){}
+}
+let sfxMuted=false;
+function soundClick(){ if(!sfxMuted) __playTone(620,0,0.07,'triangle',0.1); }
+function soundType(){
+  if(sfxMuted) return;
+  // slight pitch wobble per keystroke so it doesn't feel like a metronome
+  const f=520+Math.random()*140;
+  __playTone(f,0,0.028,'square',0.045);
+}
+function soundSaved(){
+  if(sfxMuted) return;
+  __playTone(660,0,0.09,'triangle',0.12);
+  __playTone(880,0.07,0.13,'triangle',0.12);
+}
+function toggleSfxMute(){
+  sfxMuted=!sfxMuted;
+  const btn=document.getElementById('sfxMuteBtn');
+  if(btn){ btn.textContent=sfxMuted?'🔇 Sound':'🔊 Sound'; btn.classList.toggle('is-muted',sfxMuted); }
+  try{localStorage.setItem('actionPlan3000_sfxMuted', sfxMuted?'1':'0');}catch(e){}
+}
+try{ sfxMuted = localStorage.getItem('actionPlan3000_sfxMuted')==='1'; }catch(e){}
+
+/* global click tick — fires for any button on the page */
+document.addEventListener('click', function(e){
+  const btn=e.target.closest('button');
+  if(btn) soundClick();
+}, true);
+
+/* typing sound in journal + weekly summary textareas */
+document.addEventListener('keydown', function(e){
+  const el=e.target;
+  if(!el) return;
+  if(el.classList && (el.classList.contains('journal-text') || el.id==='weeklySummaryText' || el.id==='weeklyFocusText')){
+    if(e.key && e.key.length===1 || e.key==='Backspace' || e.key==='Enter' || e.key==='Space'){
+      soundType();
+    }
+  }
+});
+
 const QUOTES=[
   "Courage comes through suffering.",
   "Don't build your happiness on others' sorrow.",
@@ -3096,6 +3254,111 @@ if(weeklyFocusEl){
     persist();
   });
 }
+
+/* ============================================================
+   WEEKLY SUMMARY ARCHIVE — a running log that survives the weekly
+   reset, so consistency (or the lack of it) is visible over time.
+   ============================================================ */
+const WS_ARCHIVE_KEY='actionPlan3000::weeklySummaryArchive';
+let weeklySummaryDraft=typeof saved.weeklySummaryDraft==='string'?saved.weeklySummaryDraft:'';
+let wsArchive=[];
+try{ const raw=localStorage.getItem(WS_ARCHIVE_KEY); if(raw) wsArchive=JSON.parse(raw); }catch(e){}
+
+const weeklySummaryEl=document.getElementById('weeklySummaryText');
+if(weeklySummaryEl){
+  weeklySummaryEl.value=weeklySummaryDraft;
+  weeklySummaryEl.addEventListener('input',()=>{
+    weeklySummaryDraft=weeklySummaryEl.value;
+    persist();
+  });
+}
+
+function wsSaveArchiveToStorage(){
+  try{ localStorage.setItem(WS_ARCHIVE_KEY, JSON.stringify(wsArchive)); }catch(e){}
+}
+function wsSortedArchive(){
+  return wsArchive.slice().sort((a,b)=> (a.wk<b.wk?1:-1)); // newest first
+}
+function wsCurrentStreak(){
+  // counts consecutive weeks ending at the most recent saved entry that has actual text
+  const sorted=wsSortedArchive().filter(e=>e.text && e.text.trim());
+  if(!sorted.length) return 0;
+  let streak=1;
+  for(let i=0;i<sorted.length-1;i++){
+    const cur=new Date(sorted[i].wk+'T00:00:00');
+    const prev=new Date(sorted[i+1].wk+'T00:00:00');
+    const diffDays=Math.round((cur-prev)/86400000);
+    if(diffDays===7) streak++;
+    else break;
+  }
+  return streak;
+}
+function wsRenderStreakBadge(){
+  const wrap=document.getElementById('wsStreakBadgeWrap');
+  if(!wrap) return;
+  const streak=wsCurrentStreak();
+  wrap.innerHTML = streak>0
+    ? '<span class="ws-streak-badge">🔥 '+streak+' week'+(streak===1?'':'s')+' logged</span>'
+    : '';
+}
+function saveWeeklySummaryToArchive(){
+  const text=weeklySummaryEl?weeklySummaryEl.value.trim():'';
+  const statusEl=document.getElementById('wsArchiveStatus');
+  if(!text){
+    if(statusEl){ statusEl.textContent='Nothing to save yet — write the recap first.'; statusEl.style.color='#FF6B6B'; }
+    return;
+  }
+  const weekLabel=fmtShort(monday).toUpperCase()+' – '+fmtShort(sunday).toUpperCase()+', '+sunday.getFullYear();
+  const existingIdx=wsArchive.findIndex(e=>e.wk===wk);
+  const entry={wk:wk, weekLabel:weekLabel, text:text, savedAt:new Date().toISOString()};
+  if(existingIdx>-1) wsArchive[existingIdx]=entry;
+  else wsArchive.push(entry);
+  wsSaveArchiveToStorage();
+  wsRenderStreakBadge();
+  soundSaved();
+  if(statusEl){
+    statusEl.style.color='#33FF66';
+    statusEl.textContent = existingIdx>-1
+      ? '✓ Updated this week\u2019s saved summary — '+wsArchive.length+' week'+(wsArchive.length===1?'':'s')+' in the archive.'
+      : '✓ Logged. '+wsArchive.length+' week'+(wsArchive.length===1?'':'s')+' in the archive now.';
+    clearTimeout(saveWeeklySummaryToArchive._t);
+    saveWeeklySummaryToArchive._t=setTimeout(()=>{ statusEl.textContent=''; },4000);
+  }
+}
+function wsDeleteEntry(entryWk){
+  wsArchive=wsArchive.filter(e=>e.wk!==entryWk);
+  wsSaveArchiveToStorage();
+  wsRenderStreakBadge();
+  viewWeeklySummaryArchive();
+}
+function viewWeeklySummaryArchive(){
+  const overlay=document.getElementById('weeklySummaryArchiveOverlay');
+  const body=document.getElementById('weeklySummaryArchiveBody');
+  const sorted=wsSortedArchive();
+  if(!sorted.length){
+    body.innerHTML='<p class="ws-archive-empty">Nothing logged yet. Write a recap in the Weekly Summary box and hit Save to Archive — it\u2019ll start building a history here that survives the weekly reset.</p>';
+    overlay.classList.add('open');
+    return;
+  }
+  const withText=sorted.filter(e=>e.text&&e.text.trim());
+  const streak=wsCurrentStreak();
+  let html='<div class="ws-archive-stats-row">'+
+    '<div class="ws-archive-stat"><b>'+withText.length+'</b> weeks logged</div>'+
+    '<div class="ws-archive-stat"><b>'+streak+'</b> week'+(streak===1?'':'s')+' current streak</div>'+
+    '</div>';
+  sorted.forEach(e=>{
+    const safeText=(e.text||'').replace(/</g,'&lt;');
+    html+='<div class="ws-archive-entry">'+
+      '<div class="ws-archive-entry-head"><span>'+e.weekLabel+'</span>'+
+      '<button class="ws-archive-entry-del" type="button" onclick="if(confirm(&quot;Delete this week&#39;s saved summary? This can&#39;t be undone.&quot;))wsDeleteEntry(\''+e.wk+'\')">Delete</button></div>'+
+      '<div class="ws-archive-entry-text">'+safeText+'</div>'+
+      '</div>';
+  });
+  body.innerHTML=html;
+  overlay.classList.add('open');
+}
+wsRenderStreakBadge();
+
 const todayKeyForJournal=todayJournalKey();
 let activeJournalDay=todayKeyForJournal;
 
@@ -3644,6 +3907,7 @@ function persist(){
   data.debtChecks=dc;
   data.journal=journalData;
   data.weeklyFocus=weeklyFocusData;
+  data.weeklySummaryDraft=weeklySummaryDraft;
   data.keyTasks=keyTasksData;
   data.mealPlan=mealPlanData;
   try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
@@ -3993,6 +4257,10 @@ function pickBlockForMove(block,e){
 }
 applyBlockOrder();
 renderBlockNav();
+(function initSfxBtn(){
+  const btn=document.getElementById('sfxMuteBtn');
+  if(btn){ btn.textContent=sfxMuted?'🔇 Sound':'🔊 Sound'; btn.classList.toggle('is-muted',sfxMuted); }
+})();
 </script>
   <div class="backup-toast" id="backupToast"></div>
 </body>
