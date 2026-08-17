@@ -243,13 +243,65 @@
   /* ---------- Wizard cursor companion ---------- */
   #jrpgWizardCursor{
     position:fixed; z-index:402; top:0; left:0; pointer-events:none;
-    font-size:26px; opacity:0; transition:opacity 0.4s;
+    width:1px; height:1px; opacity:0; transition:opacity 0.4s;
     transform:translate(-50%,-50%);
-    filter:drop-shadow(0 2px 5px rgba(0,0,0,0.45));
   }
   body.jrpg-mode #jrpgWizardCursor{opacity:1;}
-  .wiz-bob{display:inline-block; animation:wizBob 1.8s ease-in-out infinite;}
+  .wiz-sprite-wrap{position:relative; width:0; height:0;}
+  .wiz-bob{
+    display:inline-block; position:absolute; left:-13px; bottom:0;
+    font-size:26px; animation:wizBob 1.8s ease-in-out infinite;
+    filter:drop-shadow(0 2px 5px rgba(0,0,0,0.45));
+  }
   @keyframes wizBob{0%,100%{transform:translateY(0) rotate(-5deg);} 50%{transform:translateY(-6px) rotate(5deg);}}
+  .wiz-legs{position:absolute; left:-6px; bottom:-8px; display:flex; gap:5px;}
+  .wiz-leg{width:3.5px; height:8px; background:#3a2a5c; border-radius:2px 2px 1px 1px; transform-origin:top center; box-shadow:0 1px 2px rgba(0,0,0,0.4);}
+  #jrpgWizardCursor.walking .wiz-leg-l{animation:wizLegSwingL 0.32s ease-in-out infinite;}
+  #jrpgWizardCursor.walking .wiz-leg-r{animation:wizLegSwingR 0.32s ease-in-out infinite;}
+  @keyframes wizLegSwingL{0%,100%{transform:rotate(-24deg);} 50%{transform:rotate(24deg);}}
+  @keyframes wizLegSwingR{0%,100%{transform:rotate(24deg);} 50%{transform:rotate(-24deg);}}
+  #jrpgWizardCursor.jumping .wiz-sprite-wrap{animation:wizJump 0.45s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes wizJump{
+    0%{transform:translateY(0) scale(1,1);}
+    30%{transform:translateY(-22px) scale(0.88,1.16);}
+    55%{transform:translateY(-26px) scale(1.08,0.9);}
+    100%{transform:translateY(0) scale(1,1);}
+  }
+  #jrpgWizardCursor.jumping .wiz-leg{animation:wizLegTuck 0.45s ease!important;}
+  @keyframes wizLegTuck{0%,100%{transform:rotate(0deg) translateY(0);} 40%{transform:rotate(0deg) translateY(4px);}}
+
+  /* ---------- Wizard spell projectiles (click to cast) ---------- */
+  .wiz-projectile{
+    position:fixed; z-index:401; pointer-events:none;
+    font-size:20px; will-change:transform,opacity;
+    filter:drop-shadow(0 0 6px currentColor);
+  }
+  .wiz-impact{
+    position:fixed; z-index:401; pointer-events:none;
+    width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%;
+    background:radial-gradient(circle,#fff,#FFD23F 45%,transparent 72%);
+    animation:wizImpactPop 0.5s ease-out forwards;
+  }
+  @keyframes wizImpactPop{
+    0%{transform:scale(0.3); opacity:1;}
+    100%{transform:scale(3.6); opacity:0;}
+  }
+
+  /* ---------- Random dragon encounter ---------- */
+  .wiz-dragon{
+    position:fixed; z-index:405; font-size:44px; cursor:pointer; user-select:none;
+    filter:drop-shadow(0 0 10px rgba(255,90,90,0.55));
+    animation:dragonHover 1.8s ease-in-out infinite;
+  }
+  @keyframes dragonHover{0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);}}
+  .wiz-dragon.hit{animation:dragonHitShake 0.25s ease;}
+  @keyframes dragonHitShake{0%{transform:scale(1);} 50%{transform:scale(1.22) rotate(-8deg);} 100%{transform:scale(1);}}
+  .wiz-dragon-hp{
+    position:absolute; top:-16px; left:50%; transform:translateX(-50%); white-space:nowrap;
+    font-family:'Fredoka',sans-serif; font-size:11px; font-weight:800;
+    background:var(--pink-deep); color:#fff; padding:2px 8px; border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.35);
+  }
   h1{
     font-family:'Fredoka',sans-serif;
     font-weight:700;
@@ -548,6 +600,31 @@
   .study-tool-link:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--indigo-deep);}
   .study-tool-link:nth-child(2){background:var(--pink);box-shadow:3px 3px 0 var(--pink-deep);}
   .study-tool-link:nth-child(3){background:var(--green-deep);box-shadow:3px 3px 0 #067A45;}
+
+  /* ---------- Test-Taking Strategy Slideshow ---------- */
+  .slideshow-wrap{max-width:560px;margin:0 auto 26px;}
+  .slideshow-card{
+    position:relative;overflow:hidden;
+    background:linear-gradient(160deg,#1A0512,#150A2C 55%,#04140D);
+    border:3px solid var(--indigo);border-radius:20px;padding:24px 22px 18px;
+    box-shadow:6px 6px 0 var(--indigo-deep),0 0 30px rgba(120,90,255,0.4);
+    min-height:220px;display:flex;flex-direction:column;
+  }
+  .slide-eyebrow{font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--indigo-soft);margin-bottom:6px;}
+  .slide-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:20px;color:#FFE9A8;text-shadow:0 0 10px rgba(255,210,63,0.5);margin-bottom:10px;}
+  .slide-body{font-family:'Nunito',sans-serif;font-size:14.5px;line-height:1.55;color:#F0EEFA;flex:1;}
+  .slide-body b{color:#5CFFAE;}
+  .slide-dots{display:flex;gap:6px;justify-content:center;margin:14px 0 4px;}
+  .slide-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:.15s;}
+  .slide-dot.active{background:var(--pop);box-shadow:0 0 6px rgba(255,210,63,0.8);width:18px;border-radius:4px;}
+  .slideshow-controls{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;}
+  .slide-nav-btn{
+    background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.25);color:#F5F5FA;
+    width:38px;height:38px;border-radius:50%;font-size:1.1em;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
+  .slide-nav-btn:active{background:rgba(255,255,255,0.25);}
+  .slide-nav-btn.play-btn{width:48px;height:48px;background:var(--indigo);border-color:var(--indigo-deep);font-size:1.3em;}
+  .slide-counter{font-family:'Nunito',sans-serif;font-weight:800;font-size:11.5px;color:var(--indigo-soft);text-align:center;margin-top:8px;}
   .study-toolbar{display:flex;justify-content:space-between;align-items:center;max-width:480px;margin:0 auto;flex-wrap:wrap;gap:8px;}
   .study-count{font-size:12px;font-weight:800;opacity:0.6;}
   .study-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:20px;}
@@ -1984,7 +2061,15 @@
     <rect class="storm-flash" x="0" y="0" width="320" height="180" fill="#E8E4FF"/>
   </svg>
 
-  <div id="jrpgWizardCursor"><span class="wiz-bob">🧙</span></div>
+  <div id="jrpgWizardCursor">
+    <div class="wiz-sprite-wrap">
+      <span class="wiz-bob">🧙</span>
+      <div class="wiz-legs">
+        <span class="wiz-leg wiz-leg-l"></span>
+        <span class="wiz-leg wiz-leg-r"></span>
+      </div>
+    </div>
+  </div>
 
   <div class="stripe-band"><div class="track" id="stripeTrack"></div></div>
 
@@ -2511,6 +2596,22 @@
         </div>
       </div>
 
+      <div class="slideshow-wrap no-print">
+        <div class="study-tools-label">Test-Taking Strategy — Xcel Guide, Simplified</div>
+        <div class="slideshow-card">
+          <div class="slide-eyebrow" id="slideEyebrow">Slide 1 of 8</div>
+          <div class="slide-title" id="slideTitle"></div>
+          <div class="slide-body" id="slideBody"></div>
+          <div class="slide-dots" id="slideDots"></div>
+        </div>
+        <div class="slideshow-controls">
+          <button class="slide-nav-btn" type="button" onclick="slidePrev()" title="Previous">⏮</button>
+          <button class="slide-nav-btn play-btn" id="slidePlayBtn" type="button" onclick="slideToggleAudio()" title="Play/Pause narration">▶</button>
+          <button class="slide-nav-btn" type="button" onclick="slideNext()" title="Skip / Next">⏭</button>
+        </div>
+        <div class="slide-counter" id="slideCounter"></div>
+      </div>
+
       <div class="study-form no-print">
         <input type="text" id="cardTermInput" placeholder="Term (e.g. Coinsurance Clause)" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('cardDefInput').focus();}">
         <textarea id="cardDefInput" rows="2" placeholder="Definition / what it means..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addStudyCard();}"></textarea>
@@ -2717,8 +2818,83 @@ function toggleJrpgMode(){
   const btn=document.getElementById('jrpgToggleBtn');
   if(btn){ btn.classList.toggle('active',jrpgMode); btn.textContent=jrpgMode?'✨ JRPG Mode: On':'✨ JRPG Mode'; }
   document.body.classList.toggle('jrpg-mode',jrpgMode);
-  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); }
-  else{ stopJrpgAmbient(); stopStorm(); }
+  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); startDragonSchedule(); }
+  else{ stopJrpgAmbient(); stopStorm(); stopDragonSchedule(); }
+}
+
+/* ---------- Random dragon encounter — click him a few times to win ---------- */
+let dragonEl=null, dragonHitsNeeded=3, dragonHitsLanded=0, dragonScheduleTimer=null, dragonFleeTimer=null;
+function scheduleDragon(){
+  const delay=4*60000 + Math.random()*4*60000; // every 4-8 minutes while JRPG Mode is on
+  dragonScheduleTimer=setTimeout(()=>{
+    if(jrpgMode && !dragonEl) spawnDragon();
+    scheduleDragon();
+  },delay);
+}
+function spawnDragon(){
+  dragonHitsNeeded=3+Math.floor(Math.random()*2); // 3-4 hits
+  dragonHitsLanded=0;
+  dragonEl=document.createElement('div');
+  dragonEl.className='wiz-dragon';
+  dragonEl.textContent='🐉';
+  const margin=90;
+  const x=margin+Math.random()*(window.innerWidth-margin*2);
+  const y=margin+Math.random()*(window.innerHeight*0.55);
+  dragonEl.style.left=x+'px'; dragonEl.style.top=y+'px';
+  const hp=document.createElement('div');
+  hp.className='wiz-dragon-hp';
+  hp.textContent='🐉 × '+dragonHitsNeeded;
+  dragonEl.appendChild(hp);
+  dragonEl.onclick=()=>hitDragon(); // no stopPropagation — lets the wizard's spell also fire and "hit" him
+  document.body.appendChild(dragonEl);
+  if(!sfxMuted){ __playTone(140,0,0.32,'sawtooth',0.08); __playTone(95,0.1,0.4,'triangle',0.06); }
+  clearTimeout(dragonFleeTimer);
+  dragonFleeTimer=setTimeout(()=>despawnDragon(false),14000);
+}
+function hitDragon(){
+  if(!dragonEl) return;
+  dragonHitsLanded++;
+  dragonEl.classList.remove('hit'); void dragonEl.offsetWidth; dragonEl.classList.add('hit');
+  const remaining=dragonHitsNeeded-dragonHitsLanded;
+  if(remaining>0){
+    dragonEl.querySelector('.wiz-dragon-hp').textContent='🐉 × '+remaining;
+    if(!sfxMuted) __playTone(500+Math.random()*200,0,0.08,'square',0.07);
+  } else {
+    despawnDragon(true);
+  }
+}
+function despawnDragon(victory){
+  if(!dragonEl) return;
+  clearTimeout(dragonFleeTimer);
+  const rect=dragonEl.getBoundingClientRect();
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  dragonEl.remove();
+  dragonEl=null;
+  if(victory){
+    if(!sfxMuted){ __playTone(660,0,0.1,'triangle',0.1); __playTone(880,0.09,0.12,'triangle',0.1); __playTone(1108,0.18,0.24,'triangle',0.11); }
+    const txt=document.createElement('div');
+    txt.className='jrpg-quest-text';
+    txt.style.fontSize='16px';
+    txt.textContent='🐉 Dragon vanquished!';
+    txt.style.left=(cx-58)+'px'; txt.style.top=(cy-24)+'px';
+    document.body.appendChild(txt);
+    setTimeout(()=>txt.remove(),1200);
+    for(let i=0;i<8;i++){
+      setTimeout(()=>{
+        const impact=document.createElement('div');
+        impact.className='wiz-impact';
+        impact.style.left=(cx+(Math.random()*70-35))+'px';
+        impact.style.top=(cy+(Math.random()*70-35))+'px';
+        document.body.appendChild(impact);
+        setTimeout(()=>impact.remove(),550);
+      },i*45);
+    }
+  }
+}
+function startDragonSchedule(){ if(dragonScheduleTimer) return; scheduleDragon(); }
+function stopDragonSchedule(){
+  clearTimeout(dragonScheduleTimer); dragonScheduleTimer=null;
+  if(dragonEl) despawnDragon(false);
 }
 
 /* ---------- Storm scene: lightning + thunder ---------- */
@@ -2769,17 +2945,115 @@ function startStorm(){ if(stormLightningTimer) return; scheduleLightning(); }
 function stopStorm(){ clearTimeout(stormLightningTimer); stormLightningTimer=null; }
 
 /* ---------- Wizard cursor companion ---------- */
+const WIZ_OFFSET_X=-58, WIZ_OFFSET_Y=-52; // keeps him up and to the left of the actual pointer, out of the way
 let wizMouseX=window.innerWidth/2, wizMouseY=window.innerHeight/2;
 let wizX=wizMouseX, wizY=wizMouseY;
-document.addEventListener('mousemove',e=>{ wizMouseX=e.clientX; wizMouseY=e.clientY; });
+let wizPrevX=wizX, wizPrevY=wizY, wizWalkFrames=0;
+document.addEventListener('mousemove',e=>{ wizMouseX=e.clientX+WIZ_OFFSET_X; wizMouseY=e.clientY+WIZ_OFFSET_Y; });
 function wizardCursorLoop(){
   wizX+=(wizMouseX-wizX)*0.14;
   wizY+=(wizMouseY-wizY)*0.14;
   const el=document.getElementById('jrpgWizardCursor');
-  if(el){ el.style.left=wizX+'px'; el.style.top=wizY+'px'; }
+  if(el){
+    el.style.left=wizX+'px'; el.style.top=wizY+'px';
+    const speed=Math.hypot(wizX-wizPrevX, wizY-wizPrevY);
+    if(speed>0.35){ wizWalkFrames=8; } else if(wizWalkFrames>0){ wizWalkFrames--; }
+    el.classList.toggle('walking', wizWalkFrames>0);
+  }
+  wizPrevX=wizX; wizPrevY=wizY;
   requestAnimationFrame(wizardCursorLoop);
 }
 requestAnimationFrame(wizardCursorLoop);
+function wizardJump(){
+  const el=document.getElementById('jrpgWizardCursor');
+  if(!el) return;
+  el.classList.remove('jumping');
+  void el.offsetWidth; // restart animation
+  el.classList.add('jumping');
+  clearTimeout(wizardJump._t);
+  wizardJump._t=setTimeout(()=>el.classList.remove('jumping'),460);
+}
+
+/* ---------- Wizard spell-casting on click — full cross-screen shots with a trail ---------- */
+const WIZ_SPELLS=[
+  { icon:'🔥', color:'#FF7A3D', sound:()=>{ __playTone(180,0,0.16,'sawtooth',0.07); __playTone(90,0.05,0.22,'triangle',0.07); } },
+  { icon:'⚡', color:'#4FD2FF', sound:()=>{ __playTone(900,0,0.05,'square',0.06); __playTone(1300,0.03,0.06,'square',0.05); } },
+  { icon:'⭐', color:'#FFE066', sound:()=>{ __playTone(1046,0,0.09,'triangle',0.08); __playTone(1568,0.06,0.14,'triangle',0.07); } }
+];
+function castWizardSpell(targetX,targetY){
+  if(!jrpgMode) return;
+  wizardJump();
+  const spell=WIZ_SPELLS[Math.floor(Math.random()*WIZ_SPELLS.length)];
+  const startX=wizX, startY=wizY;
+
+  // extend the flight path well past the click point, off toward the screen edge,
+  // so it reads as a shot crossing the screen rather than a short hop
+  const dx0=targetX-startX, dy0=targetY-startY;
+  const ang=Math.atan2(dy0,dx0);
+  const overshoot=260+Math.random()*160;
+  const flyX=targetX+Math.cos(ang)*overshoot;
+  const flyY=targetY+Math.sin(ang)*overshoot;
+  const dx=flyX-startX, dy=flyY-startY;
+  const dist=Math.max(1,Math.hypot(dx,dy));
+  const speed=1.7; // px/ms — fast, punchy travel
+  const dur=Math.min(900,Math.max(320,dist/speed));
+  const impactT=Math.max(0.15,Math.min(0.95,Math.hypot(targetX-startX,targetY-startY)/dist));
+
+  const proj=document.createElement('div');
+  proj.className='wiz-projectile';
+  proj.textContent=spell.icon;
+  proj.style.color=spell.color;
+  proj.style.fontSize='26px';
+  proj.style.left=startX+'px';
+  proj.style.top=startY+'px';
+  document.body.appendChild(proj);
+  if(!sfxMuted) spell.sound();
+
+  const arcHeight=-20-Math.random()*20;
+  const t0=performance.now();
+  let lastTrail=0, exploded=false;
+  function animateProjectile(now){
+    const t=Math.min(1,(now-t0)/dur);
+    const x=startX+dx*t;
+    const y=startY+dy*t+Math.sin(t*Math.PI)*arcHeight;
+    proj.style.transform='translate('+(x-startX)+'px,'+(y-startY)+'px) rotate('+(t*540)+'deg)';
+
+    if(now-lastTrail>28 && t<1){
+      lastTrail=now;
+      const ghost=document.createElement('div');
+      ghost.className='wiz-projectile';
+      ghost.textContent=spell.icon;
+      ghost.style.color=spell.color;
+      ghost.style.fontSize=(20-t*6)+'px';
+      ghost.style.left=x+'px';
+      ghost.style.top=y+'px';
+      ghost.style.opacity='0.4';
+      ghost.style.transition='opacity 0.35s ease, transform 0.35s ease';
+      document.body.appendChild(ghost);
+      requestAnimationFrame(()=>{ ghost.style.opacity='0'; ghost.style.transform='scale(0.5)'; });
+      setTimeout(()=>ghost.remove(),380);
+    }
+
+    if(!exploded && t>=impactT){
+      exploded=true;
+      const impact=document.createElement('div');
+      impact.className='wiz-impact';
+      impact.style.left=targetX+'px';
+      impact.style.top=targetY+'px';
+      document.body.appendChild(impact);
+      setTimeout(()=>impact.remove(),550);
+    }
+    if(t<1){ requestAnimationFrame(animateProjectile); }
+    else{ proj.remove(); }
+  }
+  requestAnimationFrame(animateProjectile);
+}
+document.addEventListener('click',function(e){
+  if(!jrpgMode) return;
+  const wizEl=document.getElementById('jrpgWizardCursor');
+  if(wizEl && wizEl.contains(e.target)) return; // don't cast at the wizard itself
+  castWizardSpell(e.clientX,e.clientY);
+});
 
 /* ---------- Collapsible blocks ---------- */
 const COLLAPSED_BLOCKS_KEY='actionPlan3000_collapsedBlocks';
@@ -3206,7 +3480,79 @@ function switchView(view){
   const nav=document.getElementById('blockNav');
   if(nav)nav.style.display=view==='planner'?'flex':'none';
   if(view==='wall')renderWall();
+  if(view!=='study') slidePauseAudio();
 }
+
+/* ============================================================
+   TEST-TAKING STRATEGY SLIDESHOW — simplified from the Xcel
+   test-taking strategy guide screenshots (Aug 17 2026)
+   ============================================================ */
+const STRATEGY_SLIDES=[
+  { title:"Why Test-Taking Strategy Matters",
+    body:"Studying the material is essential, but <b>research shows up to 60% of your score</b> can come down to test-taking skill, not just knowledge. These strategies don't replace studying the content — they're what gives you the edge on the questions you're not 100% sure about." },
+  { title:"Know the Exam Software",
+    body:"The exam software lets you flag questions to come back to, take notes, highlight text, use a calculator, and see a timer. But if the exam is split into sections, <b>once you finish a section you can't go back</b> — double-check before moving on." },
+  { title:"Slow Down on the Wording",
+    body:"It's timed, but don't skim. One small word changes everything — <b>\"which is true\"</b> vs <b>\"which is NOT true\"</b> are completely different questions. Missing a word like that is the single most common way people lose points." },
+  { title:"Answer It Before You Peek",
+    body:"After reading a question, try to answer it in your head <b>before</b> looking at the options. If one of the choices matches what you guessed, that's a strong signal it's the right one — and it keeps the wrong answers from planting doubt." },
+  { title:"Process of Elimination",
+    body:"Even a total guess gets better once you eliminate the obviously wrong options. Cutting just one or two bad answers <b>takes your odds from 25% up to 50% or better</b> — sometimes you can eliminate three and there's only one option left." },
+  { title:"Watch for Negatives",
+    body:"Words like <b>\"not,\" \"least,\" \"false,\"</b> and questions ending in <b>\"EXCEPT\"</b> flip what's actually being asked. This is the most frequent mistake test-takers make — get comfortable spotting these on sight." },
+  { title:"Look for Answer \"Pairs\"",
+    body:"Two similar or opposite-sounding answers often mean the real answer is one of that pair. Example: two options both about \"actual cash value\" at different timing — that pairing alone is a clue the correct answer is one of those two." },
+  { title:"When Multiple Seem Right, Pick the BEST",
+    body:"Some questions have more than one answer that looks correct. Pick the one that <b>most fully and directly answers what's being asked</b> — the wrong one is usually only partly true, or true but doesn't actually answer the question." }
+];
+let slideIdx=0, slidePlaying=false;
+function renderSlide(){
+  const s=STRATEGY_SLIDES[slideIdx];
+  document.getElementById('slideEyebrow').textContent='Slide '+(slideIdx+1)+' of '+STRATEGY_SLIDES.length;
+  document.getElementById('slideTitle').textContent=s.title;
+  document.getElementById('slideBody').innerHTML=s.body;
+  document.getElementById('slideCounter').textContent=(slideIdx+1)+' / '+STRATEGY_SLIDES.length;
+  const dots=document.getElementById('slideDots');
+  dots.innerHTML=STRATEGY_SLIDES.map((_,i)=>'<span class="slide-dot'+(i===slideIdx?' active':'')+'" onclick="slideGoto('+i+')"></span>').join('');
+}
+function slideGoto(i){
+  slideIdx=Math.max(0,Math.min(STRATEGY_SLIDES.length-1,i));
+  renderSlide();
+  if(slidePlaying) slideSpeakCurrent();
+}
+function slideNext(){
+  if(slideIdx>=STRATEGY_SLIDES.length-1){
+    if(slidePlaying) slidePauseAudio();
+    slideIdx=0; renderSlide();
+    return;
+  }
+  slideGoto(slideIdx+1);
+}
+function slidePrev(){ slideGoto(slideIdx-1); }
+function slideSpeakCurrent(){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const s=STRATEGY_SLIDES[slideIdx];
+  const text=s.title+'. '+s.body.replace(/<\/?b>/g,'');
+  const utter=new SpeechSynthesisUtterance(text);
+  utter.rate=0.98;
+  utter.onend=()=>{ if(slidePlaying) slideNext(); };
+  window.speechSynthesis.speak(utter);
+}
+function slideToggleAudio(){
+  slidePlaying=!slidePlaying;
+  const btn=document.getElementById('slidePlayBtn');
+  btn.textContent=slidePlaying?'⏸':'▶';
+  if(slidePlaying) slideSpeakCurrent();
+  else if(window.speechSynthesis) window.speechSynthesis.cancel();
+}
+function slidePauseAudio(){
+  slidePlaying=false;
+  const btn=document.getElementById('slidePlayBtn');
+  if(btn) btn.textContent='▶';
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+}
+renderSlide();
 
 // ============ THE WALL ============
 function wallBlockLabel(key){
@@ -4951,7 +5297,7 @@ applyCollapsedBlocks();
   const btn=document.getElementById('jrpgToggleBtn');
   document.body.classList.toggle('jrpg-mode',jrpgMode);
   if(btn){ btn.classList.toggle('active',jrpgMode); btn.textContent=jrpgMode?'✨ JRPG Mode: On':'✨ JRPG Mode'; }
-  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); }
+  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); startDragonSchedule(); }
 })();
 </script>
   <div class="backup-toast" id="backupToast"></div>
