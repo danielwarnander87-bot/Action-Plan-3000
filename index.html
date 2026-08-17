@@ -163,6 +163,75 @@
     cursor:pointer; box-shadow:0 2px 6px rgba(22,11,41,0.12);
   }
   .sfx-toggle-btn.is-muted{opacity:0.55;}
+  .jrpg-toggle-btn{
+    position:absolute; top:14px; left:14px; z-index:5;
+    background:linear-gradient(120deg,#FFE066,#FFA8DE,#C7B8FF); border:1.5px solid rgba(22,11,41,0.18); border-radius:20px;
+    padding:6px 12px; font-family:'Fredoka',sans-serif; font-weight:700; font-size:12px; color:var(--ink);
+    cursor:pointer; box-shadow:0 2px 6px rgba(22,11,41,0.12); background-size:200% 200%;
+  }
+  .jrpg-toggle-btn.active{animation:jrpgBtnShimmer 3s ease infinite; box-shadow:0 0 14px rgba(199,184,255,0.7);}
+  @keyframes jrpgBtnShimmer{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+
+  /* ---------- JRPG Mode: sparkle overlay + quest-complete bursts ---------- */
+  #jrpgSparkleField{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; display:none;
+  }
+  body.jrpg-mode #jrpgSparkleField{display:block;}
+  .jrpg-sparkle{
+    position:absolute; width:5px; height:5px; border-radius:50%;
+    background:radial-gradient(circle,#fff 0%,#FFE066 40%,transparent 75%);
+    opacity:0; animation:jrpgTwinkle var(--dur,4s) ease-in-out infinite;
+    filter:drop-shadow(0 0 4px rgba(255,224,102,0.8));
+  }
+  @keyframes jrpgTwinkle{
+    0%,100%{opacity:0; transform:translateY(0) scale(0.5);}
+    50%{opacity:1; transform:translateY(-26px) scale(1.15);}
+  }
+  .jrpg-burst{
+    position:fixed; z-index:400; pointer-events:none;
+    width:10px; height:10px; margin:-5px 0 0 -5px;
+    border-radius:50%; background:radial-gradient(circle,#fff,#FFE066 40%,transparent 70%);
+    animation:jrpgBurstPop 0.85s ease-out forwards;
+  }
+  @keyframes jrpgBurstPop{
+    0%{transform:scale(0.3); opacity:1; box-shadow:0 0 0 0 rgba(255,224,102,0.6);}
+    60%{opacity:1;}
+    100%{transform:scale(4.5); opacity:0; box-shadow:0 0 24px 14px rgba(199,184,255,0);}
+  }
+  .jrpg-quest-text{
+    position:fixed; z-index:401; pointer-events:none;
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:13px; color:#8C0862;
+    text-shadow:0 0 6px rgba(255,255,255,0.9), 0 1px 2px rgba(255,255,255,0.6);
+    animation:jrpgTextFloat 1.1s ease-out forwards;
+  }
+  @keyframes jrpgTextFloat{
+    0%{transform:translateY(0); opacity:0;}
+    15%{opacity:1;}
+    100%{transform:translateY(-34px); opacity:0;}
+  }
+  .jrpg-creature{
+    position:absolute; font-size:24px; opacity:0; pointer-events:none;
+    filter:drop-shadow(0 0 6px rgba(255,255,255,0.55));
+    animation:jrpgCreatureDrift var(--dur,15s) ease-in-out infinite;
+    animation-delay:var(--delay,0s);
+  }
+  @keyframes jrpgCreatureDrift{
+    0%{opacity:0; transform:translate(0,0) rotate(0deg) scale(0.8);}
+    12%{opacity:0.6;}
+    50%{transform:translate(var(--dx,40px),-70px) rotate(9deg) scale(1);}
+    88%{opacity:0.55;}
+    100%{opacity:0; transform:translate(var(--dx2,-30px),-150px) rotate(-7deg) scale(0.9);}
+  }
+
+  /* ---------- Collapsible blocks ---------- */
+  .block-collapse-btn{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:11px;
+    border:2px solid var(--ink); background:rgba(255,255,255,0.12); color:#EDEDF5;
+    padding:5px 10px; border-radius:100px; cursor:pointer; flex-shrink:0; white-space:nowrap;
+  }
+  .block-collapse-btn:active{background:rgba(255,255,255,0.28);}
+  .block.collapsed{padding-bottom:16px;}
+  .block.collapsed > *:not(.block-head){display:none!important;}
   h1{
     font-family:'Fredoka',sans-serif;
     font-weight:700;
@@ -1671,6 +1740,8 @@
     body.print-plcb-order footer,
     body.print-plcb-order #viewStudy,
     body.print-plcb-order #vendorOrderPad{display:none!important;}
+    body.print-vendor-order [data-block-id="orders"].collapsed > *:not(.block-head),
+    body.print-plcb-order [data-block-id="orders"].collapsed > *:not(.block-head){display:block!important;}
     body.print-plcb-order [data-block-id="orders"]{margin-top:0;}
     .block.filesblock h2{font-size:15px;}
     .file-actions,.files-storage-note{display:none!important;}
@@ -1872,8 +1943,10 @@
   </div>
 
   <div id="viewPlanner" class="view active">
+  <div id="jrpgSparkleField"></div>
   <header>
     <button class="sfx-toggle-btn" id="sfxMuteBtn" type="button" onclick="toggleSfxMute()">🔊 Sound</button>
+    <button class="jrpg-toggle-btn" id="jrpgToggleBtn" type="button" onclick="toggleJrpgMode()">✨ JRPG Mode</button>
     <h1>ACTION PLAN 3000<span class="bang">!</span></h1>
     <div class="week-range" id="weekRange"></div>
   </header>
@@ -1888,7 +1961,7 @@
         <button class="bullet-add-btn" type="button" onclick="addBulletItem('work',true)">+ Add item</button>
       </div>
       <div class="block indigo orderblock full-width" id="ordersBlock" data-block-id="orders">
-        <div class="block-head"><h2><span class="icon">📋</span>Order Pads</h2></div>
+        <div class="block-head"><h2><span class="icon">📋</span>Order Pads</h2><button class="block-collapse-btn no-print" id="ordersCollapseBtn" type="button" onclick="toggleBlockCollapse('orders')">🔽 Collapse</button></div>
         <div class="sub">Call-in orders — vendor &amp; PLCB</div>
 
         <div class="order-pad" id="vendorOrderPad">
@@ -2499,6 +2572,133 @@ document.addEventListener('keydown', function(e){
     }
   }
 });
+
+/* ============================================================
+   JRPG MODE — upbeat mystical ambience: sparkle field, a gentle
+   procedural overworld-style loop, and quest-complete bursts.
+   ============================================================ */
+let jrpgMode=false;
+try{ jrpgMode = localStorage.getItem('actionPlan3000_jrpgMode')==='1'; }catch(e){}
+
+// C major pentatonic across two octaves — bright, uplifting, no wrong notes
+const JRPG_SCALE=[261.63,293.66,329.63,392.00,440.00,523.25,587.33,659.25,783.99,880.00];
+const JRPG_PATTERN=[0,2,4,2,5,4,2,0, 0,3,5,3,7,5,3,0, 0,2,4,6,7,6,4,2];
+let jrpgTimer=null, jrpgStep=0;
+
+function jrpgNoteLoop(){
+  if(!jrpgMode){ jrpgTimer=null; return; }
+  const idx=JRPG_PATTERN[jrpgStep % JRPG_PATTERN.length];
+  const freq=JRPG_SCALE[idx];
+  if(!sfxMuted){
+    __playTone(freq,0,0.42,'triangle',0.045);
+    if(jrpgStep % 8===0) __playTone(freq/2,0,1.1,'sine',0.028);
+  }
+  jrpgStep++;
+  jrpgTimer=setTimeout(jrpgNoteLoop,210);
+}
+function startJrpgAmbient(){ if(jrpgTimer) return; jrpgStep=0; jrpgNoteLoop(); }
+function stopJrpgAmbient(){ clearTimeout(jrpgTimer); jrpgTimer=null; }
+
+function spawnJrpgSparkles(){
+  const field=document.getElementById('jrpgSparkleField');
+  if(!field) return;
+  field.innerHTML='';
+  const count=window.innerWidth<640?16:28;
+  for(let i=0;i<count;i++){
+    const s=document.createElement('div');
+    s.className='jrpg-sparkle';
+    s.style.left=(Math.random()*100)+'vw';
+    s.style.top=(Math.random()*100)+'vh';
+    s.style.setProperty('--dur',(2.6+Math.random()*3.2)+'s');
+    s.style.animationDelay=(Math.random()*4.5)+'s';
+    field.appendChild(s);
+  }
+  spawnJrpgCreatures(field);
+}
+const JRPG_CREATURES=['⚔️','🐉','🔥','🦄','🧙','🛡️','💎','🏰','🐺','🪽'];
+function spawnJrpgCreatures(field){
+  field=field||document.getElementById('jrpgSparkleField');
+  if(!field) return;
+  const count=window.innerWidth<640?5:8;
+  for(let i=0;i<count;i++){
+    const c=document.createElement('div');
+    c.className='jrpg-creature';
+    c.textContent=JRPG_CREATURES[Math.floor(Math.random()*JRPG_CREATURES.length)];
+    c.style.left=(Math.random()*92)+'vw';
+    c.style.top=(20+Math.random()*70)+'vh';
+    c.style.fontSize=(18+Math.random()*14)+'px';
+    c.style.setProperty('--dur',(11+Math.random()*8)+'s');
+    c.style.setProperty('--delay',(Math.random()*6)+'s');
+    c.style.setProperty('--dx',(Math.random()*70-10)+'px');
+    c.style.setProperty('--dx2',(Math.random()*-70+10)+'px');
+    field.appendChild(c);
+  }
+}
+const JRPG_QUEST_LINES=['✨ Nice!','⭐ Quest complete!','💫 Well done!','🌟 Progress!','✦ Keep going!'];
+function jrpgQuestComplete(x,y){
+  if(!jrpgMode) return;
+  if(!sfxMuted){
+    __playTone(523.25,0,0.12,'triangle',0.09);
+    __playTone(659.25,0.08,0.12,'triangle',0.09);
+    __playTone(783.99,0.16,0.24,'triangle',0.1);
+  }
+  const burst=document.createElement('div');
+  burst.className='jrpg-burst';
+  burst.style.left=x+'px'; burst.style.top=y+'px';
+  document.body.appendChild(burst);
+  setTimeout(()=>burst.remove(),900);
+
+  const txt=document.createElement('div');
+  txt.className='jrpg-quest-text';
+  txt.textContent=JRPG_QUEST_LINES[Math.floor(Math.random()*JRPG_QUEST_LINES.length)];
+  txt.style.left=(x-30)+'px'; txt.style.top=(y-24)+'px';
+  document.body.appendChild(txt);
+  setTimeout(()=>txt.remove(),1150);
+}
+function toggleJrpgMode(){
+  jrpgMode=!jrpgMode;
+  try{ localStorage.setItem('actionPlan3000_jrpgMode', jrpgMode?'1':'0'); }catch(e){}
+  const btn=document.getElementById('jrpgToggleBtn');
+  if(btn){ btn.classList.toggle('active',jrpgMode); btn.textContent=jrpgMode?'✨ JRPG Mode: On':'✨ JRPG Mode'; }
+  document.body.classList.toggle('jrpg-mode',jrpgMode);
+  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); }
+  else{ stopJrpgAmbient(); }
+}
+
+/* ---------- Collapsible blocks ---------- */
+const COLLAPSED_BLOCKS_KEY='actionPlan3000_collapsedBlocks';
+function loadCollapsedBlocks(){
+  try{
+    const raw=localStorage.getItem(COLLAPSED_BLOCKS_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {};
+}
+function saveCollapsedBlocks(state){
+  try{ localStorage.setItem(COLLAPSED_BLOCKS_KEY, JSON.stringify(state)); }catch(e){}
+}
+function toggleBlockCollapse(blockId){
+  const block=document.querySelector('[data-block-id="'+blockId+'"]');
+  if(!block) return;
+  const collapsed=block.classList.toggle('collapsed');
+  const btn=block.querySelector('.block-collapse-btn');
+  if(btn) btn.textContent=collapsed?'▶️ Expand':'🔽 Collapse';
+  const state=loadCollapsedBlocks();
+  state[blockId]=collapsed;
+  saveCollapsedBlocks(state);
+  soundClick();
+}
+function applyCollapsedBlocks(){
+  const state=loadCollapsedBlocks();
+  Object.keys(state).forEach(blockId=>{
+    if(!state[blockId]) return;
+    const block=document.querySelector('[data-block-id="'+blockId+'"]');
+    if(!block) return;
+    block.classList.add('collapsed');
+    const btn=block.querySelector('.block-collapse-btn');
+    if(btn) btn.textContent='▶️ Expand';
+  });
+}
 
 const QUOTES=[
   "Courage comes through suffering.",
@@ -3276,7 +3476,15 @@ function renderBulletList(key){
 
     const chk=document.createElement('input');
     chk.type='checkbox';chk.className='bullet-check';chk.checked=item.done;
-    chk.onchange=()=>{item.done=chk.checked;row.classList.toggle('done',item.done);persist();};
+    chk.onchange=()=>{
+      item.done=chk.checked;
+      row.classList.toggle('done',item.done);
+      persist();
+      if(item.done && jrpgMode){
+        const r=chk.getBoundingClientRect();
+        jrpgQuestComplete(r.left+r.width/2, r.top+r.height/2);
+      }
+    };
     row.appendChild(chk);
 
     const pBadge=document.createElement('div');
@@ -4622,6 +4830,13 @@ renderBlockNav();
 })();
 loadWorkOrders();
 renderOrderPads();
+applyCollapsedBlocks();
+(function initJrpgMode(){
+  const btn=document.getElementById('jrpgToggleBtn');
+  document.body.classList.toggle('jrpg-mode',jrpgMode);
+  if(btn){ btn.classList.toggle('active',jrpgMode); btn.textContent=jrpgMode?'✨ JRPG Mode: On':'✨ JRPG Mode'; }
+  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); }
+})();
 </script>
   <div class="backup-toast" id="backupToast"></div>
 </body>
