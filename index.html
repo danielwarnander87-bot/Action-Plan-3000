@@ -2769,23 +2769,79 @@ document.addEventListener('keydown', function(e){
 let jrpgMode=false;
 try{ jrpgMode = localStorage.getItem('actionPlan3000_jrpgMode')==='1'; }catch(e){}
 
-// C major pentatonic across two octaves — bright, uplifting, no wrong notes
-const JRPG_SCALE=[261.63,293.66,329.63,392.00,440.00,523.25,587.33,659.25,783.99,880.00];
-const JRPG_PATTERN=[0,2,4,2,5,4,2,0, 0,3,5,3,7,5,3,0, 0,2,4,6,7,6,4,2];
-let jrpgTimer=null, jrpgStep=0;
+// ---- "Village at Dusk" — an original ambient loop, D Dorian, wistful & unhurried ----
+// A generative wandering melody over a slow four-chord phrase, not a fixed loop —
+// it never plays back quite the same way twice.
+const JRPG_MELODY_SCALE=[146.83,164.81,174.61,196.00,220.00,246.94,261.63,293.66,329.63,349.23,392.00,440.00,493.88,523.25,587.33]; // D3–D5, D Dorian
+const JRPG_BASS_ROOTS=[73.42,55.00,58.27,65.41]; // D2, A1, Bb1, C2 — a gentle i–v–VI–VII drift
+let jrpgMelodyDegree=7, jrpgPhraseStep=0, jrpgChordIdx=-1;
+let jrpgTimer=null;
 
+// a softer, lowpass-filtered tone — takes the edge off for a hazy, distant quality
+function __playHazyTone(freq,delay,dur,type,vol,cutoff){
+  const ctx=__sfxGetCtx();
+  if(!ctx) return;
+  try{
+    const o=ctx.createOscillator();
+    const f=ctx.createBiquadFilter();
+    const g=ctx.createGain();
+    o.type=type||'sine';
+    o.frequency.value=freq;
+    f.type='lowpass';
+    f.frequency.value=cutoff||2200;
+    f.Q.value=0.5;
+    o.connect(f); f.connect(g); g.connect(ctx.destination);
+    const t0=ctx.currentTime+(delay||0);
+    g.gain.setValueAtTime(0,t0);
+    g.gain.linearRampToValueAtTime(vol||0.1,t0+0.04);
+    g.gain.exponentialRampToValueAtTime(0.001,t0+(dur||0.09));
+    o.start(t0);
+    o.stop(t0+(dur||0.09)+0.05);
+  }catch(e){}
+}
+// the same hazy tone plus a handful of decaying, progressively darker repeats — an echo tail
+function __playEchoTone(freq,delay,dur,type,vol,cutoff){
+  const repeats=3;
+  const spacing=dur*0.5;
+  for(let i=0;i<=repeats;i++){
+    const decay=Math.pow(0.5,i);
+    __playHazyTone(freq, delay+i*spacing, dur*(1+i*0.4), type, vol*decay, (cutoff||2400)-i*260);
+  }
+}
+
+function jrpgPickNextDegree(){
+  const step=Math.floor(Math.random()*5)-2; // wander -2..+2 scale steps
+  return Math.max(0,Math.min(JRPG_MELODY_SCALE.length-1, jrpgMelodyDegree+step));
+}
 function jrpgNoteLoop(){
   if(!jrpgMode){ jrpgTimer=null; return; }
-  const idx=JRPG_PATTERN[jrpgStep % JRPG_PATTERN.length];
-  const freq=JRPG_SCALE[idx];
-  if(!sfxMuted){
-    __playTone(freq,0,0.42,'triangle',0.045);
-    if(jrpgStep % 8===0) __playTone(freq/2,0,1.1,'sine',0.028);
+
+  // new sustained bass chord every 16 steps — softened and a touch echoed for haze
+  if(jrpgPhraseStep % 16 === 0){
+    jrpgChordIdx=(jrpgChordIdx+1)%JRPG_BASS_ROOTS.length;
+    if(!sfxMuted){
+      const root=JRPG_BASS_ROOTS[jrpgChordIdx];
+      __playHazyTone(root,0,3.6,'triangle',0.05,900);
+      __playHazyTone(root*2,0,3.4,'sine',0.02,1300);
+    }
   }
-  jrpgStep++;
-  jrpgTimer=setTimeout(jrpgNoteLoop,210);
+
+  // leave breathing room instead of a note on every single step
+  if(Math.random()>=0.22){
+    jrpgMelodyDegree=jrpgPickNextDegree();
+    const freq=JRPG_MELODY_SCALE[jrpgMelodyDegree];
+    if(!sfxMuted){
+      const vel=0.028+Math.random()*0.02;
+      __playEchoTone(freq,0,1.0+Math.random()*0.4,'sine',vel,2600);
+      __playEchoTone(freq*1.003,0.02,0.95+Math.random()*0.4,'triangle',vel*0.6,2200);
+      if(Math.random()<0.12) __playEchoTone(freq*4,0.15,0.6,'sine',0.013,3200);
+    }
+  }
+
+  jrpgPhraseStep++;
+  jrpgTimer=setTimeout(jrpgNoteLoop, 380+Math.random()*160); // slow, unhurried pacing
 }
-function startJrpgAmbient(){ if(jrpgTimer) return; jrpgStep=0; jrpgNoteLoop(); }
+function startJrpgAmbient(){ if(jrpgTimer) return; jrpgPhraseStep=0; jrpgChordIdx=-1; jrpgNoteLoop(); }
 function stopJrpgAmbient(){ clearTimeout(jrpgTimer); jrpgTimer=null; }
 
 function spawnJrpgSparkles(){
