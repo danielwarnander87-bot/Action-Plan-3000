@@ -274,7 +274,10 @@
   .wiz-projectile{
     position:fixed; z-index:401; pointer-events:none;
     font-size:20px; will-change:transform,opacity;
-    filter:drop-shadow(0 0 6px currentColor);
+    filter:drop-shadow(0 0 6px currentColor) drop-shadow(0 0 14px currentColor);
+  }
+  .wiz-projectile.amber-trail{
+    filter:drop-shadow(0 0 5px #FFB347) drop-shadow(0 0 12px #FF9A2E);
   }
   .wiz-impact{
     position:fixed; z-index:401; pointer-events:none;
@@ -285,6 +288,35 @@
   @keyframes wizImpactPop{
     0%{transform:scale(0.3); opacity:1;}
     100%{transform:scale(3.6); opacity:0;}
+  }
+  .wiz-firework-particle{
+    position:fixed; z-index:401; pointer-events:none;
+    width:5px; height:5px; margin:-2.5px 0 0 -2.5px; border-radius:50%;
+    animation:wizFireworkFly 0.65s cubic-bezier(.15,.6,.35,1) forwards;
+  }
+  @keyframes wizFireworkFly{
+    0%{transform:translate(0,0) scale(1.3); opacity:1;}
+    70%{opacity:1;}
+    100%{transform:translate(var(--fx),var(--fy)) scale(0.2); opacity:0;}
+  }
+  .wiz-star-particle{
+    position:fixed; z-index:401; pointer-events:none; font-size:15px;
+    animation:wizStarPop 0.75s ease-out forwards;
+  }
+  @keyframes wizStarPop{
+    0%{transform:translate(0,0) scale(0.3) rotate(0deg); opacity:1;}
+    55%{transform:translate(calc(var(--fx)*0.75),calc(var(--fy)*0.75)) scale(1.3) rotate(200deg); opacity:1;}
+    100%{transform:translate(var(--fx),var(--fy)) scale(0.6) rotate(340deg); opacity:0;}
+  }
+  .wiz-shockwave{
+    position:fixed; z-index:400; pointer-events:none;
+    width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%;
+    border:2.5px solid #FFD23F; box-shadow:0 0 12px rgba(255,210,63,0.7);
+    animation:wizShockwave 0.5s ease-out forwards;
+  }
+  @keyframes wizShockwave{
+    0%{transform:scale(0.5); opacity:0.9;}
+    100%{transform:scale(10); opacity:0;}
   }
 
   /* ---------- Random dragon encounter ---------- */
@@ -2980,6 +3012,90 @@ const WIZ_SPELLS=[
   { icon:'⚡', color:'#4FD2FF', sound:()=>{ __playTone(900,0,0.05,'square',0.06); __playTone(1300,0.03,0.06,'square',0.05); } },
   { icon:'⭐', color:'#FFE066', sound:()=>{ __playTone(1046,0,0.09,'triangle',0.08); __playTone(1568,0.06,0.14,'triangle',0.07); } }
 ];
+const WIZ_FIREWORK_COLORS=['#FF7A3D','#FFD23F','#4FD2FF','#5CFFAE','#FF6BD6'];
+const WIZ_STAR_EMOJI=['⭐','✨','💫'];
+
+function spawnFireworkBurst(x,y){
+  const count=10+Math.floor(Math.random()*7);
+  for(let i=0;i<count;i++){
+    const angle=(Math.PI*2*i/count)+Math.random()*0.4;
+    const dist=28+Math.random()*44;
+    const color=WIZ_FIREWORK_COLORS[Math.floor(Math.random()*WIZ_FIREWORK_COLORS.length)];
+    const p=document.createElement('div');
+    p.className='wiz-firework-particle';
+    p.style.left=x+'px'; p.style.top=y+'px';
+    p.style.background=color;
+    p.style.boxShadow='0 0 7px '+color+', 0 0 14px '+color;
+    p.style.setProperty('--fx',(Math.cos(angle)*dist)+'px');
+    p.style.setProperty('--fy',(Math.sin(angle)*dist)+'px');
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),680);
+  }
+}
+function spawnStarBurst(x,y){
+  const count=5+Math.floor(Math.random()*4);
+  for(let i=0;i<count;i++){
+    const angle=(Math.PI*2*i/count)+Math.random()*0.5;
+    const dist=24+Math.random()*38;
+    const s=document.createElement('div');
+    s.className='wiz-star-particle';
+    s.textContent=WIZ_STAR_EMOJI[Math.floor(Math.random()*WIZ_STAR_EMOJI.length)];
+    s.style.left=x+'px'; s.style.top=y+'px';
+    s.style.setProperty('--fx',(Math.cos(angle)*dist)+'px');
+    s.style.setProperty('--fy',(Math.sin(angle)*dist)+'px');
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),780);
+  }
+}
+function spawnShockwave(x,y){
+  const ring=document.createElement('div');
+  ring.className='wiz-shockwave';
+  ring.style.left=x+'px'; ring.style.top=y+'px';
+  document.body.appendChild(ring);
+  setTimeout(()=>ring.remove(),520);
+}
+function playImpactEffect(x,y){
+  // the little punchy pop always fires — everything else is a random flourish on top
+  const impact=document.createElement('div');
+  impact.className='wiz-impact';
+  impact.style.left=x+'px'; impact.style.top=y+'px';
+  document.body.appendChild(impact);
+  setTimeout(()=>impact.remove(),550);
+
+  const roll=Math.random();
+  if(roll<0.28) spawnFireworkBurst(x,y);
+  else if(roll<0.55) spawnStarBurst(x,y);
+  else if(roll<0.8) spawnShockwave(x,y);
+  else { spawnFireworkBurst(x,y); spawnShockwave(x,y); } // combo — extra dramatic
+}
+function spawnBounceShot(x,y,icon,incomingAngle){
+  // ricochet off the impact point at a deflected angle, like it bounced off whatever it hit
+  const reflectBase=incomingAngle+Math.PI;
+  const deflect=reflectBase+(Math.random()*1.8-0.9);
+  const bounceDist=55+Math.random()*75;
+  const bx=x+Math.cos(deflect)*bounceDist;
+  const by=y+Math.sin(deflect)*bounceDist;
+
+  const proj=document.createElement('div');
+  proj.className='wiz-projectile amber-trail';
+  proj.textContent=icon;
+  proj.style.color='#FFB347';
+  proj.style.fontSize='16px';
+  proj.style.left=x+'px'; proj.style.top=y+'px';
+  document.body.appendChild(proj);
+
+  const dur=260+Math.random()*140;
+  const t0=performance.now();
+  function anim(now){
+    const t=Math.min(1,(now-t0)/dur);
+    const cx=x+(bx-x)*t, cy=y+(by-y)*t-Math.sin(t*Math.PI)*16;
+    proj.style.transform='translate('+(cx-x)+'px,'+(cy-y)+'px) scale('+(1-t*0.5)+') rotate('+(t*300)+'deg)';
+    proj.style.opacity=1-t*0.85;
+    if(t<1){ requestAnimationFrame(anim); }
+    else{ proj.remove(); playImpactEffect(bx,by); }
+  }
+  requestAnimationFrame(anim);
+}
 function castWizardSpell(targetX,targetY){
   if(!jrpgMode) return;
   wizardJump();
@@ -3003,7 +3119,7 @@ function castWizardSpell(targetX,targetY){
   proj.className='wiz-projectile';
   proj.textContent=spell.icon;
   proj.style.color=spell.color;
-  proj.style.fontSize='26px';
+  proj.style.fontSize='27px';
   proj.style.left=startX+'px';
   proj.style.top=startY+'px';
   document.body.appendChild(proj);
@@ -3018,30 +3134,27 @@ function castWizardSpell(targetX,targetY){
     const y=startY+dy*t+Math.sin(t*Math.PI)*arcHeight;
     proj.style.transform='translate('+(x-startX)+'px,'+(y-startY)+'px) rotate('+(t*540)+'deg)';
 
-    if(now-lastTrail>28 && t<1){
+    if(now-lastTrail>26 && t<1){
       lastTrail=now;
+      // amber ember trail — warm glow regardless of which spell is flying
       const ghost=document.createElement('div');
-      ghost.className='wiz-projectile';
+      ghost.className='wiz-projectile amber-trail';
       ghost.textContent=spell.icon;
-      ghost.style.color=spell.color;
-      ghost.style.fontSize=(20-t*6)+'px';
+      ghost.style.color='#FFB347';
+      ghost.style.fontSize=(19-t*6)+'px';
       ghost.style.left=x+'px';
       ghost.style.top=y+'px';
-      ghost.style.opacity='0.4';
-      ghost.style.transition='opacity 0.35s ease, transform 0.35s ease';
+      ghost.style.opacity='0.55';
+      ghost.style.transition='opacity 0.4s ease, transform 0.4s ease';
       document.body.appendChild(ghost);
-      requestAnimationFrame(()=>{ ghost.style.opacity='0'; ghost.style.transform='scale(0.5)'; });
-      setTimeout(()=>ghost.remove(),380);
+      requestAnimationFrame(()=>{ ghost.style.opacity='0'; ghost.style.transform='scale(0.4)'; });
+      setTimeout(()=>ghost.remove(),420);
     }
 
     if(!exploded && t>=impactT){
       exploded=true;
-      const impact=document.createElement('div');
-      impact.className='wiz-impact';
-      impact.style.left=targetX+'px';
-      impact.style.top=targetY+'px';
-      document.body.appendChild(impact);
-      setTimeout(()=>impact.remove(),550);
+      playImpactEffect(targetX,targetY);
+      if(Math.random()<0.55){ spawnBounceShot(targetX,targetY,spell.icon,ang); }
     }
     if(t<1){ requestAnimationFrame(animateProjectile); }
     else{ proj.remove(); }
