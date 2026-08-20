@@ -354,6 +354,62 @@
     100%{filter:drop-shadow(0 2px 5px rgba(0,0,0,0.45)) brightness(1); transform:translateY(0) rotate(-5deg);}
   }
 
+  /* poisoned — blob attack */
+  #jrpgWizardCursor.poisoned .wiz-bob{animation:wizPoisonFlash 0.55s ease;}
+  @keyframes wizPoisonFlash{
+    0%{filter:drop-shadow(0 2px 5px rgba(0,0,0,0.45)) brightness(1) saturate(1); transform:translateY(0) rotate(-5deg);}
+    30%{filter:drop-shadow(0 0 10px rgba(90,220,80,0.9)) brightness(1.25) saturate(0.4) hue-rotate(70deg); transform:translate(3px,-2px) rotate(-8deg);}
+    60%{filter:drop-shadow(0 0 8px rgba(90,220,80,0.55)) brightness(1.1) hue-rotate(40deg); transform:translate(-3px,2px) rotate(6deg);}
+    100%{filter:drop-shadow(0 2px 5px rgba(0,0,0,0.45)) brightness(1); transform:translateY(0) rotate(-5deg);}
+  }
+
+  /* themed monster projectiles */
+  .wiz-bat-shot{filter:drop-shadow(0 0 6px #a06bff) drop-shadow(0 0 12px #5b2fae);}
+  .wiz-poison-shot{filter:drop-shadow(0 0 6px #6fce5a) drop-shadow(0 0 12px #2f7a1f);}
+  .wiz-electric-shot{filter:drop-shadow(0 0 6px #7fe8ff) drop-shadow(0 0 14px #2fb8d8);}
+  .jrpg-roar-text{
+    position:fixed; z-index:411; pointer-events:none;
+    font-family:'Fredoka',sans-serif; font-weight:800; font-size:13px; color:#ffb3a0;
+    text-shadow:0 2px 4px rgba(0,0,0,0.5);
+    animation:jrpgTextFloat 1s ease-out forwards;
+  }
+
+  /* ---------- The Red Menace — ultimate adversary ---------- */
+  .wiz-redmenace{
+    position:fixed; z-index:406; font-size:52px; cursor:pointer; user-select:none;
+    filter:drop-shadow(0 0 14px rgba(255,20,20,0.75)) sepia(1) saturate(6) hue-rotate(-40deg) brightness(0.85);
+    animation:menaceHover 1.3s ease-in-out infinite, menacePulse 2s ease-in-out infinite;
+  }
+  @keyframes menaceHover{0%,100%{transform:translateY(0);} 50%{transform:translateY(-13px);}}
+  @keyframes menacePulse{0%,100%{filter:drop-shadow(0 0 14px rgba(255,20,20,0.75)) sepia(1) saturate(6) hue-rotate(-40deg) brightness(0.85);} 50%{filter:drop-shadow(0 0 24px rgba(255,20,20,0.95)) sepia(1) saturate(6) hue-rotate(-40deg) brightness(1);}}
+  .wiz-redmenace.hit{animation:dragonHitShake 0.25s ease;}
+  .wiz-redmenace.shielded{filter:drop-shadow(0 0 18px rgba(120,140,255,0.85)) sepia(1) saturate(6) hue-rotate(-40deg) brightness(0.7) grayscale(0.3);}
+  .wiz-redmenace-hp{
+    position:absolute; top:-18px; left:50%; transform:translateX(-50%); white-space:nowrap;
+    font-family:'Fredoka',sans-serif; font-size:11px; font-weight:800;
+    background:#7a0d0d; color:#fff; padding:2px 8px; border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.35);
+  }
+  .wiz-redmenace-shield-tag{
+    position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); white-space:nowrap;
+    font-family:'Fredoka',sans-serif; font-size:9.5px; font-weight:800;
+    background:#3a4a9a; color:#fff; padding:1px 6px; border-radius:8px; opacity:0; transition:opacity 0.2s ease;
+  }
+  .wiz-redmenace.shielded .wiz-redmenace-shield-tag{opacity:1;}
+  .wiz-deflect-spark{
+    position:fixed; z-index:407; pointer-events:none; font-size:22px;
+    animation:deflectPop 0.5s ease-out forwards;
+  }
+  @keyframes deflectPop{0%{transform:scale(0.4) rotate(0deg); opacity:1;} 100%{transform:scale(1.6) rotate(45deg); opacity:0;}}
+  .jrpg-boss-banner{
+    position:fixed; top:26%; left:50%; transform:translate(-50%,-50%) scale(0.55); z-index:426;
+    text-align:center; opacity:0; pointer-events:none;
+    transition:opacity 0.3s ease, transform 0.3s cubic-bezier(.2,1.5,.4,1);
+  }
+  .jrpg-boss-banner.show{opacity:1; transform:translate(-50%,-50%) scale(1);}
+  .jrpg-boss-banner .bb-main{font-family:'Fredoka',sans-serif; font-weight:800; font-size:20px; color:#ff4d4d; text-shadow:0 3px 0 #4a0d0d, 0 0 22px rgba(255,40,40,0.7);}
+  .jrpg-boss-banner .bb-sub{font-family:'Fredoka',sans-serif; font-weight:700; font-size:12px; color:#ffd9d9; margin-top:6px; text-shadow:0 2px 4px rgba(0,0,0,0.5);}
+
   /* ---------- Wizard progress: HUD, level-up, flight, hut ---------- */
   #jrpgHud{
     position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:410;
@@ -367,6 +423,10 @@
   #jrpgHud .hud-bar{width:70px; height:7px; background:rgba(255,255,255,0.2); border-radius:4px; overflow:hidden;}
   #jrpgHud .hud-bar-fill{height:100%; width:0%; background:linear-gradient(90deg,#4FD2FF,#5CFFAE); transition:width 0.5s ease;}
   #jrpgHud .hud-xp{font-size:10.5px; color:rgba(255,255,255,0.75); white-space:nowrap;}
+  #jrpgHud .hud-lives{display:flex; gap:2px; margin-left:2px;}
+  #jrpgHud .hud-heart-slot{position:relative; width:13px; height:12px; display:inline-block;}
+  #jrpgHud .heart-bg{position:absolute; inset:0; font-size:12px; opacity:0.22; filter:drop-shadow(0 1px 1px rgba(0,0,0,0.4));}
+  #jrpgHud .heart-fill{position:absolute; inset:0; font-size:12px; overflow:hidden; white-space:nowrap; filter:drop-shadow(0 1px 1px rgba(0,0,0,0.4)); transition:width 0.3s ease;}
 
   .jrpg-levelup{
     position:fixed; top:34%; left:50%; transform:translate(-50%,-50%) scale(0.5); z-index:420;
@@ -396,6 +456,87 @@
     transition:opacity 0.35s ease, transform 0.35s ease;
   }
   #jrpgWizardCursor .wiz-sprite-wrap{transition:opacity 0.35s ease, transform 0.35s ease;}
+
+  /* knocked out — lives hit 0 */
+  #jrpgWizardCursor.ko .wiz-sprite-wrap{animation:wizKO 1.1s ease forwards;}
+  @keyframes wizKO{
+    0%{transform:rotate(0deg) translateY(0); opacity:1;}
+    40%{transform:rotate(35deg) translateY(4px); opacity:1;}
+    100%{transform:rotate(95deg) translateY(18px); opacity:0.15;}
+  }
+  /* brief invulnerability after respawning — soft blink */
+  #jrpgWizardCursor.invuln .wiz-sprite-wrap{animation:wizInvuln 0.4s steps(1) infinite;}
+  @keyframes wizInvuln{0%,100%{opacity:1;} 50%{opacity:0.35;}}
+
+  /* ---------- Wizard appearance by level ---------- */
+  #jrpgWizardCursor.wiz-lvl-1 .wiz-bob{filter:grayscale(0.9) brightness(1.05) drop-shadow(0 2px 5px rgba(0,0,0,0.45));}
+  #jrpgWizardCursor.wiz-lvl-2 .wiz-bob{filter:hue-rotate(80deg) saturate(2.4) brightness(1.05) drop-shadow(0 2px 5px rgba(0,0,0,0.45));}
+  #jrpgWizardCursor.wiz-lvl-3 .wiz-bob{filter:hue-rotate(30deg) saturate(2.6) brightness(1.15) drop-shadow(0 2px 5px rgba(0,0,0,0.45));}
+  #jrpgWizardCursor.wiz-lvl-4 .wiz-bob{filter:brightness(0.4) contrast(1.5) saturate(0.7) drop-shadow(0 2px 8px rgba(0,0,0,0.7));}
+  #jrpgWizardCursor.wiz-lvl-5 .wiz-bob{filter:hue-rotate(190deg) saturate(2.3) brightness(1.15) drop-shadow(0 2px 5px rgba(80,140,255,0.5));}
+
+  /* ---------- Bubble shield — long-hold defense (level 2+) ---------- */
+  .wiz-shield-bubble{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:70px; height:70px; border-radius:50%;
+    background:radial-gradient(circle, rgba(120,200,255,0.25), rgba(80,160,255,0.05) 70%, transparent 80%);
+    border:2px solid rgba(140,210,255,0.85);
+    box-shadow:0 0 14px rgba(120,200,255,0.7), inset 0 0 10px rgba(255,255,255,0.4);
+    opacity:0; pointer-events:none; transition:opacity 0.2s ease;
+    animation:shieldPulse 1.1s ease-in-out infinite;
+  }
+  #jrpgWizardCursor.shielded .wiz-shield-bubble{opacity:1;}
+  @keyframes shieldPulse{0%,100%{transform:translate(-50%,-50%) scale(1);} 50%{transform:translate(-50%,-50%) scale(1.08);}}
+
+  /* ---------- Laser beam eyes — level 5 combo attack ---------- */
+  .wiz-laser-beam{
+    position:fixed; z-index:409; pointer-events:none; height:4px;
+    background:linear-gradient(90deg, rgba(255,255,255,0.95), rgba(120,200,255,0.9) 40%, rgba(255,255,255,0.2));
+    box-shadow:0 0 10px 3px rgba(140,210,255,0.9), 0 0 20px 6px rgba(120,180,255,0.5);
+    transform-origin:0 50%;
+    animation:laserFade 0.32s ease-out forwards;
+  }
+  @keyframes laserFade{0%{opacity:1;} 100%{opacity:0;}}
+
+  /* ---------- Boss entrance: brief red flash + heavy shake ---------- */
+  body.boss-intro-flash::after{
+    content:''; position:fixed; inset:0; z-index:500; pointer-events:none;
+    background:rgba(200,20,20,0.5);
+    animation:bossFlashFade 0.9s ease-out forwards;
+  }
+  @keyframes bossFlashFade{0%{opacity:1;} 100%{opacity:0;}}
+  @keyframes bossShakeIt{
+    0%,100%{transform:translate(0,0);} 10%{transform:translate(-10px,6px);} 20%{transform:translate(10px,-6px);}
+    30%{transform:translate(-8px,5px);} 40%{transform:translate(8px,-5px);} 50%{transform:translate(-6px,4px);}
+    60%{transform:translate(6px,-4px);} 70%{transform:translate(-4px,2px);} 80%{transform:translate(4px,-2px);} 90%{transform:translate(-2px,1px);}
+  }
+  body.boss-shake .screen-shake-target{animation:bossShakeIt 0.7s ease;}
+
+  /* ---------- Red Menace ultimate: charge countdown + radial fire ---------- */
+  .jrpg-ultimate-charge{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.5); z-index:430;
+    text-align:center; opacity:0; pointer-events:none;
+    transition:opacity 0.2s ease, transform 0.2s ease;
+  }
+  .jrpg-ultimate-charge.show{opacity:1; transform:translate(-50%,-50%) scale(1);}
+  .jrpg-ultimate-charge .uc-label{font-family:'Fredoka',sans-serif; font-weight:800; font-size:13px; color:#ff8a8a; text-shadow:0 2px 4px rgba(0,0,0,0.6); letter-spacing:2px;}
+  .jrpg-ultimate-charge .uc-num{font-family:'Fredoka',sans-serif; font-weight:800; font-size:60px; color:#fff; text-shadow:0 0 20px rgba(255,60,40,0.9), 0 4px 0 #7a0d0d; animation:ucPulse 0.35s ease infinite;}
+  @keyframes ucPulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.15);}}
+  .jrpg-radial-fire{
+    position:fixed; inset:0; z-index:495; pointer-events:none; opacity:0; transform:scale(0.05);
+    background:radial-gradient(circle at 50% 50%, rgba(255,220,140,0.95) 0%, rgba(255,110,20,0.9) 30%, rgba(180,20,10,0.85) 60%, rgba(80,0,0,0.6) 100%);
+  }
+  .jrpg-radial-fire.blast{animation:radialBlast 0.7s ease-out forwards;}
+  @keyframes radialBlast{0%{opacity:0; transform:scale(0.05);} 15%{opacity:1;} 60%{opacity:0.95; transform:scale(1.4);} 100%{opacity:0; transform:scale(1.9);}}
+
+  .jrpg-ko-banner{
+    position:fixed; top:44%; left:50%; transform:translate(-50%,-50%) scale(0.6); z-index:425;
+    text-align:center; opacity:0; pointer-events:none;
+    transition:opacity 0.25s ease, transform 0.25s cubic-bezier(.2,1.4,.4,1);
+  }
+  .jrpg-ko-banner.show{opacity:1; transform:translate(-50%,-50%) scale(1);}
+  .jrpg-ko-banner .ko-main{font-family:'Fredoka',sans-serif; font-weight:800; font-size:22px; color:#FF6B6B; text-shadow:0 3px 0 #7a1f1f, 0 0 20px rgba(255,80,80,0.6);}
+  .jrpg-ko-banner .ko-sub{font-family:'Fredoka',sans-serif; font-weight:700; font-size:13px; color:#fff; margin-top:6px; text-shadow:0 2px 4px rgba(0,0,0,0.5);}
 
   .wiz-hut{
     position:fixed; z-index:150; bottom:16px; left:16px; font-size:50px;
@@ -2204,11 +2345,25 @@
     <span class="hud-lvl" id="hudLvl">Lv.1</span>
     <div class="hud-bar"><div class="hud-bar-fill" id="hudBarFill"></div></div>
     <span class="hud-xp" id="hudXpText">0/30</span>
+    <div class="hud-lives" id="hudLives"></div>
   </div>
   <div class="jrpg-levelup" id="jrpgLevelUp">
     <div class="lu-main" id="luMain">LEVEL UP!</div>
     <div class="lu-sub" id="luSub"></div>
   </div>
+  <div class="jrpg-ko-banner" id="jrpgKoBanner">
+    <div class="ko-main">💫 KNOCKED OUT!</div>
+    <div class="ko-sub">Catching his breath…</div>
+  </div>
+  <div class="jrpg-boss-banner" id="jrpgBossBanner">
+    <div class="bb-main" id="bbMain">⚠️ THE RED MENACE APPEARS ⚠️</div>
+    <div class="bb-sub" id="bbSub"></div>
+  </div>
+  <div class="jrpg-ultimate-charge" id="jrpgUltimateCharge">
+    <div class="uc-label" id="ucLabel">CHARGING</div>
+    <div class="uc-num" id="ucNum">5</div>
+  </div>
+  <div class="jrpg-radial-fire" id="jrpgRadialFire"></div>
 
   <div class="wiz-hut" id="wizHut" title="Click to send the wizard into hiding">
     🛖<span class="wiz-hut-label">Take cover</span>
@@ -2217,6 +2372,7 @@
   <div id="jrpgWizardCursor">
     <div class="wiz-sprite-wrap">
       <span class="wiz-bob">🧙</span>
+      <div class="wiz-shield-bubble"></div>
       <div class="wiz-legs">
         <span class="wiz-leg wiz-leg-l"></span>
         <span class="wiz-leg wiz-leg-r"></span>
@@ -2893,7 +3049,7 @@ let jrpgMode=false;
 try{ jrpgMode = localStorage.getItem('actionPlan3000_jrpgMode')==='1'; }catch(e){}
 
 /* ---------- Wizard progress: XP, levels, and the unlocks that come with them ---------- */
-let wizardProgress={ level:1, xp:0, flightUnlocked:false, beamUnlocked:false };
+let wizardProgress={ level:1, xp:0, shieldUnlocked:false, flightUnlocked:false, electricityUnlocked:false, laserUnlocked:false, lives:3, maxLives:3 };
 try{
   const raw=localStorage.getItem('actionPlan3000_wizardProgress');
   if(raw) wizardProgress=Object.assign(wizardProgress, JSON.parse(raw));
@@ -2904,11 +3060,25 @@ function updateHud(){
   const lvlEl=document.getElementById('hudLvl');
   const fillEl=document.getElementById('hudBarFill');
   const xpEl=document.getElementById('hudXpText');
+  const livesEl=document.getElementById('hudLives');
   if(!lvlEl) return;
   const need=xpToNext(wizardProgress.level);
   lvlEl.textContent='Lv.'+wizardProgress.level;
   fillEl.style.width=Math.min(100,(wizardProgress.xp/need*100))+'%';
   xpEl.textContent=wizardProgress.xp+'/'+need;
+  if(livesEl){
+    livesEl.innerHTML='';
+    for(let i=0;i<wizardProgress.maxLives;i++){
+      const remaining=Math.max(0,Math.min(1, wizardProgress.lives-i));
+      const slot=document.createElement('span');
+      slot.className='hud-heart-slot';
+      const bg=document.createElement('span'); bg.className='heart-bg'; bg.textContent='❤️';
+      const fill=document.createElement('span'); fill.className='heart-fill'; fill.textContent='❤️';
+      fill.style.width=(remaining*100)+'%';
+      slot.appendChild(bg); slot.appendChild(fill);
+      livesEl.appendChild(slot);
+    }
+  }
 }
 function awardXP(amount,x,y){
   wizardProgress.xp+=amount;
@@ -2929,6 +3099,25 @@ function awardXP(amount,x,y){
   updateHud();
   if(!leveled && !sfxMuted) __playTone(740,0,0.07,'triangle',0.06);
 }
+function deductXP(amount,x,y){
+  // getting hit costs XP — and can even knock a level back down, though Flight/Beam stay unlocked once earned
+  wizardProgress.xp-=amount;
+  const xpTxt=document.createElement('div');
+  xpTxt.className='jrpg-xp-text';
+  xpTxt.style.color='#FF6B6B';
+  xpTxt.textContent='-'+amount+' XP';
+  xpTxt.style.left=(x-20)+'px'; xpTxt.style.top=(y-30)+'px';
+  document.body.appendChild(xpTxt);
+  setTimeout(()=>xpTxt.remove(),1150);
+  while(wizardProgress.xp<0 && wizardProgress.level>1){
+    wizardProgress.level--;
+    wizardProgress.xp+=xpToNext(wizardProgress.level);
+  }
+  if(wizardProgress.xp<0) wizardProgress.xp=0;
+  saveWizardProgress();
+  updateHud();
+  updateWizardAppearance();
+}
 function levelUp(newLevel){
   const el=document.getElementById('jrpgWizardCursor');
   const luMain=document.getElementById('luMain');
@@ -2937,12 +3126,18 @@ function levelUp(newLevel){
   luMain.textContent='⭐ LEVEL UP! Lv.'+newLevel;
   let sub='Growing stronger.';
   if(newLevel===2){
+    wizardProgress.shieldUnlocked=true;
+    sub='🫧 Bubble Shield unlocked — press and hold to guard!';
+  } else if(newLevel===3){
     wizardProgress.flightUnlocked=true;
     sub='🦋 Flight unlocked — no more walking!';
     if(el) el.classList.add('can-fly');
-  } else if(newLevel===3){
-    wizardProgress.beamUnlocked=true;
-    sub='💥 Arcane Beam unlocked — one shot, any foe!';
+  } else if(newLevel===4){
+    wizardProgress.electricityUnlocked=true;
+    sub='⚡ Electricity unlocked — a new spell joins the rotation!';
+  } else if(newLevel===5){
+    wizardProgress.laserUnlocked=true;
+    sub='👁️ Laser Beam Eyes unlocked — quick double-tap to fire!';
   }
   luSub.textContent=sub;
   banner.classList.remove('show'); void banner.offsetWidth; banner.classList.add('show');
@@ -2951,6 +3146,14 @@ function levelUp(newLevel){
     __playTone(523.25,0,0.1,'triangle',0.1); __playTone(659.25,0.09,0.1,'triangle',0.1);
     __playTone(783.99,0.18,0.1,'triangle',0.1); __playTone(1046.5,0.27,0.28,'triangle',0.12);
   }
+  updateWizardAppearance();
+}
+function updateWizardAppearance(){
+  const el=document.getElementById('jrpgWizardCursor');
+  if(!el) return;
+  const tier=Math.max(1,Math.min(5,wizardProgress.level));
+  el.classList.remove('wiz-lvl-1','wiz-lvl-2','wiz-lvl-3','wiz-lvl-4','wiz-lvl-5');
+  el.classList.add('wiz-lvl-'+tier);
 }
 
 // ---- "Village at Dusk" — an original ambient loop, D Dorian, wistful & unhurried ----
@@ -3093,8 +3296,9 @@ function toggleJrpgMode(){
   const wizEl=document.getElementById('jrpgWizardCursor');
   if(wizEl) wizEl.classList.toggle('can-fly', wizardProgress.flightUnlocked);
   updateHud();
-  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); startDragonSchedule(); startSmallMonsterSchedule(); }
-  else{ stopJrpgAmbient(); stopStorm(); stopDragonSchedule(); stopSmallMonsterSchedule(); }
+  updateWizardAppearance();
+  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); startDragonSchedule(); startSmallMonsterSchedule(); startRedMenaceSchedule(); }
+  else{ stopJrpgAmbient(); stopStorm(); stopDragonSchedule(); stopSmallMonsterSchedule(); stopRedMenaceSchedule(); }
 }
 
 /* ---------- Random dragon encounter — click him a few times to win ---------- */
@@ -3126,6 +3330,7 @@ function spawnDragon(){
   clearTimeout(dragonFleeTimer);
   dragonFleeTimer=setTimeout(()=>despawnDragon(false),14000);
   scheduleDragonAttack();
+  scheduleDragonRoar();
 }
 function hitDragon(spell){
   if(!dragonEl) return;
@@ -3143,6 +3348,7 @@ function despawnDragon(victory){
   if(!dragonEl) return;
   clearTimeout(dragonFleeTimer);
   clearTimeout(dragonAttackTimer); dragonAttackTimer=null;
+  clearTimeout(dragonRoarTimer); dragonRoarTimer=null;
   const rect=dragonEl.getBoundingClientRect();
   const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
   dragonEl.remove();
@@ -3176,48 +3382,466 @@ function stopDragonSchedule(){
 }
 
 /* ---------- Dragon fires back at the wizard while he's alive ---------- */
+/* ---------- Scroll-based difficulty — everything gets faster near the bottom of the page ---------- */
+function scrollIntensity(){
+  const scrollable=document.documentElement.scrollHeight-window.innerHeight;
+  if(scrollable<=0) return 0;
+  return Math.max(0,Math.min(1, window.scrollY/scrollable));
+}
+function speedScale(delay){
+  const factor=Math.max(0.35, 1-scrollIntensity()*0.65); // up to ~2.85x faster near the bottom
+  return delay*factor;
+}
 function scheduleDragonAttack(){
   clearTimeout(dragonAttackTimer);
-  const delay=1100+Math.random()*900; // first shot comes shortly after he appears
+  const delay=speedScale(1100+Math.random()*900); // first shot comes shortly after he appears
   dragonAttackTimer=setTimeout(()=>{
     if(dragonEl){ fireDragonAttack(); scheduleDragonAttack(); }
   }, delay);
 }
-function fireDragonAttack(){
-  if(!dragonEl) return;
-  const dRect=dragonEl.getBoundingClientRect();
-  const startX=dRect.left+dRect.width/2, startY=dRect.top+dRect.height/2;
-  const targetX=wizX, targetY=wizY; // the wizard's current on-screen position
-  if(!sfxMuted){ __playTone(120,0,0.16,'sawtooth',0.07); __playTone(70,0.05,0.24,'triangle',0.06); }
+function fireHomingShot(startX,startY,opts){
+  opts=opts||{};
+  const targetX=wizX, targetY=wizY; // the wizard's current on-screen position, read at fire time
+  if(opts.sound) opts.sound();
   const proj=document.createElement('div');
-  proj.className='wiz-dragon-shot';
-  proj.textContent='🔥';
+  proj.className=opts.className||'wiz-dragon-shot';
+  proj.textContent=opts.icon||'🔥';
   proj.style.left=startX+'px'; proj.style.top=startY+'px';
   document.body.appendChild(proj);
   const dx=targetX-startX, dy=targetY-startY;
   const dist=Math.hypot(dx,dy);
   const duration=Math.max(260,Math.min(650,dist*1.1));
   const startTime=performance.now();
-  function animateDragonShot(now){
+  function animate(now){
     const t=Math.min(1,(now-startTime)/duration);
     const cx=startX+dx*t, cy=startY+dy*t;
     proj.style.left=cx+'px'; proj.style.top=cy+'px';
     proj.style.transform='translate(-50%,-50%) rotate('+(Math.atan2(dy,dx)*180/Math.PI)+'deg)';
-    if(t<1){ requestAnimationFrame(animateDragonShot); }
-    else{ proj.remove(); hitWizard(targetX,targetY); }
+    if(t<1){ requestAnimationFrame(animate); }
+    else{
+      proj.remove();
+      if(opts.onHit) opts.onHit(targetX,targetY); else hitWizard(targetX,targetY);
+    }
   }
-  requestAnimationFrame(animateDragonShot);
+  requestAnimationFrame(animate);
 }
-function hitWizard(x,y){
-  if(wizardHiding){
-    // tucked away in the hut — the shot just fizzles out
-    if(!sfxMuted) __playTone(300,0,0.05,'sine',0.04);
-    const puff=document.createElement('div');
-    puff.className='wiz-safe-puff';
-    puff.textContent='💨';
-    puff.style.left=x+'px'; puff.style.top=y+'px';
-    document.body.appendChild(puff);
-    setTimeout(()=>puff.remove(),700);
+function fireDragonAttack(){
+  if(!dragonEl) return;
+  const r=dragonEl.getBoundingClientRect();
+  fireHomingShot(r.left+r.width/2, r.top+r.height/2, {
+    icon:'🔥', className:'wiz-dragon-shot',
+    sound:()=>{ if(!sfxMuted){ __playTone(120,0,0.16,'sawtooth',0.07); __playTone(70,0.05,0.24,'triangle',0.06); } }
+  });
+}
+function playRoar(deep){
+  if(sfxMuted) return;
+  if(deep){ __playTone(80,0,0.3,'sawtooth',0.09); __playTone(55,0.08,0.4,'sawtooth',0.08); __playTone(40,0.18,0.5,'triangle',0.07); }
+  else { __playTone(110,0,0.25,'sawtooth',0.08); __playTone(75,0.06,0.32,'triangle',0.07); }
+}
+function showRoarText(el){
+  if(!el) return;
+  const r=el.getBoundingClientRect();
+  const txt=document.createElement('div');
+  txt.className='jrpg-roar-text';
+  txt.textContent='ROAR!';
+  txt.style.left=(r.left+r.width/2-22)+'px'; txt.style.top=(r.top-14)+'px';
+  document.body.appendChild(txt);
+  setTimeout(()=>txt.remove(),1000);
+}
+let dragonRoarTimer=null;
+function scheduleDragonRoar(){
+  clearTimeout(dragonRoarTimer);
+  const delay=4200+Math.random()*3200;
+  dragonRoarTimer=setTimeout(()=>{
+    if(dragonEl){ playRoar(false); showRoarText(dragonEl); scheduleDragonRoar(); }
+  },delay);
+}
+
+/* ============================================================
+   THE RED MENACE — the ultimate adversary.
+   Rare, tougher, faster, deflects attacks, and calls in help.
+   ============================================================ */
+let redMenaceEl=null, redMenaceHitsNeeded=7, redMenaceHitsLanded=0;
+let redMenaceScheduleTimer=null, redMenaceFleeTimer=null, redMenaceAttackTimer=null, redMenaceSummonTimer=null;
+let redMenaceMinionEl=null, redMenaceShielded=false;
+
+function showBossBanner(main,sub,duration){
+  const b=document.getElementById('jrpgBossBanner');
+  if(!b) return;
+  document.getElementById('bbMain').textContent=main;
+  document.getElementById('bbSub').textContent=sub||'';
+  b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+  clearTimeout(showBossBanner._t);
+  showBossBanner._t=setTimeout(()=>b.classList.remove('show'), duration||2200);
+}
+function scheduleRedMenace(){
+  const delay=16*60000 + Math.random()*10*60000; // every 16-26 minutes — a rare, dreaded encounter
+  redMenaceScheduleTimer=setTimeout(()=>{
+    if(jrpgMode && !redMenaceEl && !dragonEl) spawnRedMenace(); // never overlaps the regular dragon
+    scheduleRedMenace();
+  },delay);
+}
+function spawnRedMenace(){
+  redMenaceHitsNeeded=6+Math.floor(Math.random()*3); // 6-8 hits
+  redMenaceHitsLanded=0;
+  redMenaceShielded=false;
+  redMenaceEl=document.createElement('div');
+  redMenaceEl.className='wiz-redmenace';
+  redMenaceEl.textContent='🐉';
+  const margin=90;
+  const x=margin+Math.random()*(window.innerWidth-margin*2);
+  const y=margin+Math.random()*(window.innerHeight*0.5);
+  redMenaceEl.style.left=x+'px'; redMenaceEl.style.top=y+'px';
+  const hp=document.createElement('div');
+  hp.className='wiz-redmenace-hp';
+  hp.textContent='👹 × '+redMenaceHitsNeeded;
+  redMenaceEl.appendChild(hp);
+  document.body.appendChild(redMenaceEl);
+  showBossBanner('⚠️ THE RED MENACE APPEARS ⚠️','He\u2019s stronger, faster, and never fights alone.', 2800);
+  bossEntranceEffect();
+  startBattleMusic();
+  if(!sfxMuted){ __playTone(90,0,0.4,'sawtooth',0.09); __playTone(60,0.15,0.5,'sawtooth',0.08); __playTone(45,0.3,0.6,'triangle',0.07); }
+  clearTimeout(redMenaceFleeTimer);
+  redMenaceFleeTimer=setTimeout(()=>despawnRedMenace(false),22000);
+  scheduleRedMenaceAttack();
+  scheduleRedMenaceRoar();
+  scheduleRedMenaceUltimate();
+  clearTimeout(redMenaceSummonTimer);
+  redMenaceSummonTimer=setTimeout(()=>{ if(redMenaceEl && !redMenaceMinionEl) summonBossMinion(); }, 2400+Math.random()*900);
+}
+function hitRedMenace(spell,clickX,clickY){
+  if(!redMenaceEl) return;
+  if(redMenaceShielded){
+    if(!sfxMuted) __playTone(260,0,0.06,'square',0.05);
+    const txt=document.createElement('div');
+    txt.className='jrpg-quest-text';
+    txt.style.fontSize='13px'; txt.style.color='#9fb4ff';
+    txt.textContent='🛡️ Shielded — clear the minion!';
+    txt.style.left=((clickX||0)-40)+'px'; txt.style.top=((clickY||0)-24)+'px';
+    document.body.appendChild(txt);
+    setTimeout(()=>txt.remove(),1100);
+    return;
+  }
+  // he deflects a real chunk of incoming attacks — and punishes carelessness
+  if(Math.random()<0.38){
+    const r=redMenaceEl.getBoundingClientRect();
+    const dx=r.left+r.width/2, dy=r.top+r.height/2;
+    const spark=document.createElement('div');
+    spark.className='wiz-deflect-spark';
+    spark.textContent='🛡️';
+    spark.style.left=dx+'px'; spark.style.top=dy+'px';
+    document.body.appendChild(spark);
+    setTimeout(()=>spark.remove(),520);
+    if(!sfxMuted){ __playTone(700,0,0.05,'square',0.07); __playTone(500,0.04,0.08,'square',0.06); }
+    fireHomingShot(dx,dy,{
+      icon:'🔴', className:'wiz-dragon-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(150,0,0.12,'sawtooth',0.07); } }
+    });
+    return;
+  }
+  redMenaceHitsLanded = (spell && spell.oneShotKill) ? redMenaceHitsNeeded : redMenaceHitsLanded+1;
+  redMenaceEl.classList.remove('hit'); void redMenaceEl.offsetWidth; redMenaceEl.classList.add('hit');
+  const remaining=redMenaceHitsNeeded-redMenaceHitsLanded;
+  if(remaining>0){
+    redMenaceEl.querySelector('.wiz-redmenace-hp').textContent='👹 × '+remaining;
+    if(!sfxMuted) __playTone(450+Math.random()*200,0,0.08,'square',0.07);
+  } else {
+    despawnRedMenace(true);
+  }
+}
+function despawnRedMenace(victory){
+  if(!redMenaceEl) return;
+  clearTimeout(redMenaceFleeTimer);
+  clearTimeout(redMenaceAttackTimer); redMenaceAttackTimer=null;
+  clearTimeout(redMenaceSummonTimer); redMenaceSummonTimer=null;
+  clearTimeout(redMenaceRoarTimer); redMenaceRoarTimer=null;
+  clearTimeout(redMenaceUltimateTimer); redMenaceUltimateTimer=null;
+  clearTimeout(redMenaceChargeTimer); redMenaceChargeTimer=null;
+  const chargeEl=document.getElementById('jrpgUltimateCharge');
+  if(chargeEl) chargeEl.classList.remove('show');
+  stopBattleMusic();
+  if(redMenaceMinionEl){ redMenaceMinionEl.remove(); redMenaceMinionEl=null; }
+  redMenaceShielded=false;
+  const rect=redMenaceEl.getBoundingClientRect();
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  redMenaceEl.remove();
+  redMenaceEl=null;
+  if(victory){
+    if(!sfxMuted){ __playTone(660,0,0.1,'triangle',0.1); __playTone(880,0.09,0.12,'triangle',0.1); __playTone(1108,0.18,0.14,'triangle',0.11); __playTone(1318.5,0.32,0.3,'triangle',0.12); }
+    showBossBanner('👹 THE RED MENACE FALLS!','A hard-earned victory.', 2400);
+    for(let i=0;i<12;i++){
+      setTimeout(()=>{
+        const impact=document.createElement('div');
+        impact.className='wiz-impact';
+        impact.style.left=(cx+(Math.random()*90-45))+'px';
+        impact.style.top=(cy+(Math.random()*90-45))+'px';
+        document.body.appendChild(impact);
+        setTimeout(()=>impact.remove(),550);
+      },i*40);
+    }
+    awardXP(90, cx, cy);
+    wizardProgress.lives=Math.min(wizardProgress.maxLives, wizardProgress.lives+1);
+    saveWizardProgress(); updateHud();
+  }
+}
+function scheduleRedMenaceAttack(){
+  clearTimeout(redMenaceAttackTimer);
+  const delay=speedScale(750+Math.random()*550); // noticeably faster than the regular dragon
+  redMenaceAttackTimer=setTimeout(()=>{
+    if(redMenaceEl){ fireRedMenaceAttack(); scheduleRedMenaceAttack(); }
+  }, delay);
+}
+function fireRedMenaceAttack(){
+  if(!redMenaceEl) return;
+  const r=redMenaceEl.getBoundingClientRect();
+  const sx=r.left+r.width/2, sy=r.top+r.height/2;
+  fireRedMenaceAttackAt(sx,sy);
+  if(Math.random()<0.3){
+    setTimeout(()=>{
+      if(!redMenaceEl) return;
+      const r2=redMenaceEl.getBoundingClientRect();
+      fireRedMenaceAttackAt(r2.left+r2.width/2, r2.top+r2.height/2);
+    }, 180);
+  }
+}
+function fireRedMenaceAttackAt(sx,sy){
+  const roll=Math.random();
+  if(roll<0.4){
+    // fire — the dragon's classic attack, full damage
+    fireHomingShot(sx,sy,{
+      icon:'🔥', className:'wiz-dragon-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(100,0,0.14,'sawtooth',0.08); __playTone(60,0.04,0.22,'triangle',0.07); } }
+    });
+  } else if(roll<0.6){
+    // bat-style swoop — half damage
+    fireHomingShot(sx,sy,{
+      icon:'🦇', className:'wiz-bat-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(700,0,0.05,'square',0.06); __playTone(500,0.04,0.08,'triangle',0.06); } },
+      onHit:(tx,ty)=>dealLifeDamage(0.5,tx,ty)
+    });
+  } else if(roll<0.8){
+    // poison — instant level-down
+    fireHomingShot(sx,sy,{
+      icon:'☠️', className:'wiz-poison-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(260,0,0.1,'sine',0.06); __playTone(180,0.08,0.14,'sine',0.06); } },
+      onHit:(tx,ty)=>poisonWizard(tx,ty)
+    });
+  } else {
+    // electric bolt — full damage
+    fireHomingShot(sx,sy,{
+      icon:'⚡', className:'wiz-electric-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(950,0,0.04,'square',0.07); __playTone(1300,0.03,0.05,'square',0.06); } },
+      onHit:(tx,ty)=>dealLifeDamage(1,tx,ty)
+    });
+  }
+}
+let redMenaceRoarTimer=null;
+function scheduleRedMenaceRoar(){
+  clearTimeout(redMenaceRoarTimer);
+  const delay=3200+Math.random()*2600;
+  redMenaceRoarTimer=setTimeout(()=>{
+    if(redMenaceEl){ playRoar(true); showRoarText(redMenaceEl); scheduleRedMenaceRoar(); }
+  },delay);
+}
+
+/* ---------- Boss entrance: a jolt of shake + red flash the instant he appears ---------- */
+function bossEntranceEffect(){
+  document.body.classList.add('boss-intro-flash','boss-shake');
+  setTimeout(()=>document.body.classList.remove('boss-intro-flash','boss-shake'),900);
+}
+
+/* ---------- Epic battle music — takes over from the calm ambient loop while he's alive ---------- */
+const BATTLE_MELODY_SCALE=[146.83,164.81,174.61,196.00,220.00,233.08,277.18,293.66,329.63,349.23,392.00,440.00,466.16,554.37,587.33]; // D harmonic minor — tense, driving
+const BATTLE_BASS_PATTERN=[73.42,73.42,55.00,58.27]; // i - i - VI - v, a fast, urgent ostinato
+let battleTimer=null, battleBeatIdx=0;
+function battleNoteLoop(){
+  if(!jrpgMode || !redMenaceEl){ battleTimer=null; return; }
+  if(!sfxMuted){
+    const bassFreq=BATTLE_BASS_PATTERN[battleBeatIdx % BATTLE_BASS_PATTERN.length];
+    __playTone(bassFreq,0,0.16,'sawtooth',0.09);
+    __playTone(bassFreq/2,0,0.2,'square',0.05);
+    if(Math.random()<0.55){
+      const freq=BATTLE_MELODY_SCALE[Math.floor(Math.random()*BATTLE_MELODY_SCALE.length)];
+      __playTone(freq,0.05,0.22,'square',0.045);
+    }
+    if(battleBeatIdx%8===0){ __playTone(BATTLE_MELODY_SCALE[BATTLE_MELODY_SCALE.length-1],0,0.3,'triangle',0.05); }
+  }
+  battleBeatIdx++;
+  battleTimer=setTimeout(battleNoteLoop, 180+Math.random()*40); // fast, driving tempo
+}
+function startBattleMusic(){
+  if(battleTimer) return;
+  stopJrpgAmbient();
+  battleBeatIdx=0;
+  battleNoteLoop();
+}
+function stopBattleMusic(){
+  clearTimeout(battleTimer); battleTimer=null;
+  if(jrpgMode) startJrpgAmbient();
+}
+
+/* ---------- The ultimate: a techno countdown, then a radial wall of fire ---------- */
+let redMenaceUltimateTimer=null, redMenaceChargeTimer=null;
+function scheduleRedMenaceUltimate(){
+  clearTimeout(redMenaceUltimateTimer);
+  const delay=7000+Math.random()*3000;
+  redMenaceUltimateTimer=setTimeout(()=>{ if(redMenaceEl) startUltimateCharge(); },delay);
+}
+function startUltimateCharge(){
+  if(!redMenaceEl) return;
+  const chargeEl=document.getElementById('jrpgUltimateCharge');
+  const numEl=document.getElementById('ucNum');
+  chargeEl.classList.add('show');
+  showBossBanner('☠️ HE\u2019S CHARGING SOMETHING…','Brace yourself.',1800);
+  let beatsLeft=6;
+  function beat(){
+    if(!redMenaceEl){ chargeEl.classList.remove('show'); return; } // aborted if he's defeated mid-charge
+    numEl.textContent = beatsLeft>0 ? beatsLeft : '💥';
+    if(!sfxMuted){
+      const pitch=300+(6-beatsLeft)*70;
+      __playTone(pitch,0,0.09,'square',0.09);
+      __playTone(pitch/2,0,0.12,'sawtooth',0.06);
+    }
+    shakeScreen();
+    if(beatsLeft<=0){
+      clearTimeout(redMenaceChargeTimer);
+      chargeEl.classList.remove('show');
+      executeRadialFireUltimate();
+      return;
+    }
+    beatsLeft--;
+    redMenaceChargeTimer=setTimeout(beat, 380);
+  }
+  beat();
+}
+function executeRadialFireUltimate(){
+  if(!redMenaceEl) return;
+  document.body.classList.add('boss-shake');
+  setTimeout(()=>document.body.classList.remove('boss-shake'),700);
+  const blast=document.getElementById('jrpgRadialFire');
+  blast.classList.remove('blast'); void blast.offsetWidth; blast.classList.add('blast');
+  if(!sfxMuted){ __playTone(60,0,0.6,'sawtooth',0.13); __playTone(90,0.02,0.5,'sawtooth',0.1); __playTone(45,0.05,0.7,'triangle',0.1); }
+  setTimeout(()=>{
+    if(wizardShielded){
+      deactivateShield(true);
+      showBossBanner('🫧 SHIELD ABSORBED THE BLAST!','That was close.',2000);
+      if(!sfxMuted){ __playTone(500,0,0.1,'triangle',0.08); __playTone(700,0.08,0.14,'triangle',0.08); }
+    } else {
+      wizardProgress.lives=0; saveWizardProgress(); updateHud();
+      koWizard('inferno');
+    }
+  },350);
+  if(redMenaceEl) scheduleRedMenaceUltimate();
+}
+
+function summonBossMinion(){
+  if(!redMenaceEl || redMenaceMinionEl) return;
+  const type=MONSTER_TYPES[Math.floor(Math.random()*MONSTER_TYPES.length)];
+  const r=redMenaceEl.getBoundingClientRect();
+  redMenaceMinionEl=document.createElement('div');
+  redMenaceMinionEl.className='wiz-monster';
+  redMenaceMinionEl.textContent=type.icon;
+  redMenaceMinionEl._hitsNeeded=type.hits;
+  redMenaceMinionEl._hitsLanded=0;
+  redMenaceMinionEl._xp=Math.round(type.xp*0.7);
+  const offX=Math.random()*140-70, offY=Math.random()*50-25;
+  const mx=Math.max(40,Math.min(window.innerWidth-40, r.left+r.width/2+offX));
+  const my=Math.max(40,Math.min(window.innerHeight*0.6, r.top+offY));
+  redMenaceMinionEl.style.left=mx+'px'; redMenaceMinionEl.style.top=my+'px';
+  if(type.hits>1){
+    const hp=document.createElement('div');
+    hp.className='wiz-monster-hp';
+    hp.textContent=type.icon+' × '+type.hits;
+    redMenaceMinionEl.appendChild(hp);
+  }
+  document.body.appendChild(redMenaceMinionEl);
+  redMenaceShielded=true;
+  if(redMenaceEl){
+    redMenaceEl.classList.add('shielded');
+    if(!redMenaceEl.querySelector('.wiz-redmenace-shield-tag')){
+      const tag=document.createElement('div');
+      tag.className='wiz-redmenace-shield-tag';
+      tag.textContent='🛡️ Shielded';
+      redMenaceEl.appendChild(tag);
+    }
+  }
+  if(!sfxMuted){ __playTone(200,0,0.08,'square',0.06); __playTone(260,0.06,0.1,'square',0.06); }
+}
+function hitBossMinion(spell){
+  if(!redMenaceMinionEl) return;
+  redMenaceMinionEl._hitsLanded = (spell && spell.oneShotKill) ? redMenaceMinionEl._hitsNeeded : redMenaceMinionEl._hitsLanded+1;
+  redMenaceMinionEl.classList.remove('hit'); void redMenaceMinionEl.offsetWidth; redMenaceMinionEl.classList.add('hit');
+  const remaining=redMenaceMinionEl._hitsNeeded-redMenaceMinionEl._hitsLanded;
+  if(remaining>0){
+    const hp=redMenaceMinionEl.querySelector('.wiz-monster-hp');
+    if(hp) hp.textContent=redMenaceMinionEl.textContent+' × '+remaining;
+    if(!sfxMuted) __playTone(560+Math.random()*180,0,0.07,'square',0.06);
+  } else {
+    clearBossMinion(true);
+  }
+}
+function clearBossMinion(killed){
+  if(!redMenaceMinionEl) return;
+  const rect=redMenaceMinionEl.getBoundingClientRect();
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  const xp=redMenaceMinionEl._xp;
+  redMenaceMinionEl.remove();
+  redMenaceMinionEl=null;
+  redMenaceShielded=false;
+  if(redMenaceEl){
+    redMenaceEl.classList.remove('shielded');
+    const tag=redMenaceEl.querySelector('.wiz-redmenace-shield-tag');
+    if(tag) tag.remove();
+  }
+  if(killed){
+    if(!sfxMuted){ __playTone(700,0,0.08,'triangle',0.08); __playTone(950,0.06,0.1,'triangle',0.08); }
+    awardXP(xp,cx,cy);
+    if(redMenaceEl){
+      clearTimeout(redMenaceSummonTimer);
+      redMenaceSummonTimer=setTimeout(()=>{ if(redMenaceEl && !redMenaceMinionEl) summonBossMinion(); }, 4200+Math.random()*1800);
+    }
+  }
+}
+function startRedMenaceSchedule(){ if(redMenaceScheduleTimer) return; scheduleRedMenace(); }
+function stopRedMenaceSchedule(){
+  clearTimeout(redMenaceScheduleTimer); redMenaceScheduleTimer=null;
+  if(redMenaceEl) despawnRedMenace(false);
+}
+
+let wizardInvulnerable=false, wizardKO=false;
+const HIT_XP_PENALTY=12;
+let wizardShielded=false;
+function wizardIsShielded(){ return wizardHiding || wizardKO || wizardShielded; }
+function activateShield(){
+  if(wizardShielded || !wizardProgress.shieldUnlocked) return;
+  wizardShielded=true;
+  const el=document.getElementById('jrpgWizardCursor');
+  if(el) el.classList.add('shielded');
+  if(!sfxMuted){ __playTone(500,0,0.08,'triangle',0.07); __playTone(700,0.06,0.1,'triangle',0.07); }
+}
+function deactivateShield(consumed){
+  if(!wizardShielded) return;
+  wizardShielded=false;
+  const el=document.getElementById('jrpgWizardCursor');
+  if(el) el.classList.remove('shielded');
+  if(!consumed && !sfxMuted) __playTone(350,0,0.06,'sine',0.05);
+}
+function showFizzlePuff(x,y,icon,tone){
+  if(!sfxMuted && tone) tone();
+  const puff=document.createElement('div');
+  puff.className='wiz-safe-puff';
+  puff.textContent=icon;
+  puff.style.left=x+'px'; puff.style.top=y+'px';
+  document.body.appendChild(puff);
+  setTimeout(()=>puff.remove(),700);
+}
+function dealLifeDamage(amount,x,y){
+  if(wizardIsShielded()){
+    showFizzlePuff(x,y,'💨',()=>__playTone(300,0,0.05,'sine',0.04));
+    return;
+  }
+  if(wizardInvulnerable){
+    showFizzlePuff(x,y,'✨');
     return;
   }
   const wizEl=document.getElementById('jrpgWizardCursor');
@@ -3231,15 +3855,95 @@ function hitWizard(x,y){
   impact.style.left=x+'px'; impact.style.top=y+'px';
   document.body.appendChild(impact);
   setTimeout(()=>impact.remove(),550);
+
+  deductXP(Math.round(HIT_XP_PENALTY*amount), x, y);
+  wizardProgress.lives=Math.max(0, Math.round((wizardProgress.lives-amount)*2)/2);
+  saveWizardProgress();
+  updateHud();
+  if(wizardProgress.lives<=0){ koWizard(); }
+}
+function hitWizard(x,y){ dealLifeDamage(1,x,y); }
+function poisonWizard(x,y){
+  if(wizardIsShielded()){
+    showFizzlePuff(x,y,'💨',()=>__playTone(300,0,0.05,'sine',0.04));
+    return;
+  }
+  if(wizardInvulnerable){
+    showFizzlePuff(x,y,'✨');
+    return;
+  }
+  const wizEl=document.getElementById('jrpgWizardCursor');
+  if(wizEl){
+    wizEl.classList.remove('poisoned'); void wizEl.offsetWidth; wizEl.classList.add('poisoned');
+    setTimeout(()=>{ if(wizEl) wizEl.classList.remove('poisoned'); },560);
+  }
+  if(!sfxMuted){ __playTone(320,0,0.1,'sawtooth',0.06); __playTone(220,0.08,0.14,'sawtooth',0.06); __playTone(150,0.18,0.22,'triangle',0.06); }
+  const puff=document.createElement('div');
+  puff.className='wiz-safe-puff';
+  puff.textContent='☠️';
+  puff.style.left=x+'px'; puff.style.top=y+'px';
+  document.body.appendChild(puff);
+  setTimeout(()=>puff.remove(),700);
+
+  const txt=document.createElement('div');
+  txt.className='jrpg-xp-text';
+  txt.style.color='#7CE85A';
+  if(wizardProgress.level>1){
+    wizardProgress.level--;
+    wizardProgress.xp=0;
+    txt.textContent='☠️ POISONED — LEVEL DOWN';
+    txt.style.fontSize='12px';
+  } else {
+    wizardProgress.xp=Math.max(0, wizardProgress.xp-15);
+    txt.textContent='-15 XP';
+  }
+  txt.style.left=(x-30)+'px'; txt.style.top=(y-30)+'px';
+  document.body.appendChild(txt);
+  setTimeout(()=>txt.remove(),1300);
+  saveWizardProgress();
+  updateHud();
+  updateWizardAppearance();
+}
+function koWizard(reason){
+  if(wizardKO) return;
+  wizardKO=true;
+  const wizEl=document.getElementById('jrpgWizardCursor');
+  if(wizEl) wizEl.classList.add('ko');
+  const banner=document.getElementById('jrpgKoBanner');
+  const mainEl=banner ? banner.querySelector('.ko-main') : null;
+  const subEl=banner ? banner.querySelector('.ko-sub') : null;
+  if(mainEl) mainEl.textContent = reason==='inferno' ? '💥 CAUGHT IN THE INFERNO!' : '💫 KNOCKED OUT!';
+  if(subEl) subEl.textContent = reason==='inferno' ? 'That radial blast was brutal…' : 'Catching his breath…';
+  if(banner){ banner.classList.remove('show'); void banner.offsetWidth; banner.classList.add('show'); }
+  if(!sfxMuted){ __playTone(300,0,0.1,'sawtooth',0.08); __playTone(220,0.1,0.12,'sawtooth',0.07); __playTone(140,0.22,0.3,'triangle',0.07); }
+  setTimeout(()=>{
+    if(banner) banner.classList.remove('show');
+    respawnWizard();
+  }, 1500);
+}
+function respawnWizard(){
+  wizardProgress.lives=wizardProgress.maxLives;
+  saveWizardProgress();
+  updateHud();
+  const wizEl=document.getElementById('jrpgWizardCursor');
+  if(wizEl){ wizEl.classList.remove('ko'); wizEl.classList.add('invuln'); }
+  wizardKO=false;
+  wizardInvulnerable=true;
+  if(!sfxMuted){ __playTone(523.25,0,0.08,'triangle',0.08); __playTone(659.25,0.07,0.08,'triangle',0.08); __playTone(880,0.14,0.16,'triangle',0.09); }
+  clearTimeout(respawnWizard._t);
+  respawnWizard._t=setTimeout(()=>{
+    wizardInvulnerable=false;
+    if(wizEl) wizEl.classList.remove('invuln');
+  }, 2500);
 }
 
 /* ---------- Small roaming monsters — steadier XP between dragon visits ---------- */
 const MONSTER_TYPES=[
-  { icon:'🟢', hits:1, xp:6 },
-  { icon:'🦇', hits:2, xp:11 },
-  { icon:'👺', hits:2, xp:15 }
+  { key:'blob', icon:'🟢', hits:1, xp:6 },
+  { key:'bat', icon:'🦇', hits:2, xp:11 },
+  { key:'goblin', icon:'👺', hits:2, xp:15 }
 ];
-let smallMonsterEl=null, smallMonsterScheduleTimer=null, smallMonsterFleeTimer=null;
+let smallMonsterEl=null, smallMonsterScheduleTimer=null, smallMonsterFleeTimer=null, smallMonsterAttackTimer=null;
 function scheduleSmallMonster(){
   const delay=22000+Math.random()*18000; // every 22-40s while JRPG Mode is on
   smallMonsterScheduleTimer=setTimeout(()=>{
@@ -3255,6 +3959,7 @@ function spawnSmallMonster(){
   smallMonsterEl._hitsNeeded=type.hits;
   smallMonsterEl._hitsLanded=0;
   smallMonsterEl._xp=type.xp;
+  smallMonsterEl._key=type.key;
   const margin=70;
   const x=margin+Math.random()*(window.innerWidth-margin*2);
   const y=margin+Math.random()*(window.innerHeight*0.5);
@@ -3268,6 +3973,7 @@ function spawnSmallMonster(){
   document.body.appendChild(smallMonsterEl);
   clearTimeout(smallMonsterFleeTimer);
   smallMonsterFleeTimer=setTimeout(()=>despawnSmallMonster(false),11000);
+  scheduleSmallMonsterAttack();
 }
 function hitSmallMonster(spell){
   if(!smallMonsterEl) return;
@@ -3285,6 +3991,7 @@ function hitSmallMonster(spell){
 function despawnSmallMonster(killed){
   if(!smallMonsterEl) return;
   clearTimeout(smallMonsterFleeTimer);
+  clearTimeout(smallMonsterAttackTimer); smallMonsterAttackTimer=null;
   const rect=smallMonsterEl.getBoundingClientRect();
   const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
   const xp=smallMonsterEl._xp;
@@ -3299,6 +4006,39 @@ function startSmallMonsterSchedule(){ if(smallMonsterScheduleTimer) return; sche
 function stopSmallMonsterSchedule(){
   clearTimeout(smallMonsterScheduleTimer); smallMonsterScheduleTimer=null;
   if(smallMonsterEl) despawnSmallMonster(false);
+}
+
+/* ---------- Every small monster fights back with its own attack ---------- */
+function scheduleSmallMonsterAttack(){
+  clearTimeout(smallMonsterAttackTimer);
+  const delay=speedScale(1700+Math.random()*1500);
+  smallMonsterAttackTimer=setTimeout(()=>{
+    if(smallMonsterEl){ fireSmallMonsterAttack(); scheduleSmallMonsterAttack(); }
+  }, delay);
+}
+function fireSmallMonsterAttack(){
+  if(!smallMonsterEl) return;
+  const r=smallMonsterEl.getBoundingClientRect();
+  const sx=r.left+r.width/2, sy=r.top+r.height/2;
+  if(smallMonsterEl._key==='bat'){
+    fireHomingShot(sx,sy,{
+      icon:'🦇', className:'wiz-bat-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(700,0,0.05,'square',0.05); __playTone(500,0.04,0.08,'triangle',0.05); } },
+      onHit:(tx,ty)=>dealLifeDamage(0.5,tx,ty)
+    });
+  } else if(smallMonsterEl._key==='blob'){
+    fireHomingShot(sx,sy,{
+      icon:'☠️', className:'wiz-poison-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(260,0,0.1,'sine',0.05); __playTone(180,0.08,0.14,'sine',0.05); } },
+      onHit:(tx,ty)=>poisonWizard(tx,ty)
+    });
+  } else if(smallMonsterEl._key==='goblin'){
+    fireHomingShot(sx,sy,{
+      icon:'⚡', className:'wiz-electric-shot',
+      sound:()=>{ if(!sfxMuted){ __playTone(950,0,0.04,'square',0.06); __playTone(1300,0.03,0.05,'square',0.05); } },
+      onHit:(tx,ty)=>dealLifeDamage(1,tx,ty)
+    });
+  }
 }
 
 /* ---------- The hut — click to send the wizard into hiding ---------- */
@@ -3411,17 +4151,19 @@ function wizardJump(){
 
 /* ---------- Wizard spell-casting on click — full cross-screen shots with a trail ---------- */
 const WIZ_SPELLS=[
-  { icon:'🔥', color:'#FF7A3D', sound:()=>{ __playTone(180,0,0.16,'sawtooth',0.07); __playTone(90,0.05,0.22,'triangle',0.07); } },
-  { icon:'⚡', color:'#4FD2FF', sound:()=>{ __playTone(900,0,0.05,'square',0.06); __playTone(1300,0.03,0.06,'square',0.05); } },
-  { icon:'⭐', color:'#FFE066', sound:()=>{ __playTone(1046,0,0.09,'triangle',0.08); __playTone(1568,0.06,0.14,'triangle',0.07); } }
+  { icon:'🔥', color:'#FF7A3D', sound:()=>{ __playTone(180,0,0.16,'sawtooth',0.07); __playTone(90,0.05,0.22,'triangle',0.07); } }
 ];
-const WIZ_BEAM_SPELL={
-  icon:'💥', color:'#FFD23F', oneShotKill:true, beam:true,
-  sound:()=>{ __playTone(220,0,0.05,'sawtooth',0.1); __playTone(660,0.03,0.06,'square',0.09); __playTone(1320,0.07,0.2,'triangle',0.11); }
+const ELECTRICITY_SPELL={
+  icon:'⚡', color:'#4FD2FF', sound:()=>{ __playTone(900,0,0.05,'square',0.06); __playTone(1300,0.03,0.06,'square',0.05); }
+};
+const LASER_SPELL={
+  icon:'👁️', color:'#8CD2FF', oneShotKill:true, laser:true,
+  sound:()=>{ __playTone(1400,0,0.04,'square',0.09); __playTone(2000,0.02,0.08,'square',0.08); }
 };
 function pickWizardSpell(){
-  if(wizardProgress.beamUnlocked && Math.random()<0.22) return WIZ_BEAM_SPELL;
-  return WIZ_SPELLS[Math.floor(Math.random()*WIZ_SPELLS.length)];
+  // level 1: fireball only. level 4+: electricity joins the rotation.
+  const pool = wizardProgress.electricityUnlocked ? [WIZ_SPELLS[0], ELECTRICITY_SPELL] : [WIZ_SPELLS[0]];
+  return pool[Math.floor(Math.random()*pool.length)];
 }
 const WIZ_FIREWORK_COLORS=['#FF7A3D','#FFD23F','#4FD2FF','#5CFFAE','#FF6BD6'];
 const WIZ_STAR_EMOJI=['⭐','✨','💫'];
@@ -3572,19 +4314,82 @@ function castWizardSpell(targetX,targetY,spell){
   }
   requestAnimationFrame(animateProjectile);
 }
-document.addEventListener('click',function(e){
-  if(!jrpgMode) return;
-  const wizEl=document.getElementById('jrpgWizardCursor');
-  if(wizEl && wizEl.contains(e.target)) return; // don't cast at the wizard itself
-  const hutEl=document.getElementById('wizHut');
-  if(hutEl && hutEl.contains(e.target)) return; // the hut's own listener handles this click
+/* ---------- Wizard input: quick tap casts, a hold raises the shield, a fast double-tap fires the laser ---------- */
+let wizMouseDownInfo=null, wizLastTapTime=0;
+const WIZ_HOLD_THRESHOLD=480; // ms — how long a press must last to become a hold
+const WIZ_COMBO_WINDOW=380; // ms — max gap between taps to count as the level-5 combo
+
+function handleWizardTap(e){
+  const now=Date.now();
+  const isCombo = wizardProgress.laserUnlocked && (now-wizLastTapTime) < WIZ_COMBO_WINDOW;
+  wizLastTapTime = isCombo ? 0 : now; // reset after a combo fires so a third rapid tap doesn't immediately re-trigger
+
+  const targetMonster = e.target.closest ? e.target.closest('.wiz-dragon, .wiz-redmenace, .wiz-monster') : null;
+
+  if(isCombo){
+    fireLaserAttack(e.clientX, e.clientY);
+    if(targetMonster){
+      if(targetMonster.classList.contains('wiz-dragon')) hitDragon(LASER_SPELL);
+      else if(targetMonster.classList.contains('wiz-redmenace')) hitRedMenace(LASER_SPELL, e.clientX, e.clientY);
+      else if(targetMonster===redMenaceMinionEl) hitBossMinion(LASER_SPELL);
+      else hitSmallMonster(LASER_SPELL);
+    }
+    return;
+  }
+
   const spell=pickWizardSpell();
   castWizardSpell(e.clientX,e.clientY,spell);
-  // resolve the hit against whatever was actually clicked, using the spell that was just cast
-  const targetMonster = e.target.closest ? e.target.closest('.wiz-dragon, .wiz-monster') : null;
   if(targetMonster){
     if(targetMonster.classList.contains('wiz-dragon')) hitDragon(spell);
+    else if(targetMonster.classList.contains('wiz-redmenace')) hitRedMenace(spell, e.clientX, e.clientY);
+    else if(targetMonster===redMenaceMinionEl) hitBossMinion(spell);
     else hitSmallMonster(spell);
+  }
+}
+function fireLaserAttack(targetX,targetY){
+  const startX=wizX, startY=wizY;
+  const dx=targetX-startX, dy=targetY-startY;
+  const dist=Math.hypot(dx,dy);
+  const angle=Math.atan2(dy,dx)*180/Math.PI;
+  const beam=document.createElement('div');
+  beam.className='wiz-laser-beam';
+  beam.style.left=startX+'px';
+  beam.style.top=startY+'px';
+  beam.style.width=dist+'px';
+  beam.style.transform='rotate('+angle+'deg)';
+  document.body.appendChild(beam);
+  setTimeout(()=>beam.remove(),340);
+  if(!sfxMuted) LASER_SPELL.sound();
+  wizardJump();
+  playImpactEffect(targetX,targetY);
+}
+document.addEventListener('mousedown',function(e){
+  if(!jrpgMode) return;
+  const wizEl=document.getElementById('jrpgWizardCursor');
+  if(wizEl && wizEl.contains(e.target)) return; // don't interact with the wizard itself
+  const hutEl=document.getElementById('wizHut');
+  if(hutEl && hutEl.contains(e.target)) return; // the hut has its own listener
+  wizMouseDownInfo={ x:e.clientX, y:e.clientY, target:e.target, holdFired:false };
+  wizMouseDownInfo.holdTimer=setTimeout(()=>{
+    if(wizMouseDownInfo && wizardProgress.shieldUnlocked){
+      wizMouseDownInfo.holdFired=true;
+      activateShield();
+    }
+  }, WIZ_HOLD_THRESHOLD);
+});
+document.addEventListener('mouseup',function(e){
+  if(!jrpgMode || !wizMouseDownInfo) return;
+  clearTimeout(wizMouseDownInfo.holdTimer);
+  const wasHold=wizMouseDownInfo.holdFired;
+  wizMouseDownInfo=null;
+  if(wasHold){ deactivateShield(); return; } // holding-and-releasing doesn't also cast a spell
+  handleWizardTap(e);
+});
+window.addEventListener('blur',function(){
+  if(wizMouseDownInfo){
+    clearTimeout(wizMouseDownInfo.holdTimer);
+    if(wizMouseDownInfo.holdFired) deactivateShield();
+    wizMouseDownInfo=null;
   }
 });
 
@@ -5833,7 +6638,8 @@ applyCollapsedBlocks();
   const wizEl=document.getElementById('jrpgWizardCursor');
   if(wizEl) wizEl.classList.toggle('can-fly', wizardProgress.flightUnlocked);
   updateHud();
-  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); startDragonSchedule(); startSmallMonsterSchedule(); }
+  updateWizardAppearance();
+  if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); startDragonSchedule(); startSmallMonsterSchedule(); startRedMenaceSchedule(); }
 })();
 </script>
   <div class="backup-toast" id="backupToast"></div>
