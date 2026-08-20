@@ -1166,6 +1166,26 @@
     margin-bottom:14px;
   }
   .order-pad:last-of-type{margin-bottom:10px;}
+  .vendor-hub{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .vendor-chip{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);
+    border-radius:100px;padding:5px 10px;cursor:pointer;user-select:none;
+    font-family:'Nunito',sans-serif;transition:background 0.12s ease, border-color 0.12s ease;
+  }
+  .vendor-chip:hover{background:rgba(255,255,255,0.14);border-color:var(--pop);}
+  .vc-name{font-weight:700;font-size:12.5px;color:#F5F5FA;}
+  .vc-phone{font-weight:600;font-size:11px;color:rgba(255,255,255,0.55);}
+  .vc-del{
+    border:none;background:transparent;color:rgba(255,255,255,0.4);font-size:14px;font-weight:800;
+    line-height:1;cursor:pointer;padding:0 0 0 2px;
+  }
+  .vc-del:hover{color:#FF8A8A;}
+  .vendor-chip.vc-add{
+    background:transparent;border-style:dashed;color:rgba(255,255,255,0.6);
+    font-weight:700;font-size:12px;
+  }
+  .vendor-chip.vc-add:hover{color:#F5F5FA;border-color:var(--pop);}
   .order-pad-head{
     display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px;
   }
@@ -2039,6 +2059,40 @@
     .keytask-title,.keytask-meta,.keytask-empty{color:var(--ink)!important;}
     .dish-card{background:#fff!important;border-color:rgba(22,11,41,0.2)!important;}
     .dish-name,.dish-ingredients,.mealplan-empty{color:var(--ink)!important;}
+
+    /* ---------- Order Pad — always exports as a clean printed card ---------- */
+    .order-pad{
+      background:#fff!important;
+      border:1.5px solid rgba(22,11,41,0.16)!important;
+      border-left:5px solid #6B4EE6!important;
+      border-radius:10px!important;
+      box-shadow:none!important;
+      padding:14px 16px 12px!important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    .vendor-hub{display:none!important;}
+    .order-title-input,.order-pad-title-static{
+      color:#A87B0E!important;font-size:17px!important;
+      border-bottom-color:rgba(22,11,41,0.2)!important;text-shadow:none!important;
+    }
+    .order-phone-input,.order-meta-input{
+      background:transparent!important;border:none!important;color:rgba(22,11,41,0.65)!important;
+      font-size:12.5px!important;padding:2px 0!important;text-align:right!important;
+    }
+    .order-pad-meta-row{margin-bottom:8px!important;}
+    .order-subsection-label{color:rgba(22,11,41,0.55)!important;}
+    .order-items{gap:0!important;}
+    .order-item-row{
+      background:transparent!important;border:none!important;
+      border-bottom:1px solid rgba(22,11,41,0.12)!important;
+      border-radius:0!important;padding:7px 0!important;
+    }
+    .oi-label{color:var(--ink)!important;font-size:13px!important;}
+    .oi-qty,.oi-code,.oi-unit{
+      background:transparent!important;border:none!important;color:rgba(22,11,41,0.7)!important;
+      font-size:12px!important;text-align:right!important;
+    }
+
     .block-head{margin-bottom:2px;}
     .block h2{font-size:15px;}
     .block .icon{font-size:15px;}
@@ -2415,6 +2469,7 @@
         <div class="sub">Call-in orders — vendor &amp; PLCB</div>
 
         <div class="order-pad" id="vendorOrderPad">
+          <div class="vendor-hub no-print" id="vendorHub"></div>
           <div class="order-pad-head">
             <input type="text" id="vendorTitleInput" class="order-title-input" placeholder="Vendor name (e.g. Produce Junction)" onchange="updateVendorMeta()">
             <input type="tel" id="vendorPhoneInput" class="order-meta-input order-phone-input" placeholder="Phone number" onchange="updateVendorMeta()">
@@ -6340,6 +6395,57 @@ function loadWorkOrders(){
 function saveWorkOrders(){
   try{ localStorage.setItem(ORDERS_KEY, JSON.stringify(workOrders)); }catch(e){}
 }
+
+/* ---------- Vendor Hub — saved call-in vendors for quick reuse ---------- */
+const SAVED_VENDORS_KEY='actionPlan3000::savedVendors';
+const DEFAULT_SAVED_VENDORS=[
+  {name:'Produce Junction', phone:'(610) 604-4664'},
+  {name:"Gentile's Fruit Market", phone:'(610) 356-9755'}
+];
+let savedVendors=[];
+function loadSavedVendors(){
+  try{
+    const raw=localStorage.getItem(SAVED_VENDORS_KEY);
+    if(raw){ const d=JSON.parse(raw); savedVendors=Array.isArray(d)?d:DEFAULT_SAVED_VENDORS.slice(); }
+    else{ savedVendors=DEFAULT_SAVED_VENDORS.slice(); saveSavedVendors(); }
+  }catch(e){ savedVendors=DEFAULT_SAVED_VENDORS.slice(); }
+}
+function saveSavedVendors(){
+  try{ localStorage.setItem(SAVED_VENDORS_KEY, JSON.stringify(savedVendors)); }catch(e){}
+}
+function renderVendorHub(){
+  const hub=document.getElementById('vendorHub');
+  if(!hub) return;
+  hub.innerHTML = savedVendors.map((v,i)=>
+    '<span class="vendor-chip" onclick="selectSavedVendor('+i+')">'+
+      '<span class="vc-name">'+escapeHtml(v.name)+'</span>'+
+      (v.phone?'<span class="vc-phone">'+escapeHtml(v.phone)+'</span>':'')+
+      '<button class="vc-del no-print" type="button" onclick="event.stopPropagation();removeSavedVendor('+i+')" title="Remove">×</button>'+
+    '</span>'
+  ).join('') + '<button class="vendor-chip vc-add no-print" type="button" onclick="addSavedVendor()">+ Save vendor</button>';
+}
+function selectSavedVendor(i){
+  const v=savedVendors[i];
+  if(!v) return;
+  workOrders.vendorTitle=v.name;
+  workOrders.vendorPhone=v.phone||'';
+  saveWorkOrders();
+  renderOrderPads();
+}
+function addSavedVendor(){
+  const name=(document.getElementById('vendorTitleInput')||{}).value || prompt('Vendor name?');
+  if(!name || !name.trim()) return;
+  const phone=(document.getElementById('vendorPhoneInput')||{}).value || prompt('Phone number? (optional)') || '';
+  if(savedVendors.some(v=>v.name.toLowerCase()===name.trim().toLowerCase())) return;
+  savedVendors.push({name:name.trim(), phone:phone.trim()});
+  saveSavedVendors();
+  renderVendorHub();
+}
+function removeSavedVendor(i){
+  savedVendors.splice(i,1);
+  saveSavedVendors();
+  renderVendorHub();
+}
 function unitOptionsHtml(units,selected){
   return units.map(u=>'<option value="'+u+'"'+(selected===u?' selected':'')+'>'+u+'</option>').join('');
 }
@@ -6629,7 +6735,9 @@ renderBlockNav();
   if(btn){ btn.textContent=sfxMuted?'🔇 Sound':'🔊 Sound'; btn.classList.toggle('is-muted',sfxMuted); }
 })();
 loadWorkOrders();
+loadSavedVendors();
 renderOrderPads();
+renderVendorHub();
 applyCollapsedBlocks();
 (function initJrpgMode(){
   const btn=document.getElementById('jrpgToggleBtn');
