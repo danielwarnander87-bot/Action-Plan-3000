@@ -680,6 +680,74 @@
   .view{display:none;}
   .view.active{display:block;}
 
+  /* ============ ZEN — breathing space ============ */
+  .zen-view{position:relative; min-height:calc(100vh - 130px); overflow:hidden;}
+  .zen-bg{
+    position:absolute; inset:0; z-index:0;
+    background:linear-gradient(135deg, var(--indigo-soft), var(--pink-soft), var(--green-soft), var(--cream));
+    background-size:400% 400%;
+    animation:zenDrift 32s ease-in-out infinite;
+    opacity:0.55;
+  }
+  @keyframes zenDrift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+  .zen-content{
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:calc(100vh - 130px);
+    padding:30px 20px 50px;
+  }
+  .zen-presets{display:flex; gap:10px; margin-bottom:34px; flex-wrap:wrap; justify-content:center;}
+  .zen-preset-btn{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px;
+    padding:9px 18px; border-radius:100px;
+    border:2.5px solid rgba(22,11,41,0.18);
+    background:rgba(255,255,255,0.55);
+    color:var(--ink); cursor:pointer;
+  }
+  .zen-preset-btn.active{background:var(--indigo); color:#fff; border-color:var(--indigo);}
+  .zen-circle-wrap{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:22px; user-select:none; -webkit-user-select:none; touch-action:none;
+  }
+  .zen-circle-hit{
+    width:260px; height:260px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .zen-circle{
+    width:120px; height:120px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.9), var(--indigo-soft) 55%, var(--pink-soft) 100%);
+    box-shadow:0 0 50px rgba(199,184,255,0.65), 0 0 90px rgba(255,168,222,0.35);
+    transform:scale(0.62);
+    will-change:transform;
+  }
+  .zen-phase-label{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:18px;
+    color:var(--ink); text-align:center; min-height:24px;
+  }
+  .zen-count{
+    font-family:'VT323',monospace; font-size:22px; letter-spacing:1px;
+    color:var(--indigo-deep); opacity:0.75; min-height:22px;
+  }
+  .zen-footer{
+    margin-top:44px; display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .zen-sound-btn{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px;
+    padding:8px 16px; border-radius:100px;
+    border:2px solid rgba(22,11,41,0.18);
+    background:rgba(255,255,255,0.55); color:var(--ink); cursor:pointer;
+  }
+  .zen-sound-btn.is-muted{opacity:0.55;}
+  .zen-stats{
+    font-family:'Nunito',sans-serif; font-size:12px; font-weight:700;
+    color:var(--ink); opacity:0.55; text-align:center;
+  }
+
   .study-wrap{max-width:1040px;margin:0 auto;padding:30px 20px 40px;}
 
   /* ============ THE WALL — Windows 98 chrome ============ */
@@ -2441,6 +2509,7 @@
       <button class="tab-btn active" id="tabBtnPlanner" onclick="switchView('planner')">📅 Planner</button>
       <button class="tab-btn" id="tabBtnStudy" onclick="switchView('study')">🧠 Study Session</button>
       <button class="tab-btn" id="tabBtnWall" onclick="switchView('wall')">🧱 Wall</button>
+      <button class="tab-btn" id="tabBtnZen" onclick="switchView('zen')">🧘 Zen</button>
       <button class="tab-btn" id="rearrangeBtn" onclick="toggleRearrangeMode()">🔀 Rearrange</button>
     </div>
     <div class="block-nav" id="blockNav"></div>
@@ -3029,6 +3098,28 @@
     </div>
   </div>
 
+  <div id="viewZen" class="view zen-view">
+    <div class="zen-bg"></div>
+    <div class="zen-content">
+      <div class="zen-presets">
+        <button class="zen-preset-btn active" data-preset="box" onclick="setZenPreset('box')">Box Breathing</button>
+        <button class="zen-preset-btn" data-preset="478" onclick="setZenPreset('478')">4-7-8</button>
+        <button class="zen-preset-btn" data-preset="free" onclick="setZenPreset('free')">Free Hold</button>
+      </div>
+      <div class="zen-circle-wrap">
+        <div class="zen-circle-hit" id="zenCircleHit">
+          <div class="zen-circle" id="zenCircle"></div>
+        </div>
+        <div class="zen-phase-label" id="zenPhaseLabel">Press and hold to breathe in</div>
+        <div class="zen-count" id="zenCount"></div>
+      </div>
+      <div class="zen-footer">
+        <button class="zen-sound-btn" id="zenSoundBtn" onclick="toggleZenSound()">🔊 Sound</button>
+        <div class="zen-stats" id="zenStats"></div>
+      </div>
+    </div>
+  </div>
+
 <script>
 /* ============================================================
    SOUND ENGINE — click ticks on every button + soft journal typing
@@ -3095,6 +3186,283 @@ document.addEventListener('keydown', function(e){
     }
   }
 });
+
+/* ============================================================
+   ZEN — a breathing space. Press and hold to inhale (the circle
+   grows the longer you hold), release to exhale. Presets give a
+   target count to aim for; Free Hold just follows your own pace.
+   Ambient wind, chimes, and rustling trees play underneath.
+   ============================================================ */
+const ZEN_PRESETS={
+  box:  { label:'Box Breathing', inhale:4, hold:4, exhale:4, pause:4 },
+  '478':{ label:'4-7-8',         inhale:4, hold:7, exhale:8, pause:0 },
+  free: { label:'Free Hold',     inhale:0, hold:0, exhale:0, pause:0 },
+};
+let zenPreset='box';
+let zenPhase='idle';        // idle | inhale | hold | exhale | pause
+let zenPressStart=0, zenReleaseStart=0, zenPauseStart=0;
+let zenSizeAtRelease=0.62;
+let zenRafId=null;
+let zenStats={ totalBreaths:0, totalSeconds:0, sessions:0 };
+try{
+  const raw=localStorage.getItem('actionPlan3000_zenStats');
+  if(raw) zenStats=Object.assign(zenStats, JSON.parse(raw));
+}catch(e){}
+function saveZenStats(){ try{ localStorage.setItem('actionPlan3000_zenStats', JSON.stringify(zenStats)); }catch(e){} }
+let zenSessionCounted=false;
+
+const ZEN_MIN_SCALE=0.62, ZEN_MAX_SCALE=1.9;
+const ZEN_FREE_INHALE_REF=6; // seconds — how long a "full" free-hold breath feels, for scaling the circle only
+
+function zenLerp(a,b,t){ return a+(b-a)*Math.max(0,Math.min(1,t)); }
+
+function setZenPreset(p){
+  if(!ZEN_PRESETS[p]) return;
+  zenPreset=p;
+  document.querySelectorAll('.zen-preset-btn').forEach(b=>b.classList.toggle('active', b.dataset.preset===p));
+  zenResetToIdle();
+}
+function zenResetToIdle(){
+  zenPhase='idle';
+  if(zenRafId){ cancelAnimationFrame(zenRafId); zenRafId=null; }
+  const circle=document.getElementById('zenCircle');
+  if(circle) circle.style.transform='scale('+ZEN_MIN_SCALE+')';
+  const label=document.getElementById('zenPhaseLabel');
+  if(label) label.textContent='Press and hold to breathe in';
+  const count=document.getElementById('zenCount');
+  if(count) count.textContent='';
+}
+function zenUpdateStatsDisplay(){
+  const el=document.getElementById('zenStats');
+  if(!el) return;
+  const mins=Math.floor(zenStats.totalSeconds/60);
+  el.textContent=zenStats.totalBreaths+' breath'+(zenStats.totalBreaths===1?'':'s')+' logged · '+mins+' zen minute'+(mins===1?'':'s')+' total';
+}
+
+function zenPointerDown(e){
+  e.preventDefault();
+  if(zenPhase==='inhale'||zenPhase==='hold') return;
+  zenPhase='inhale';
+  zenPressStart=performance.now();
+  if(zenRafId) cancelAnimationFrame(zenRafId);
+  zenLoop();
+}
+function zenPointerUp(e){
+  if(zenPhase!=='inhale' && zenPhase!=='hold') return;
+  const circle=document.getElementById('zenCircle');
+  const currentScale=circle ? parseFloat((circle.style.transform.match(/scale\(([\d.]+)\)/)||[0,ZEN_MIN_SCALE])[1]) : ZEN_MIN_SCALE;
+  zenSizeAtRelease=currentScale;
+  zenPhase='exhale';
+  zenReleaseStart=performance.now();
+  if(zenRafId) cancelAnimationFrame(zenRafId);
+  zenLoop();
+}
+function zenLoop(){
+  const preset=ZEN_PRESETS[zenPreset];
+  const circle=document.getElementById('zenCircle');
+  const label=document.getElementById('zenPhaseLabel');
+  const count=document.getElementById('zenCount');
+  const now=performance.now();
+
+  if(zenPhase==='inhale'){
+    const heldSec=(now-zenPressStart)/1000;
+    const inhaleTarget=preset.inhale>0 ? preset.inhale : ZEN_FREE_INHALE_REF;
+    if(heldSec<=inhaleTarget){
+      const progress=heldSec/inhaleTarget;
+      const scale=zenLerp(ZEN_MIN_SCALE, ZEN_MAX_SCALE, progress);
+      if(circle) circle.style.transform='scale('+scale.toFixed(3)+')';
+      if(label) label.textContent='Breathe in…';
+      if(count) count.textContent = preset.inhale>0 ? (Math.ceil(heldSec)+' / '+preset.inhale) : '';
+    } else if(preset.hold>0){
+      zenPhase='hold';
+    } else {
+      // free mode or no hold phase — just sit at full while still holding
+      if(circle) circle.style.transform='scale('+ZEN_MAX_SCALE+')';
+      if(label) label.textContent='Full — release to breathe out';
+      if(count) count.textContent='';
+    }
+    zenRafId=requestAnimationFrame(zenLoop);
+    return;
+  }
+  if(zenPhase==='hold'){
+    const inhaleTarget=preset.inhale>0?preset.inhale:ZEN_FREE_INHALE_REF;
+    const holdSec=(now-zenPressStart)/1000-inhaleTarget;
+    const pulse=ZEN_MAX_SCALE+Math.sin(now/420)*0.045;
+    if(circle) circle.style.transform='scale('+pulse.toFixed(3)+')';
+    if(label) label.textContent='Hold…';
+    if(count) count.textContent=Math.ceil(Math.max(0,holdSec))+' / '+preset.hold;
+    zenRafId=requestAnimationFrame(zenLoop);
+    return;
+  }
+  if(zenPhase==='exhale'){
+    const exSec=(now-zenReleaseStart)/1000;
+    const totalHeld=(zenReleaseStart-zenPressStart)/1000;
+    const exhaleTarget=preset.exhale>0 ? preset.exhale : Math.max(3, Math.min(8, totalHeld));
+    if(exSec<=exhaleTarget){
+      const progress=exSec/exhaleTarget;
+      const scale=zenLerp(zenSizeAtRelease, ZEN_MIN_SCALE, progress);
+      if(circle) circle.style.transform='scale('+scale.toFixed(3)+')';
+      if(label) label.textContent='Breathe out…';
+      if(count) count.textContent = preset.exhale>0 ? (Math.ceil(exSec)+' / '+preset.exhale) : '';
+      zenRafId=requestAnimationFrame(zenLoop);
+      return;
+    } else {
+      // breath complete — log it
+      zenStats.totalBreaths++;
+      zenStats.totalSeconds+=Math.round(totalHeld+exhaleTarget);
+      saveZenStats();
+      zenUpdateStatsDisplay();
+      if(preset.pause>0){
+        zenPhase='pause';
+        zenPauseStart=now;
+      } else {
+        zenResetToIdle();
+        return;
+      }
+    }
+  }
+  if(zenPhase==='pause'){
+    const pauseSec=(now-zenPauseStart)/1000;
+    if(circle) circle.style.transform='scale('+ZEN_MIN_SCALE+')';
+    if(label) label.textContent='Pause…';
+    const preset2=ZEN_PRESETS[zenPreset];
+    if(count) count.textContent=Math.ceil(pauseSec)+' / '+preset2.pause;
+    if(pauseSec>=preset2.pause){
+      zenResetToIdle();
+      return;
+    }
+    zenRafId=requestAnimationFrame(zenLoop);
+    return;
+  }
+}
+
+/* ---------- Zen ambient soundscape — wind, chimes, rustling trees ---------- */
+let zenSoundOn=true;
+try{ zenSoundOn = localStorage.getItem('actionPlan3000_zenSound')!=='0'; }catch(e){}
+let zenNoiseBuffer=null, zenWindNodes=null, zenTreeNodes=null, zenChimeTimeoutId=null, zenAmbientActive=false;
+function zenEnsureNoiseBuffer(ctx){
+  if(zenNoiseBuffer) return zenNoiseBuffer;
+  try{
+    const len=ctx.sampleRate*4;
+    zenNoiseBuffer=ctx.createBuffer(1, len, ctx.sampleRate);
+    const data=zenNoiseBuffer.getChannelData(0);
+    for(let i=0;i<len;i++) data[i]=Math.random()*2-1;
+  }catch(e){}
+  return zenNoiseBuffer;
+}
+function zenStartWind(){
+  const ctx=__sfxGetCtx();
+  if(!ctx || zenWindNodes) return;
+  const buf=zenEnsureNoiseBuffer(ctx);
+  if(!buf) return;
+  try{
+    const src=ctx.createBufferSource();
+    src.buffer=buf; src.loop=true;
+    const filter=ctx.createBiquadFilter();
+    filter.type='lowpass'; filter.frequency.value=340;
+    const gain=ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime+2.5);
+    const lfo=ctx.createOscillator();
+    lfo.type='sine'; lfo.frequency.value=0.07;
+    const lfoGain=ctx.createGain(); lfoGain.gain.value=90;
+    lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    src.start(); lfo.start();
+    zenWindNodes={src, filter, gain, lfo};
+  }catch(e){}
+}
+function zenStartTrees(){
+  const ctx=__sfxGetCtx();
+  if(!ctx || zenTreeNodes) return;
+  const buf=zenEnsureNoiseBuffer(ctx);
+  if(!buf) return;
+  try{
+    const src=ctx.createBufferSource();
+    src.buffer=buf; src.loop=true;
+    const filter=ctx.createBiquadFilter();
+    filter.type='bandpass'; filter.frequency.value=2200; filter.Q.value=0.7;
+    const gain=ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.022, ctx.currentTime+3);
+    const lfo=ctx.createOscillator();
+    lfo.type='sine'; lfo.frequency.value=0.13;
+    const lfoGain=ctx.createGain(); lfoGain.gain.value=0.014;
+    lfo.connect(lfoGain); lfoGain.connect(gain.gain);
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    src.start(); lfo.start();
+    zenTreeNodes={src, filter, gain, lfo};
+  }catch(e){}
+}
+function zenStopLoopNodes(nodes){
+  if(!nodes) return;
+  try{
+    const ctx=__sfxGetCtx();
+    const now=ctx.currentTime;
+    nodes.gain.gain.cancelScheduledValues(now);
+    nodes.gain.gain.setValueAtTime(nodes.gain.gain.value, now);
+    nodes.gain.gain.linearRampToValueAtTime(0.0001, now+0.8);
+    setTimeout(()=>{ try{ nodes.src.stop(); nodes.lfo.stop(); }catch(e){} }, 900);
+  }catch(e){}
+}
+function zenPlayChime(){
+  if(!zenSoundOn) return;
+  const notes=[523.25,587.33,659.25,783.99,880.00,1046.50,1174.66];
+  const n=1+Math.floor(Math.random()*2);
+  let t=0;
+  for(let i=0;i<n;i++){
+    const f=notes[Math.floor(Math.random()*notes.length)];
+    __playTone(f, t, 1.1, 'sine', 0.032);
+    t+=0.4+Math.random()*0.5;
+  }
+}
+function zenScheduleChimes(){
+  if(!zenAmbientActive) return;
+  zenPlayChime();
+  const gap=4+Math.random()*7;
+  zenChimeTimeoutId=setTimeout(zenScheduleChimes, gap*1000);
+}
+function zenStartAmbient(){
+  if(zenAmbientActive || !zenSoundOn) return;
+  zenAmbientActive=true;
+  zenStartWind();
+  zenStartTrees();
+  zenChimeTimeoutId=setTimeout(zenScheduleChimes, 1500);
+}
+function zenStopAmbient(){
+  zenAmbientActive=false;
+  if(zenChimeTimeoutId){ clearTimeout(zenChimeTimeoutId); zenChimeTimeoutId=null; }
+  zenStopLoopNodes(zenWindNodes); zenWindNodes=null;
+  zenStopLoopNodes(zenTreeNodes); zenTreeNodes=null;
+}
+function toggleZenSound(){
+  zenSoundOn=!zenSoundOn;
+  try{ localStorage.setItem('actionPlan3000_zenSound', zenSoundOn?'1':'0'); }catch(e){}
+  const btn=document.getElementById('zenSoundBtn');
+  if(btn){ btn.textContent=zenSoundOn?'🔊 Sound':'🔇 Sound'; btn.classList.toggle('is-muted',!zenSoundOn); }
+  if(zenSoundOn){ zenStartAmbient(); } else { zenStopAmbient(); }
+}
+function enterZen(){
+  zenResetToIdle();
+  zenUpdateStatsDisplay();
+  const btn=document.getElementById('zenSoundBtn');
+  if(btn){ btn.textContent=zenSoundOn?'🔊 Sound':'🔇 Sound'; btn.classList.toggle('is-muted',!zenSoundOn); }
+  const hit=document.getElementById('zenCircleHit');
+  if(hit && !hit._zenWired){
+    hit.addEventListener('pointerdown', zenPointerDown);
+    hit.addEventListener('pointerup', zenPointerUp);
+    hit.addEventListener('pointercancel', zenPointerUp);
+    hit.addEventListener('pointerleave', zenPointerUp);
+    hit._zenWired=true;
+  }
+  if(zenSoundOn) zenStartAmbient();
+  if(!zenSessionCounted){ zenStats.sessions++; saveZenStats(); zenSessionCounted=true; }
+}
+function leaveZen(){
+  zenResetToIdle();
+  zenStopAmbient();
+  zenSessionCounted=false;
+}
 
 /* ============================================================
    JRPG MODE — upbeat mystical ambience: sparkle field, a gentle
@@ -4867,13 +5235,16 @@ function switchView(view){
   document.getElementById('viewPlanner').classList.toggle('active',view==='planner');
   document.getElementById('viewStudy').classList.toggle('active',view==='study');
   document.getElementById('viewWall').classList.toggle('active',view==='wall');
+  document.getElementById('viewZen').classList.toggle('active',view==='zen');
   document.getElementById('tabBtnPlanner').classList.toggle('active',view==='planner');
   document.getElementById('tabBtnStudy').classList.toggle('active',view==='study');
   document.getElementById('tabBtnWall').classList.toggle('active',view==='wall');
+  document.getElementById('tabBtnZen').classList.toggle('active',view==='zen');
   const nav=document.getElementById('blockNav');
   if(nav)nav.style.display=view==='planner'?'flex':'none';
   if(view==='wall')renderWall();
   if(view!=='study') slidePauseAudio();
+  if(view==='zen'){ enterZen(); } else { leaveZen(); }
 }
 
 /* ============================================================
