@@ -233,6 +233,36 @@
   .block.collapsed{padding-bottom:16px;}
   .block.collapsed > *:not(.block-head){display:none!important;}
 
+  /* ---------- 3D flip — every block can flip to a back-side notes face,
+     giving it a second surface without taking more room on the page ---------- */
+  .block{perspective:1400px;}
+  .block-flip-btn{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:13px;
+    border:2px solid var(--ink); background:rgba(255,255,255,0.12); color:#EDEDF5;
+    padding:5px 9px; border-radius:100px; cursor:pointer; flex-shrink:0; line-height:1;
+  }
+  .block-flip-btn:active{background:rgba(255,255,255,0.28);}
+  .block-flip-inner{
+    position:relative; width:100%; flex:1; min-height:0;
+    transition:transform 0.7s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .block.flipped .block-flip-inner{transform:rotateY(180deg);}
+  .block-face{backface-visibility:hidden; -webkit-backface-visibility:hidden; width:100%;}
+  .block-face-front{position:relative; display:flex; flex-direction:column; min-height:100%;}
+  .block-face-back{
+    position:absolute; inset:0; transform:rotateY(180deg);
+    display:flex; flex-direction:column;
+  }
+  .block-back-label{font-family:'Fredoka',sans-serif; font-weight:700; font-size:13px; opacity:0.85; margin-bottom:6px;}
+  .block-back-notes{
+    flex:1; width:100%; min-height:110px; resize:vertical; box-sizing:border-box;
+    background:rgba(0,0,0,0.16); border:1.5px dashed rgba(255,255,255,0.4); border-radius:12px;
+    color:inherit; font-family:'Nunito',sans-serif; font-size:14px; line-height:1.5; padding:10px 12px;
+  }
+  .block-back-notes:focus{outline:none; border-color:rgba(255,255,255,0.65); background:rgba(0,0,0,0.22);}
+  @media print{ .block-flip-btn{display:none!important;} .block-flip-inner{transform:none!important;} .block-face-back{display:none!important;} }
+
   /* ---------- Storm scene (JRPG Mode background) ---------- */
   .jrpg-storm-scene{display:none;}
   body.jrpg-mode .scene-bg:not(.jrpg-storm-scene){display:none!important;}
@@ -1224,6 +1254,57 @@
     cursor:pointer;
   }
   .bullet-add-btn:active{background:rgba(255,255,255,0.15);}
+
+  /* ---------- flexible block pieces — custom blocks you build yourself ---------- */
+  .block-pieces-wrap{flex:1; display:flex; flex-direction:column; gap:10px; margin-bottom:10px; min-height:20px;}
+  .block-piece{position:relative; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+    border-radius:12px; padding:10px 11px;}
+  .piece-controls{position:absolute; top:6px; right:6px; display:flex; gap:2px;}
+  .piece-controls button{
+    width:20px; height:20px; border-radius:6px; border:1px solid rgba(255,255,255,0.2);
+    background:rgba(0,0,0,0.2); color:#EDEDF5; font-size:11px; line-height:1; cursor:pointer; padding:0;
+  }
+  .piece-controls button:active{background:rgba(255,255,255,0.2);}
+  .piece-checklist{padding-right:70px;}
+  .piece-check-item{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .piece-check-item:last-of-type{margin-bottom:8px;}
+  .piece-check-text{
+    flex:1; border:none; background:transparent; font-family:'Nunito',sans-serif;
+    font-weight:600; font-size:14px; color:#F5F5FA; outline:none; padding:2px 0;
+  }
+  .piece-check-text::placeholder{color:rgba(255,255,255,0.35);}
+  .piece-item-del{border:none; background:transparent; color:#EDEDF5; opacity:0.4; font-size:16px; cursor:pointer; padding:0 3px;}
+  .piece-item-del:active{opacity:0.9;}
+  .piece-add-item-btn{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:11px;
+    border:1.5px dashed rgba(255,255,255,0.35); background:transparent; color:#EDEDF5;
+    padding:4px 10px; border-radius:100px; cursor:pointer;
+  }
+  .piece-note-text{
+    width:100%; min-height:70px; box-sizing:border-box; resize:vertical;
+    border:none; background:rgba(0,0,0,0.12); border-radius:8px;
+    font-family:'Nunito',sans-serif; font-size:14px; color:#F5F5FA; padding:8px; outline:none;
+  }
+  .piece-link{padding-right:70px;}
+  .piece-link-label,.piece-link-url{
+    display:block; width:100%; box-sizing:border-box; border:none; background:rgba(0,0,0,0.12);
+    border-radius:8px; font-family:'Nunito',sans-serif; font-size:14px; color:#F5F5FA;
+    padding:7px 9px; outline:none; margin-bottom:6px;
+  }
+  .piece-link-visit{font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; color:var(--pop);}
+  .piece-header{padding-right:70px;}
+  .piece-header-text{
+    width:100%; box-sizing:border-box; border:none; background:transparent;
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:16px; color:#F5F5FA;
+    padding:2px 0; outline:none; border-bottom:2px solid rgba(255,255,255,0.18);
+  }
+  .piece-add-toolbar{display:flex; gap:6px; flex-wrap:wrap;}
+  .piece-add-toolbar button{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:11px;
+    border:2px dashed rgba(255,255,255,0.35); background:transparent; color:#EDEDF5;
+    padding:6px 11px; border-radius:100px; cursor:pointer;
+  }
+  .piece-add-toolbar button:active{background:rgba(255,255,255,0.15);}
 
   /* ---------- Order Pads (Vendor + PLCB) ---------- */
   .order-pad{
@@ -5473,21 +5554,144 @@ function saveCustomBlocks(){
   try{localStorage.setItem(CUSTOM_BLOCKS_KEY,JSON.stringify(customBlocks));return true;}
   catch(e){alert("Storage is full \u2014 couldn't save that block.");return false;}
 }
+function migrateCustomBlockPieces(b){
+  if(b.pieces) return;
+  const key=customBlockKey(b.id);
+  const oldItems=BLOCK_DATA[key];
+  if(Array.isArray(oldItems) && oldItems.length){
+    b.pieces=[{id:uid(), type:'checklist', items:oldItems.map(it=>({id:it.id||uid(), text:it.text||'', done:!!it.done}))}];
+  } else {
+    b.pieces=[];
+  }
+}
+function findCustomBlock(blockId){ return customBlocks.find(b=>b.id===blockId); }
+function findPiece(blockId,pieceId){ const b=findCustomBlock(blockId); return b ? (b.pieces||[]).find(p=>p.id===pieceId) : null; }
+function pieceControlsHTML(blockId,pieceId){
+  return '<div class="piece-controls no-print">'+
+    '<button type="button" title="Move up" onclick="moveBlockPiece(\''+blockId+'\',\''+pieceId+'\',-1)">\u2191</button>'+
+    '<button type="button" title="Move down" onclick="moveBlockPiece(\''+blockId+'\',\''+pieceId+'\',1)">\u2193</button>'+
+    '<button type="button" title="Remove piece" onclick="removeBlockPiece(\''+blockId+'\',\''+pieceId+'\')">\u00d7</button>'+
+  '</div>';
+}
+function renderPieceHTML(blockId,p){
+  if(p.type==='checklist'){
+    const itemsHtml=(p.items||[]).map(it=>
+      '<div class="piece-check-item">'+
+        '<input type="checkbox" class="bullet-check" '+(it.done?'checked':'')+' onchange="togglePieceItem(\''+blockId+'\',\''+p.id+'\',\''+it.id+'\')">'+
+        '<input type="text" class="piece-check-text" value="'+escapeHtml(it.text)+'" placeholder="List item..." onchange="updatePieceItemText(\''+blockId+'\',\''+p.id+'\',\''+it.id+'\',this.value)">'+
+        '<button type="button" class="piece-item-del no-print" onclick="deletePieceItem(\''+blockId+'\',\''+p.id+'\',\''+it.id+'\')">\u00d7</button>'+
+      '</div>').join('');
+    return '<div class="block-piece piece-checklist" data-piece-id="'+p.id+'">'+pieceControlsHTML(blockId,p.id)+itemsHtml+
+      '<button type="button" class="piece-add-item-btn no-print" onclick="addPieceItem(\''+blockId+'\',\''+p.id+'\')">+ Add item</button></div>';
+  }
+  if(p.type==='note'){
+    return '<div class="block-piece piece-note" data-piece-id="'+p.id+'">'+pieceControlsHTML(blockId,p.id)+
+      '<textarea class="piece-note-text" placeholder="Write anything..." onchange="updatePieceField(\''+blockId+'\',\''+p.id+'\',\'text\',this.value)">'+escapeHtml(p.text||'')+'</textarea></div>';
+  }
+  if(p.type==='link'){
+    return '<div class="block-piece piece-link" data-piece-id="'+p.id+'">'+pieceControlsHTML(blockId,p.id)+
+      '<input type="text" class="piece-link-label" placeholder="Label" value="'+escapeHtml(p.label||'')+'" onchange="updatePieceField(\''+blockId+'\',\''+p.id+'\',\'label\',this.value)">'+
+      '<input type="text" class="piece-link-url" placeholder="https://..." value="'+escapeHtml(p.url||'')+'" onchange="updatePieceField(\''+blockId+'\',\''+p.id+'\',\'url\',this.value)">'+
+      (p.url?'<a class="piece-link-visit" href="'+escapeHtml(p.url)+'" target="_blank" rel="noopener">'+escapeHtml(p.label||p.url)+' \u2197</a>':'')+
+    '</div>';
+  }
+  if(p.type==='header'){
+    return '<div class="block-piece piece-header" data-piece-id="'+p.id+'">'+pieceControlsHTML(blockId,p.id)+
+      '<input type="text" class="piece-header-text" placeholder="Section title" value="'+escapeHtml(p.text||'')+'" onchange="updatePieceField(\''+blockId+'\',\''+p.id+'\',\'text\',this.value)"></div>';
+  }
+  return '';
+}
 function renderCustomBlocksDOM(){
   const container=document.getElementById('customBlocksContainer');
   if(!container)return;
+  customBlocks.forEach(migrateCustomBlockPieces);
   container.innerHTML=customBlocks.map(b=>{
     const key=customBlockKey(b.id);
-    return '<div class="block '+b.color+'" id="customblock_'+b.id+'">'+
+    const piecesHtml=(b.pieces||[]).map(p=>renderPieceHTML(b.id,p)).join('');
+    return '<div class="block '+b.color+'" id="customblock_'+b.id+'" data-block-id="'+key+'">'+
       '<div class="block-head"><h2><span class="icon">\u2728</span>'+escapeHtml(b.title)+'</h2>'+
       '<div style="display:flex;gap:6px;">'+
       '<button class="eta-btn" onclick="addETA(\''+key+'\')">\u23f1 ETA</button>'+
-      '<button class="custom-block-del" type="button" onclick="deleteCustomBlock(\''+b.id+'\')">\u00d7</button>'+
+      '<button class="custom-block-del no-print" type="button" onclick="deleteCustomBlock(\''+b.id+'\')">\u00d7</button>'+
       '</div></div>'+
-      '<div class="bullet-list" data-key="'+key+'"></div>'+
-      '<button class="bullet-add-btn" type="button" onclick="addBulletItem(\''+key+'\',true)">+ Add item</button>'+
+      '<div class="block-pieces-wrap">'+piecesHtml+
+        (piecesHtml?'':'<span style="opacity:0.5;font-size:13px;">Empty — add a piece below to build this block out.</span>')+
+      '</div>'+
+      '<div class="piece-add-toolbar no-print">'+
+        '<button type="button" onclick="addBlockPiece(\''+b.id+'\',\'checklist\')">\u2611\ufe0f Checklist</button>'+
+        '<button type="button" onclick="addBlockPiece(\''+b.id+'\',\'note\')">\ud83d\udcdd Note</button>'+
+        '<button type="button" onclick="addBlockPiece(\''+b.id+'\',\'link\')">\ud83d\udd17 Link</button>'+
+        '<button type="button" onclick="addBlockPiece(\''+b.id+'\',\'header\')">\ud83c\udff7\ufe0f Header</button>'+
+      '</div>'+
     '</div>';
   }).join('');
+}
+function addBlockPiece(blockId,type){
+  const b=findCustomBlock(blockId); if(!b) return;
+  if(!b.pieces) b.pieces=[];
+  const piece={id:uid(), type:type};
+  if(type==='checklist') piece.items=[];
+  if(type==='note') piece.text='';
+  if(type==='link'){ piece.label=''; piece.url=''; }
+  if(type==='header') piece.text='';
+  b.pieces.push(piece);
+  saveCustomBlocks();
+  renderCustomBlocksDOM();
+  enhanceBlocksWith3D();
+  soundClick();
+}
+function removeBlockPiece(blockId,pieceId){
+  const b=findCustomBlock(blockId); if(!b||!b.pieces) return;
+  b.pieces=b.pieces.filter(p=>p.id!==pieceId);
+  saveCustomBlocks();
+  renderCustomBlocksDOM();
+  enhanceBlocksWith3D();
+  soundClick();
+}
+function moveBlockPiece(blockId,pieceId,dir){
+  const b=findCustomBlock(blockId); if(!b||!b.pieces) return;
+  const idx=b.pieces.findIndex(p=>p.id===pieceId);
+  const newIdx=idx+dir;
+  if(idx<0||newIdx<0||newIdx>=b.pieces.length) return;
+  const tmp=b.pieces[idx]; b.pieces[idx]=b.pieces[newIdx]; b.pieces[newIdx]=tmp;
+  saveCustomBlocks();
+  renderCustomBlocksDOM();
+  enhanceBlocksWith3D();
+  soundClick();
+}
+function updatePieceField(blockId,pieceId,field,value){
+  const p=findPiece(blockId,pieceId); if(!p) return;
+  p[field]=value;
+  saveCustomBlocks();
+  if(p.type==='link'){ renderCustomBlocksDOM(); enhanceBlocksWith3D(); } // refresh the "Open" link
+}
+function addPieceItem(blockId,pieceId){
+  const p=findPiece(blockId,pieceId); if(!p) return;
+  if(!p.items) p.items=[];
+  p.items.push({id:uid(), text:'', done:false});
+  saveCustomBlocks();
+  renderCustomBlocksDOM();
+  enhanceBlocksWith3D();
+}
+function togglePieceItem(blockId,pieceId,itemId){
+  const p=findPiece(blockId,pieceId); if(!p||!p.items) return;
+  const it=p.items.find(i=>i.id===itemId); if(!it) return;
+  it.done=!it.done;
+  saveCustomBlocks();
+  soundClick();
+}
+function updatePieceItemText(blockId,pieceId,itemId,value){
+  const p=findPiece(blockId,pieceId); if(!p||!p.items) return;
+  const it=p.items.find(i=>i.id===itemId); if(!it) return;
+  it.text=value;
+  saveCustomBlocks();
+}
+function deletePieceItem(blockId,pieceId,itemId){
+  const p=findPiece(blockId,pieceId); if(!p||!p.items) return;
+  p.items=p.items.filter(i=>i.id!==itemId);
+  saveCustomBlocks();
+  renderCustomBlocksDOM();
+  enhanceBlocksWith3D();
 }
 function toggleAddBlockForm(){
   document.getElementById('addBlockForm').classList.toggle('open');
@@ -5501,17 +5705,15 @@ function createCustomBlock(){
   const title=titleEl.value.trim();
   if(!title){alert('Give the block a title first.');titleEl.focus();return;}
   const id=uid();
-  customBlocks.push({id:id,title:title,color:pickedBlockColor});
+  customBlocks.push({id:id,title:title,color:pickedBlockColor,pieces:[]});
   if(!saveCustomBlocks()){customBlocks.pop();return;}
   BLOCK_KEYS=currentBlockKeys();
   renderCustomBlocksDOM();
-  const key=customBlockKey(id);
-  BLOCK_DATA[key]=[{id:uid(),stamp:nowStamp(),text:'',done:false}];
-  customBlocks.forEach(b=>renderBulletList(customBlockKey(b.id)));
   titleEl.value='';
   document.getElementById('addBlockForm').classList.remove('open');
   persist();
   renderBlockNav();
+  enhanceBlocksWith3D();
 }
 function deleteCustomBlock(id){
   if(!confirm('Delete this block and everything in it?'))return;
@@ -5520,9 +5722,9 @@ function deleteCustomBlock(id){
   delete BLOCK_DATA[customBlockKey(id)];
   BLOCK_KEYS=currentBlockKeys();
   renderCustomBlocksDOM();
-  customBlocks.forEach(b=>renderBulletList(customBlockKey(b.id)));
   persist();
   renderBlockNav();
+  enhanceBlocksWith3D();
 }
 renderCustomBlocksDOM();
 
@@ -7110,6 +7312,69 @@ loadSavedVendors();
 renderOrderPads();
 renderVendorHub();
 applyCollapsedBlocks();
+function saveBlockNotes(el){
+  try{ localStorage.setItem(el.dataset.notesKey, el.value); }catch(e){}
+}
+function flipBlock(blockId){
+  const block=document.querySelector('[data-block-id="'+blockId+'"]');
+  if(!block) return;
+  block.classList.toggle('flipped');
+  soundClick();
+}
+function enhanceBlocksWith3D(){
+  document.querySelectorAll('.block[data-block-id]').forEach(block=>{
+    if(block.dataset.enhanced3d) return;
+    const blockId=block.getAttribute('data-block-id');
+    const head=block.querySelector('.block-head');
+    if(!head) return;
+
+    // move all existing body content (everything after the head) into a front face
+    const bodyNodes=Array.from(block.childNodes).filter(n=>n!==head);
+    const frontFace=document.createElement('div');
+    frontFace.className='block-face block-face-front';
+    bodyNodes.forEach(n=>frontFace.appendChild(n));
+
+    // build a back face — free notes space, so every block gets a second
+    // surface without taking more room on the page
+    const notesKey='blockNotes_'+blockId;
+    let savedNotes=''; try{ savedNotes=localStorage.getItem(notesKey)||''; }catch(e){}
+    const backFace=document.createElement('div');
+    backFace.className='block-face block-face-back';
+    backFace.innerHTML=
+      '<div class="block-back-label">📝 Notes</div>'+
+      '<textarea class="block-back-notes" data-notes-key="'+notesKey+'" oninput="saveBlockNotes(this)" placeholder="Extra space — anything goes here.">'+escapeHtml(savedNotes)+'</textarea>';
+
+    const flipInner=document.createElement('div');
+    flipInner.className='block-flip-inner';
+    flipInner.appendChild(frontFace);
+    flipInner.appendChild(backFace);
+    block.appendChild(flipInner);
+
+    // flip button — every block gets one
+    const flipBtn=document.createElement('button');
+    flipBtn.className='block-flip-btn no-print';
+    flipBtn.type='button';
+    flipBtn.title='Flip for notes space';
+    flipBtn.textContent='🔄';
+    flipBtn.onclick=()=>flipBlock(blockId);
+    head.appendChild(flipBtn);
+
+    // collapse button — every block except Clock and Calculator, and skip
+    // blocks (like Order Pads) that already have their own collapse button
+    if(blockId!=='clock' && blockId!=='calculator' && !head.querySelector('.block-collapse-btn')){
+      const collapseBtn=document.createElement('button');
+      collapseBtn.className='block-collapse-btn no-print';
+      collapseBtn.type='button';
+      collapseBtn.textContent='🔽 Collapse';
+      collapseBtn.onclick=()=>toggleBlockCollapse(blockId);
+      head.appendChild(collapseBtn);
+    }
+
+    block.dataset.enhanced3d='1';
+  });
+  applyCollapsedBlocks(); // re-apply saved collapsed state now that buttons exist
+}
+enhanceBlocksWith3D();
 (function initJrpgMode(){
   const btn=document.getElementById('jrpgToggleBtn');
   document.body.classList.toggle('jrpg-mode',jrpgMode);
