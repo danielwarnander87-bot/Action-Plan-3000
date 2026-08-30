@@ -250,7 +250,7 @@
   .chalk-surface{
     flex:1; width:100%; min-height:200px; box-sizing:border-box; resize:vertical;
     background:transparent; border:2px dashed rgba(255,255,255,0.14); border-radius:8px;
-    font-family:'Kalam',cursive; font-size:20px; line-height:1.7; color:#F3F7F0;
+    font-family:'Kalam',cursive; font-size:26px; line-height:2.15; color:#F3F7F0;
     padding:14px 16px; outline:none; caret-color:#F3F7F0;
   }
   .chalk-surface::placeholder{color:rgba(255,255,255,0.32); font-family:'Nunito',sans-serif; font-size:14px;}
@@ -2833,7 +2833,7 @@
       <div class="block-head">
         <h2><span class="icon">🖍️</span>Chalk Board</h2>
       </div>
-      <div class="chalk-hint">On iPad: write with Apple Pencil right on the board — iPadOS Scribble turns it into real text automatically. End a line with "=" and tap Solve (or just pause) to fill in the answer.</div>
+      <div class="chalk-hint">On iPad: write with Apple Pencil right on the board — iPadOS Scribble turns it into real text automatically. Write bigger and give each character room — Scribble reads math symbols better with more space. End a line with "=" and tap Solve (or just pause) to fill in the answer — a stray "t" between two numbers gets auto-corrected to "+", since that's almost always what Scribble misheard.</div>
       <div class="chalk-surface-wrap">
         <textarea class="chalk-surface" id="chalkSurface" placeholder="Write here with Apple Pencil, or type…" oninput="onChalkInput()"></textarea>
       </div>
@@ -2887,6 +2887,8 @@
       <div class="files-btn-row">
         <button class="bullet-add-btn" type="button" onclick="saveToFile()">💾 Save to File</button>
         <button class="bullet-add-btn" type="button" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
+        <button class="bullet-add-btn no-print" type="button" onclick="saveToVault()">🏺 Save to Vault</button>
+        <button class="bullet-add-btn no-print" type="button" onclick="loadFromVault()">📤 Load from Vault</button>
       </div>
       <div class="files-storage-note">Keep files under ~3MB each — this is browser storage, not the cloud.</div>
     </div>
@@ -2953,6 +2955,8 @@
       <button class="clear-btn sync-btn" onclick="saveToFile()">💾 Save to File</button>
       <button class="clear-btn sync-btn" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
       <input type="file" id="loadFileInput" accept="application/json" style="display:none;" onchange="loadFromFile(event)">
+      <button class="clear-btn sync-btn no-print" onclick="saveToVault()">🏺 Save to Vault</button>
+      <button class="clear-btn sync-btn no-print" onclick="loadFromVault()">📤 Load from Vault</button>
       <button class="clear-btn sync-btn" onclick="carryOverUnfinishedClick()">⬅️ Carry Over Unfinished</button>
       <button class="clear-btn sync-btn" onclick="viewLastWeekJournal()">📔 View Last Week's Journal</button>
       <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
@@ -5994,7 +5998,12 @@ function solveChalkboard(){
     // whitespace) after it — never touch a line that already has an answer
     const m=line.match(/^(.*?)=\s*$/);
     if(!m) return line;
-    const exprPart=m[1];
+    let exprPart=m[1];
+    // Apple Pencil Scribble sometimes reads a "+" as a lowercase "t" — a
+    // bare "t" sitting directly between two numbers (or a number and a
+    // parenthesis) only ever happens when it was meant to be a plus sign,
+    // since nobody writes an actual word like that in a formula line
+    exprPart=exprPart.replace(/(?<=[\d)])\s*t\s*(?=[\d(])/gi, ' + ');
     if(!/[\d]/.test(exprPart)) return line;
     const result=safeEvalMath(exprPart);
     if(result===null) return line;
@@ -6884,6 +6893,82 @@ function saveToFile(){
   URL.revokeObjectURL(url);
 }
 
+/* ============================================================
+   SAVE TO VAULT — hands the same backup straight to The Vault
+   in another tab via postMessage, instead of just downloading
+   it. Each page only ever writes to its own storage; this just
+   passes the file data across, the same way pasting or drag-
+   and-drop would.
+   ============================================================ */
+const VAULT_URL='https://danielwarnander87-bot.github.io/The-Vault/';
+const VAULT_ORIGIN='https://danielwarnander87-bot.github.io';
+let vaultWindowRef=null;
+window.addEventListener('message', (event)=>{
+  if(event.origin!==VAULT_ORIGIN) return;
+  const msg=event.data;
+  if(!msg) return;
+  if(msg.type==='vault-ready' && saveToVault._pending){
+    const pending=saveToVault._pending; saveToVault._pending=null;
+    pending();
+  }
+  if(msg.type==='vault-add-file-ack'){
+    showBackupToast(msg.ok ? '🏺 Saved to The Vault.' : '⚠️ The Vault couldn\'t save that file.');
+  }
+  if(msg.type==='vault-file-picked'){
+    try{
+      const jsonText=decodeURIComponent(escape(atob(msg.dataBase64)));
+      showBackupToast('🏺 Loading "'+msg.name+'" from The Vault…');
+      restoreFromBackupData(jsonText);
+    }catch(e){
+      showBackupToast('⚠️ Couldn\'t read that file from The Vault.');
+    }
+  }
+});
+function loadFromVault(){
+  const pickUrl=VAULT_URL + (VAULT_URL.indexOf('?')!==-1?'&':'?') + 'pick=1';
+  const win=window.open(pickUrl, 'theVaultWindow');
+  if(!win){
+    showBackupToast('⚠️ Your browser blocked the popup — allow popups for this page and try again.');
+    return;
+  }
+  vaultWindowRef=win;
+  showBackupToast('🏺 Pick a file in The Vault tab to load it here.');
+}
+function saveToVault(){
+  const dump={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.indexOf('actionPlan3000')===0)dump[k]=localStorage.getItem(k);
+  }
+  const jsonStr=JSON.stringify(dump,null,2);
+  const filename='action-plan-3000_'+wk+'.json';
+  const dataBase64=btoa(unescape(encodeURIComponent(jsonStr)));
+
+  function sendNow(){
+    vaultWindowRef.postMessage({type:'vault-add-file', name:filename, mime:'application/json', dataBase64}, VAULT_ORIGIN);
+  }
+
+  if(vaultWindowRef && !vaultWindowRef.closed){
+    sendNow();
+    vaultWindowRef.focus();
+    showBackupToast('🏺 Sending to The Vault…');
+  } else {
+    vaultWindowRef=window.open(VAULT_URL, 'theVaultWindow');
+    if(!vaultWindowRef){
+      showBackupToast('⚠️ Your browser blocked the popup — allow popups for this page and try again.');
+      return;
+    }
+    saveToVault._pending=sendNow;
+    showBackupToast('🏺 Opening The Vault…');
+    setTimeout(()=>{
+      if(saveToVault._pending){
+        saveToVault._pending=null;
+        showBackupToast('⚠️ The Vault took too long to respond — try again once its tab has fully loaded.');
+      }
+    }, 8000);
+  }
+}
+
 function showBackupToast(msg){
   const t=document.getElementById('backupToast');
   if(!t)return;
@@ -6981,32 +7066,33 @@ function mergeUnfinishedFromParsedData(sourceData){
   return {carried,carriedItems};
 }
 
+function restoreFromBackupData(jsonText){
+  let data;
+  try{ data=JSON.parse(jsonText); }catch(e){ alert('That file doesn\'t look like a valid Action Plan 3000 save file.'); return; }
+  const keys=Object.keys(data).filter(k=>k.indexOf('actionPlan3000')===0);
+  if(!keys.length){ alert('No Action Plan 3000 data found in that file.'); return; }
+  keys.forEach(k=>{try{localStorage.setItem(k,data[k]);}catch(e){}});
+
+  // Auto-carry unfinished tasks from the most recent prior week found in the file into THIS week
+  const bestKey=findMostRecentPriorWeekKeyIn(data,STORE_KEY);
+  let carriedMsg='';
+  if(bestKey && data[bestKey]){
+    try{
+      const sourceData=typeof data[bestKey]==='string'?JSON.parse(data[bestKey]):data[bestKey];
+      const result=mergeUnfinishedFromParsedData(sourceData);
+      if(result.carried){
+        carriedMsg='\n\nAlso carried over '+result.carried+' unfinished task(s) from '+bestKey.replace('actionPlan3000::','')+' into this week.';
+      }
+    }catch(e){}
+  }
+  alert('Loaded!'+carriedMsg+' The page will refresh to show your synced data.');
+  location.reload();
+}
 function loadFromFile(event){
   const file=event.target.files&&event.target.files[0];
   if(!file)return;
   const reader=new FileReader();
-  reader.onload=()=>{
-    let data;
-    try{data=JSON.parse(reader.result);}catch(e){alert('That file doesn\'t look like a valid Action Plan 3000 save file.');event.target.value='';return;}
-    const keys=Object.keys(data).filter(k=>k.indexOf('actionPlan3000')===0);
-    if(!keys.length){alert('No Action Plan 3000 data found in that file.');event.target.value='';return;}
-    keys.forEach(k=>{try{localStorage.setItem(k,data[k]);}catch(e){}});
-
-    // Auto-carry unfinished tasks from the most recent prior week found in the file into THIS week
-    const bestKey=findMostRecentPriorWeekKeyIn(data,STORE_KEY);
-    let carriedMsg='';
-    if(bestKey && data[bestKey]){
-      try{
-        const sourceData=typeof data[bestKey]==='string'?JSON.parse(data[bestKey]):data[bestKey];
-        const result=mergeUnfinishedFromParsedData(sourceData);
-        if(result.carried){
-          carriedMsg='\n\nAlso carried over '+result.carried+' unfinished task(s) from '+bestKey.replace('actionPlan3000::','')+' into this week.';
-        }
-      }catch(e){}
-    }
-    alert('Loaded!'+carriedMsg+' The page will refresh to show your synced data.');
-    location.reload();
-  };
+  reader.onload=()=>{ restoreFromBackupData(reader.result); };
   reader.onerror=()=>{alert('Could not read that file.');};
   reader.readAsText(file);
 }
