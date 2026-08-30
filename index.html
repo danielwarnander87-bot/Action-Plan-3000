@@ -250,7 +250,7 @@
   .chalk-surface{
     flex:1; width:100%; min-height:200px; box-sizing:border-box; resize:vertical;
     background:transparent; border:2px dashed rgba(255,255,255,0.14); border-radius:8px;
-    font-family:'Kalam',cursive; font-size:20px; line-height:1.7; color:#F3F7F0;
+    font-family:'Kalam',cursive; font-size:26px; line-height:2.15; color:#F3F7F0;
     padding:14px 16px; outline:none; caret-color:#F3F7F0;
   }
   .chalk-surface::placeholder{color:rgba(255,255,255,0.32); font-family:'Nunito',sans-serif; font-size:14px;}
@@ -2833,7 +2833,7 @@
       <div class="block-head">
         <h2><span class="icon">🖍️</span>Chalk Board</h2>
       </div>
-      <div class="chalk-hint">On iPad: write with Apple Pencil right on the board — iPadOS Scribble turns it into real text automatically. End a line with "=" and tap Solve (or just pause) to fill in the answer.</div>
+      <div class="chalk-hint">On iPad: write with Apple Pencil right on the board — iPadOS Scribble turns it into real text automatically. Write bigger and give each character room — Scribble reads math symbols better with more space. End a line with "=" and tap Solve (or just pause) to fill in the answer — a stray "t" between two numbers gets auto-corrected to "+", since that's almost always what Scribble misheard.</div>
       <div class="chalk-surface-wrap">
         <textarea class="chalk-surface" id="chalkSurface" placeholder="Write here with Apple Pencil, or type…" oninput="onChalkInput()"></textarea>
       </div>
@@ -2887,6 +2887,7 @@
       <div class="files-btn-row">
         <button class="bullet-add-btn" type="button" onclick="saveToFile()">💾 Save to File</button>
         <button class="bullet-add-btn" type="button" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
+        <a class="bullet-add-btn no-print" href="https://danielwarnander87-bot.github.io/The-Vault/" target="_blank" rel="noopener" style="text-decoration:none; display:inline-flex; align-items:center;">🏺 The Vault</a>
       </div>
       <div class="files-storage-note">Keep files under ~3MB each — this is browser storage, not the cloud.</div>
     </div>
@@ -2953,6 +2954,7 @@
       <button class="clear-btn sync-btn" onclick="saveToFile()">💾 Save to File</button>
       <button class="clear-btn sync-btn" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
       <input type="file" id="loadFileInput" accept="application/json" style="display:none;" onchange="loadFromFile(event)">
+      <a class="clear-btn sync-btn no-print" href="https://danielwarnander87-bot.github.io/The-Vault/" target="_blank" rel="noopener" style="text-decoration:none; display:inline-flex; align-items:center;">🏺 The Vault</a>
       <button class="clear-btn sync-btn" onclick="carryOverUnfinishedClick()">⬅️ Carry Over Unfinished</button>
       <button class="clear-btn sync-btn" onclick="viewLastWeekJournal()">📔 View Last Week's Journal</button>
       <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
@@ -5994,7 +5996,12 @@ function solveChalkboard(){
     // whitespace) after it — never touch a line that already has an answer
     const m=line.match(/^(.*?)=\s*$/);
     if(!m) return line;
-    const exprPart=m[1];
+    let exprPart=m[1];
+    // Apple Pencil Scribble sometimes reads a "+" as a lowercase "t" — a
+    // bare "t" sitting directly between two numbers (or a number and a
+    // parenthesis) only ever happens when it was meant to be a plus sign,
+    // since nobody writes an actual word like that in a formula line
+    exprPart=exprPart.replace(/(?<=[\d)])\s*t\s*(?=[\d(])/gi, ' + ');
     if(!/[\d]/.test(exprPart)) return line;
     const result=safeEvalMath(exprPart);
     if(result===null) return line;
