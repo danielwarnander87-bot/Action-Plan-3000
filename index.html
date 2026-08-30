@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB4PSI1MCUiIHk9IjU4JSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI4MCI+8J+SjjwvdGV4dD48L3N2Zz4=">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=VT323&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --pink:#E0119B;
@@ -232,6 +232,42 @@
   .block-collapse-btn:active{background:rgba(255,255,255,0.28);}
   .block.collapsed{padding-bottom:16px;}
   .block.collapsed > *:not(.block-head){display:none!important;}
+
+  /* ---------- Chalk Board — dark green slate, real text underneath so
+     Apple Pencil + iPadOS Scribble can transcribe handwriting into it ---------- */
+  .chalkboard-block{
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.03), transparent 45%),
+      radial-gradient(ellipse at 75% 70%, rgba(255,255,255,0.025), transparent 50%),
+      linear-gradient(160deg, #24382b 0%, #1c2e21 55%, #16241b 100%) !important;
+    border-color:#0d150f !important;
+  }
+  .chalk-hint{
+    font-family:'Nunito',sans-serif; font-size:12px; color:#bcd6c2; opacity:0.85;
+    margin:-2px 0 10px; line-height:1.5;
+  }
+  .chalk-surface-wrap{position:relative; flex:1; display:flex; flex-direction:column; min-height:220px;}
+  .chalk-surface{
+    flex:1; width:100%; min-height:200px; box-sizing:border-box; resize:vertical;
+    background:transparent; border:2px dashed rgba(255,255,255,0.14); border-radius:8px;
+    font-family:'Kalam',cursive; font-size:20px; line-height:1.7; color:#F3F7F0;
+    padding:14px 16px; outline:none; caret-color:#F3F7F0;
+  }
+  .chalk-surface::placeholder{color:rgba(255,255,255,0.32); font-family:'Nunito',sans-serif; font-size:14px;}
+  .chalk-surface:focus{border-color:rgba(255,255,255,0.32); background:rgba(255,255,255,0.02);}
+  .chalk-tray{
+    height:14px; margin-top:8px; border-radius:4px;
+    background:linear-gradient(180deg,#8a6a44,#6b4f30);
+    box-shadow:inset 0 2px 3px rgba(255,255,255,0.15), inset 0 -3px 4px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.3);
+  }
+  .chalk-toolbar{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+  .chalk-btn{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:12.5px;
+    border:2px solid rgba(255,255,255,0.28); background:rgba(255,255,255,0.08); color:#F3F7F0;
+    padding:7px 14px; border-radius:100px; cursor:pointer;
+  }
+  .chalk-btn:active{background:rgba(255,255,255,0.2);}
+  .chalk-btn.erase{border-color:rgba(255,140,140,0.4); color:#ffd6d6;}
 
   /* ---------- 3D flip — every block can flip to a back-side notes face,
      giving it a second surface without taking more room on the page ---------- */
@@ -2790,6 +2826,21 @@
         <button class="calc-btn calc-zero" type="button" onclick="calcDigit('0')">0</button>
         <button class="calc-btn" type="button" onclick="calcDigit('.')">.</button>
         <button class="calc-btn calc-eq" type="button" onclick="calcEquals()">=</button>
+      </div>
+    </div>
+
+    <div class="block chalkboard-block no-print" data-block-id="chalkboard">
+      <div class="block-head">
+        <h2><span class="icon">🖍️</span>Chalk Board</h2>
+      </div>
+      <div class="chalk-hint">On iPad: write with Apple Pencil right on the board — iPadOS Scribble turns it into real text automatically. End a line with "=" and tap Solve (or just pause) to fill in the answer.</div>
+      <div class="chalk-surface-wrap">
+        <textarea class="chalk-surface" id="chalkSurface" placeholder="Write here with Apple Pencil, or type…" oninput="onChalkInput()"></textarea>
+      </div>
+      <div class="chalk-tray"></div>
+      <div class="chalk-toolbar no-print">
+        <button class="chalk-btn" type="button" onclick="solveChalkboard()">🧮 Solve</button>
+        <button class="chalk-btn erase" type="button" onclick="eraseChalkboard()">🧽 Erase</button>
       </div>
     </div>
 
@@ -5891,6 +5942,89 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'||e.key==='c'||e.key==='C'){calcClear();e.preventDefault();return;}
   if(e.key==='%'){calcPercent();e.preventDefault();return;}
 });
+
+/* ============================================================
+   CHALK BOARD — a real text field underneath the chalkboard look,
+   so Apple Pencil + iPadOS Scribble does the actual handwriting-to-
+   text work natively. We just watch the text for finished math
+   expressions (like "12*4+7=") and fill in the answer, the same
+   way Apple Notes' Math Notes does.
+   ============================================================ */
+const CHALK_KEY='actionPlan3000_chalkboard';
+let chalkSolveTimer=null;
+
+function loadChalkboard(){
+  const el=document.getElementById('chalkSurface');
+  if(!el) return;
+  try{ el.value=localStorage.getItem(CHALK_KEY)||''; }catch(e){}
+}
+function saveChalkboard(){
+  const el=document.getElementById('chalkSurface');
+  if(!el) return;
+  try{ localStorage.setItem(CHALK_KEY, el.value); }catch(e){}
+}
+function onChalkInput(){
+  saveChalkboard();
+  clearTimeout(chalkSolveTimer);
+  // wait for a short pause in writing/typing before auto-solving, so we're
+  // not fighting the cursor mid-stroke
+  chalkSolveTimer=setTimeout(solveChalkboard, 900);
+}
+// Only ever evaluates strings made up of digits, spaces, and + - * / ( ) . %
+// — never anything else — before handing them to Function(), so this can't
+// be used to run arbitrary code even though it takes free-form text input.
+function safeEvalMath(expr){
+  const cleaned=expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/\^/g,'**');
+  if(!/^[\d\s+\-*/().%]+$/.test(cleaned)) return null;
+  if(!/\d/.test(cleaned)) return null;
+  try{
+    const result=Function('"use strict"; return ('+cleaned+')')();
+    if(typeof result!=='number' || !isFinite(result)) return null;
+    return Math.round(result*1e6)/1e6; // trim floating-point noise
+  }catch(e){ return null; }
+}
+function solveChalkboard(){
+  const el=document.getElementById('chalkSurface');
+  if(!el) return;
+  const selStart=el.selectionStart, selEnd=el.selectionEnd;
+  const lines=el.value.split('\n');
+  let changed=false, lenDelta=0, cursorLineSeen=false;
+  const newLines=lines.map((line,i)=>{
+    // only auto-fill a line that ends in a bare "=" with nothing (or just
+    // whitespace) after it — never touch a line that already has an answer
+    const m=line.match(/^(.*?)=\s*$/);
+    if(!m) return line;
+    const exprPart=m[1];
+    if(!/[\d]/.test(exprPart)) return line;
+    const result=safeEvalMath(exprPart);
+    if(result===null) return line;
+    const newLine=exprPart+'= '+result;
+    if(newLine!==line){
+      changed=true;
+      if(!cursorLineSeen){
+        const thisLineStart=lines.slice(0,i).join('\n').length + (i>0?1:0);
+        if(selStart>=thisLineStart && selStart<=thisLineStart+line.length){
+          lenDelta+=newLine.length-line.length;
+        }
+      }
+    }
+    return newLine;
+  });
+  if(!changed) return;
+  el.value=newLines.join('\n');
+  el.selectionStart=el.selectionEnd=Math.max(0, selEnd+lenDelta);
+  saveChalkboard();
+}
+function eraseChalkboard(){
+  if(!confirm('Erase the chalk board?')) return;
+  const el=document.getElementById('chalkSurface');
+  if(!el) return;
+  el.value='';
+  saveChalkboard();
+  el.focus();
+}
+loadChalkboard();
+
 
 function renderBulletList(key){
   const container=document.querySelector('.bullet-list[data-key="'+key+'"]');
