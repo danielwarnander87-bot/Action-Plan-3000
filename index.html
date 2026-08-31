@@ -2887,8 +2887,8 @@
       <div class="files-btn-row">
         <button class="bullet-add-btn" type="button" onclick="saveToFile()">💾 Save to File</button>
         <button class="bullet-add-btn" type="button" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
-        <button class="bullet-add-btn no-print" type="button" onclick="saveToVault()">🏺 Save to Vault</button>
-        <button class="bullet-add-btn no-print" type="button" onclick="loadFromVault()">📤 Load from Vault</button>
+        <a class="bullet-add-btn no-print" href="https://danielwarnander87-bot.github.io/The-Vault/" target="theVaultWindow" onclick="prepareSaveToVault()" style="text-decoration:none; display:inline-flex; align-items:center;">🏺 Save to Vault</a>
+        <a class="bullet-add-btn no-print" href="https://danielwarnander87-bot.github.io/The-Vault/?pick=1" target="theVaultWindow" onclick="showBackupToast('🏺 Pick a file in The Vault tab to load it here.')" style="text-decoration:none; display:inline-flex; align-items:center;">📤 Load from Vault</a>
       </div>
       <div class="files-storage-note">Keep files under ~3MB each — this is browser storage, not the cloud.</div>
     </div>
@@ -2955,8 +2955,8 @@
       <button class="clear-btn sync-btn" onclick="saveToFile()">💾 Save to File</button>
       <button class="clear-btn sync-btn" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
       <input type="file" id="loadFileInput" accept="application/json" style="display:none;" onchange="loadFromFile(event)">
-      <button class="clear-btn sync-btn no-print" onclick="saveToVault()">🏺 Save to Vault</button>
-      <button class="clear-btn sync-btn no-print" onclick="loadFromVault()">📤 Load from Vault</button>
+      <a class="clear-btn sync-btn no-print" href="https://danielwarnander87-bot.github.io/The-Vault/" target="theVaultWindow" onclick="prepareSaveToVault()" style="text-decoration:none; display:inline-flex; align-items:center;">🏺 Save to Vault</a>
+      <a class="clear-btn sync-btn no-print" href="https://danielwarnander87-bot.github.io/The-Vault/?pick=1" target="theVaultWindow" onclick="showBackupToast('🏺 Pick a file in The Vault tab to load it here.')" style="text-decoration:none; display:inline-flex; align-items:center;">📤 Load from Vault</a>
       <button class="clear-btn sync-btn" onclick="carryOverUnfinishedClick()">⬅️ Carry Over Unfinished</button>
       <button class="clear-btn sync-btn" onclick="viewLastWeekJournal()">📔 View Last Week's Journal</button>
       <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
@@ -6899,17 +6899,26 @@ function saveToFile(){
    it. Each page only ever writes to its own storage; this just
    passes the file data across, the same way pasting or drag-
    and-drop would.
+
+   The actual tab-opening happens via real <a target="_blank"> links
+   in the HTML now, not window.open() — iOS Safari (and some other
+   mobile browsers) block scripted popups far more aggressively than
+   genuine link taps, even when the script runs synchronously inside
+   a click handler. A real link tap is never blocked. We still get a
+   window reference back either way, via event.source on the message
+   the Vault tab sends once it's loaded.
    ============================================================ */
 const VAULT_URL='https://danielwarnander87-bot.github.io/The-Vault/';
 const VAULT_ORIGIN='https://danielwarnander87-bot.github.io';
-let vaultWindowRef=null;
+let pendingVaultSave=null;
 window.addEventListener('message', (event)=>{
   if(event.origin!==VAULT_ORIGIN) return;
   const msg=event.data;
   if(!msg) return;
-  if(msg.type==='vault-ready' && saveToVault._pending){
-    const pending=saveToVault._pending; saveToVault._pending=null;
-    pending();
+  if(msg.type==='vault-ready' && pendingVaultSave){
+    const payload=pendingVaultSave; pendingVaultSave=null;
+    event.source.postMessage(payload, VAULT_ORIGIN);
+    showBackupToast('🏺 Sending to The Vault…');
   }
   if(msg.type==='vault-add-file-ack'){
     showBackupToast(msg.ok ? '🏺 Saved to The Vault.' : '⚠️ The Vault couldn\'t save that file.');
@@ -6924,17 +6933,7 @@ window.addEventListener('message', (event)=>{
     }
   }
 });
-function loadFromVault(){
-  const pickUrl=VAULT_URL + (VAULT_URL.indexOf('?')!==-1?'&':'?') + 'pick=1';
-  const win=window.open(pickUrl, 'theVaultWindow');
-  if(!win){
-    showBackupToast('⚠️ Your browser blocked the popup — allow popups for this page and try again.');
-    return;
-  }
-  vaultWindowRef=win;
-  showBackupToast('🏺 Pick a file in The Vault tab to load it here.');
-}
-function saveToVault(){
+function prepareSaveToVault(){
   const dump={};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
@@ -6943,30 +6942,14 @@ function saveToVault(){
   const jsonStr=JSON.stringify(dump,null,2);
   const filename='action-plan-3000_'+wk+'.json';
   const dataBase64=btoa(unescape(encodeURIComponent(jsonStr)));
-
-  function sendNow(){
-    vaultWindowRef.postMessage({type:'vault-add-file', name:filename, mime:'application/json', dataBase64}, VAULT_ORIGIN);
-  }
-
-  if(vaultWindowRef && !vaultWindowRef.closed){
-    sendNow();
-    vaultWindowRef.focus();
-    showBackupToast('🏺 Sending to The Vault…');
-  } else {
-    vaultWindowRef=window.open(VAULT_URL, 'theVaultWindow');
-    if(!vaultWindowRef){
-      showBackupToast('⚠️ Your browser blocked the popup — allow popups for this page and try again.');
-      return;
+  pendingVaultSave={type:'vault-add-file', name:filename, mime:'application/json', dataBase64};
+  showBackupToast('🏺 Opening The Vault…');
+  setTimeout(()=>{
+    if(pendingVaultSave){
+      pendingVaultSave=null;
+      showBackupToast('⚠️ The Vault tab took too long to respond — try again once it has fully loaded.');
     }
-    saveToVault._pending=sendNow;
-    showBackupToast('🏺 Opening The Vault…');
-    setTimeout(()=>{
-      if(saveToVault._pending){
-        saveToVault._pending=null;
-        showBackupToast('⚠️ The Vault took too long to respond — try again once its tab has fully loaded.');
-      }
-    }, 8000);
-  }
+  }, 8000);
 }
 
 function showBackupToast(msg){
