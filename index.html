@@ -744,6 +744,114 @@
     transition:opacity 0.2s ease;
   }
   .wiz-hut:hover .wiz-hut-label{opacity:1;}
+
+  /* ============================================================
+     CALL TO ACTION — a floating orb instead of a board block
+     ============================================================ */
+  .cta-orb{
+    position:fixed; z-index:600; bottom:16px; right:16px;
+    width:62px; height:62px; border-radius:50%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:box-shadow 0.5s ease, background 0.5s ease, width 0.4s ease, height 0.4s ease;
+    user-select:none;
+  }
+  .cta-orb.roaming{ transition:box-shadow 0.5s ease, background 0.5s ease, width 0.4s ease, height 0.4s ease; }
+  .cta-orb-count{
+    position:relative; z-index:1; font-family:'Fredoka',sans-serif; font-weight:700;
+    font-size:22px; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.5); pointer-events:none;
+  }
+  .cta-orb::after{
+    content:''; position:absolute; inset:-8px; border-radius:50%;
+    background:#fff; opacity:0; pointer-events:none;
+  }
+  .cta-orb.strobe::after{ animation:ctaOrbStrobeFlash 0.16s steps(1) infinite; }
+  @keyframes ctaOrbStrobeFlash{
+    0%, 100%{ opacity:0; }
+    50%{ opacity:0.9; }
+  }
+  .cta-orb.blue{
+    background:radial-gradient(circle at 35% 30%, #9fd8ff 0%, #2e7dd6 55%, #14458c 100%);
+    box-shadow:0 0 14px 4px rgba(46,125,214,0.65), 0 0 30px 10px rgba(46,125,214,0.3);
+    animation:ctaOrbFloatBlue 3.4s ease-in-out infinite;
+  }
+  .cta-orb.purple{
+    background:radial-gradient(circle at 35% 30%, #e0b8ff 0%, #8b3fd6 55%, #4c1a80 100%);
+    box-shadow:0 0 16px 5px rgba(139,63,214,0.7), 0 0 34px 12px rgba(139,63,214,0.35);
+    animation:ctaOrbFloatPurple 2.6s ease-in-out infinite;
+  }
+  .cta-orb.red{
+    background:radial-gradient(circle at 35% 30%, #ffd79f 0%, #ff5a1f 45%, #a8140a 100%);
+    box-shadow:0 0 20px 6px rgba(255,90,31,0.85), 0 0 42px 16px rgba(255,30,10,0.5);
+    animation:ctaOrbFire 0.9s ease-in-out infinite;
+  }
+  @keyframes ctaOrbFloatBlue{
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+  @keyframes ctaOrbFloatPurple{
+    0%, 100%{ transform:translateY(0) scale(1); }
+    50%{ transform:translateY(-4px) scale(1.05); }
+  }
+  @keyframes ctaOrbFire{
+    0%, 100%{ transform:scale(1); filter:brightness(1); }
+    30%{ transform:scale(1.06) translateY(-2px); filter:brightness(1.25); }
+    60%{ transform:scale(0.98); filter:brightness(0.95); }
+  }
+
+  .cta-modal-overlay{
+    position:fixed; inset:0; z-index:900;
+    background:rgba(22,10,41,0.72);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; opacity:0; pointer-events:none;
+    transition:opacity 0.25s ease;
+  }
+  .cta-modal-overlay.open{opacity:1; pointer-events:auto;}
+  .cta-modal-box{
+    width:100%; max-width:380px; max-height:88vh; overflow-y:auto;
+    background:var(--paper); border-radius:20px; padding:18px 18px 22px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);
+    font-family:'Nunito',sans-serif; position:relative;
+  }
+  .cta-modal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .cta-modal-title{font-family:'Fredoka',sans-serif; font-weight:700; font-size:18px; color:var(--ink);}
+  .cta-modal-close{background:none; border:none; font-size:26px; line-height:1; cursor:pointer; color:var(--ink);}
+  .cta-wizard-art{
+    width:100%; height:150px; border-radius:14px; overflow:hidden; margin-bottom:12px;
+    background:linear-gradient(180deg, #efe6ff, #ffffff);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cta-wizard-art img{max-width:70%; max-height:100%; object-fit:contain;}
+  .cta-actions-list{display:flex; flex-direction:column; gap:10px; margin-bottom:12px;}
+  .cta-action-card{
+    position:relative; overflow:hidden;
+    border:2px solid var(--indigo-soft); border-radius:12px; padding:10px 12px 14px;
+    background:#fbf9ff; cursor:pointer;
+  }
+  .cta-action-card.holding{border-color:var(--pop-deep);}
+  .cta-action-title{font-family:'Fredoka',sans-serif; font-weight:700; font-size:15px; color:var(--ink);}
+  .cta-action-desc{font-size:13px; color:#555; margin-top:2px;}
+  .cta-action-hint{font-size:10px; color:#999; margin-top:6px; text-transform:uppercase; letter-spacing:0.04em;}
+  .cta-hold-progress{
+    position:absolute; left:0; bottom:0; height:4px; width:0%;
+    background:linear-gradient(90deg, var(--pop), var(--pink));
+  }
+  .cta-add-form{display:flex; flex-direction:column; gap:8px;}
+  .cta-add-form input, .cta-add-form textarea{
+    font-family:'Nunito',sans-serif; font-size:14px; padding:8px 10px;
+    border:2px solid var(--indigo-soft); border-radius:10px; resize:vertical;
+  }
+  .cta-add-form button{
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:14px;
+    background:var(--indigo); color:#fff; border:none; border-radius:10px;
+    padding:10px; cursor:pointer;
+  }
+  .cta-empty-hint{font-size:12px; color:#999; text-align:center; padding:6px 0;}
+  .cta-full-hint{font-size:12px; color:#999; text-align:center; margin-top:2px;}
+
+  .cta-screen-flash{
+    position:fixed; inset:0; z-index:950; pointer-events:none;
+    background:#ff6a1f; opacity:0;
+  }
   .wiz-safe-puff{
     position:fixed; z-index:403; pointer-events:none; font-size:16px;
     animation:puffFade 0.7s ease-out forwards;
@@ -2923,6 +3031,27 @@
 
   <div class="wiz-hut" id="wizHut" title="Click to send the wizard into hiding">
     🛖<span class="wiz-hut-label">Take cover</span>
+  </div>
+
+  <div class="cta-orb blue" id="ctaOrb" title="Call to Action">
+    <span class="cta-orb-count" id="ctaOrbCount"></span>
+  </div>
+  <div class="cta-screen-flash" id="ctaScreenFlash"></div>
+  <div class="cta-modal-overlay" id="ctaModalOverlay">
+    <div class="cta-modal-box">
+      <div class="cta-modal-head">
+        <span class="cta-modal-title">📣 Call to Action</span>
+        <button class="cta-modal-close" id="ctaModalClose" type="button">&times;</button>
+      </div>
+      <div class="cta-wizard-art"><img id="ctaWizardImg" alt="a small wizard, ready to help"></div>
+      <div class="cta-actions-list" id="ctaActionsList"></div>
+      <div class="cta-add-form" id="ctaAddForm">
+        <input type="text" id="ctaNewTitle" placeholder="What needs doing?" maxlength="80">
+        <textarea id="ctaNewDesc" placeholder="Any details..." rows="2" maxlength="240"></textarea>
+        <button type="button" id="ctaAddBtn">Add Action</button>
+      </div>
+      <div class="cta-full-hint" id="ctaFullHint" style="display:none;">All 3 slots are full — hold one to clear it.</div>
+    </div>
   </div>
 
   <div id="jrpgWizardCursor">
@@ -8482,6 +8611,373 @@ enhanceBlocksWith3D();
   updateHud();
   updateWizardAppearance();
   if(jrpgMode){ spawnJrpgSparkles(); startJrpgAmbient(); startStorm(); startDragonSchedule(); startSmallMonsterSchedule(); startRedMenaceSchedule(); }
+})();
+
+/* ============================================================
+   CALL TO ACTION — floating orb, up to 3 actions, its own tune
+   ============================================================ */
+(function(){
+  const CTA_KEY = 'actionPlan3000_ctaActions';
+  let ctaActions = [];
+  try{ ctaActions = JSON.parse(localStorage.getItem(CTA_KEY)) || []; }catch(e){ ctaActions = []; }
+  function saveCtaActions(){ try{ localStorage.setItem(CTA_KEY, JSON.stringify(ctaActions)); }catch(e){} }
+
+  const orb = document.getElementById('ctaOrb');
+  const orbCount = document.getElementById('ctaOrbCount');
+  const overlay = document.getElementById('ctaModalOverlay');
+  const closeBtn = document.getElementById('ctaModalClose');
+  const list = document.getElementById('ctaActionsList');
+  const addForm = document.getElementById('ctaAddForm');
+  const newTitle = document.getElementById('ctaNewTitle');
+  const newDesc = document.getElementById('ctaNewDesc');
+  const addBtn = document.getElementById('ctaAddBtn');
+  const fullHint = document.getElementById('ctaFullHint');
+  const wizardImg = document.getElementById('ctaWizardImg');
+  const screenFlash = document.getElementById('ctaScreenFlash');
+
+  function ctaColorClass(){
+    if(ctaActions.length === 0) return 'blue';
+    if(ctaActions.length === 1) return 'purple';
+    return 'red';
+  }
+  function renderCtaOrb(){
+    orb.classList.remove('blue','purple','red');
+    orb.classList.add(ctaColorClass());
+    orbCount.textContent = ctaActions.length > 0 ? String(ctaActions.length) : '';
+    updateOrbBehavior();
+  }
+
+  /* ---------- making the orb impossible to ignore once something is pending:
+     it grows, wanders around the screen, and strobes every so often ---------- */
+  let orbRoamInterval = null;
+  let orbFlashTimer = null;
+  function clearOrbTimers(){
+    if(orbRoamInterval){ clearInterval(orbRoamInterval); orbRoamInterval = null; }
+    if(orbFlashTimer){ clearTimeout(orbFlashTimer); orbFlashTimer = null; }
+    orb.classList.remove('strobe');
+  }
+  function parkOrb(){
+    orb.style.transition = 'left 0.6s ease, top 0.6s ease, width 0.4s ease, height 0.4s ease, box-shadow 0.5s ease, background 0.5s ease';
+    orb.style.width = '62px';
+    orb.style.height = '62px';
+    orb.style.right = '16px';
+    orb.style.bottom = '16px';
+    orb.style.left = 'auto';
+    orb.style.top = 'auto';
+    orb.classList.remove('roaming');
+  }
+  function roamOrbOnce(duration){
+    const size = orb.offsetWidth || 62;
+    const margin = 10;
+    const maxX = Math.max(margin, window.innerWidth - size - margin);
+    const maxY = Math.max(margin, window.innerHeight - size - margin);
+    const x = margin + Math.random() * (maxX - margin);
+    const y = margin + Math.random() * (maxY - margin);
+    orb.style.transition = 'left ' + duration + 's cubic-bezier(.34,1.56,.64,1), top ' + duration + 's cubic-bezier(.34,1.56,.64,1), width 0.4s ease, height 0.4s ease, box-shadow 0.5s ease, background 0.5s ease';
+    orb.style.right = 'auto';
+    orb.style.bottom = 'auto';
+    orb.style.left = x + 'px';
+    orb.style.top = y + 'px';
+  }
+  function scheduleOrbFlash(minDelay, maxDelay){
+    orbFlashTimer = setTimeout(function(){
+      orb.classList.add('strobe');
+      setTimeout(function(){ orb.classList.remove('strobe'); }, 850);
+      scheduleOrbFlash(minDelay, maxDelay);
+    }, minDelay + Math.random() * (maxDelay - minDelay));
+  }
+  function updateOrbBehavior(){
+    clearOrbTimers();
+    if(overlay.classList.contains('open')) return; // don't harass the user while they're already looking at it
+    const n = ctaActions.length;
+    if(n === 0){
+      parkOrb();
+      return;
+    }
+    orb.classList.add('roaming');
+    if(n === 1){
+      orb.style.width = '74px';
+      orb.style.height = '74px';
+      roamOrbOnce(1.4);
+      orbRoamInterval = setInterval(function(){ roamOrbOnce(1.4); }, 14000);
+      scheduleOrbFlash(9000, 16000);
+    } else {
+      orb.style.width = '92px';
+      orb.style.height = '92px';
+      roamOrbOnce(0.7);
+      orbRoamInterval = setInterval(function(){ roamOrbOnce(0.7); }, 5000);
+      scheduleOrbFlash(2800, 5500);
+    }
+  }
+  window.addEventListener('resize', function(){
+    if(orb.classList.contains('roaming')) roamOrbOnce(0.5);
+  });
+
+  function attachLongPress(el, callback, duration){
+    duration = duration || 900;
+    let timer = null;
+    const progressEl = document.createElement('div');
+    progressEl.className = 'cta-hold-progress';
+    el.appendChild(progressEl);
+    function start(e){
+      if(e.cancelable) e.preventDefault();
+      el.classList.add('holding');
+      progressEl.style.transition = 'none';
+      progressEl.style.width = '0%';
+      requestAnimationFrame(function(){
+        progressEl.style.transition = 'width ' + duration + 'ms linear';
+        progressEl.style.width = '100%';
+      });
+      timer = setTimeout(function(){
+        el.classList.remove('holding');
+        callback();
+      }, duration);
+    }
+    function cancel(){
+      if(timer){ clearTimeout(timer); timer = null; }
+      el.classList.remove('holding');
+      progressEl.style.transition = 'none';
+      progressEl.style.width = '0%';
+    }
+    el.addEventListener('mousedown', start);
+    el.addEventListener('touchstart', start, {passive:false});
+    ['mouseup','mouseleave','touchend','touchcancel'].forEach(function(ev){
+      el.addEventListener(ev, cancel);
+    });
+  }
+
+  function renderCtaList(){
+    list.innerHTML = '';
+    if(ctaActions.length === 0){
+      const hint = document.createElement('div');
+      hint.className = 'cta-empty-hint';
+      hint.textContent = 'Nothing on the list yet — add your first action below.';
+      list.appendChild(hint);
+    }
+    ctaActions.forEach(function(a, idx){
+      const card = document.createElement('div');
+      card.className = 'cta-action-card';
+      const h = document.createElement('div');
+      h.className = 'cta-action-title';
+      h.textContent = a.title;
+      card.appendChild(h);
+      if(a.desc){
+        const p = document.createElement('div');
+        p.className = 'cta-action-desc';
+        p.textContent = a.desc;
+        card.appendChild(p);
+      }
+      const hint = document.createElement('div');
+      hint.className = 'cta-action-hint';
+      hint.textContent = 'hold to complete & remove';
+      card.appendChild(hint);
+      attachLongPress(card, function(){ completeCtaAction(idx); });
+      list.appendChild(card);
+    });
+    const full = ctaActions.length >= 3;
+    addForm.style.display = full ? 'none' : '';
+    fullHint.style.display = full ? '' : 'none';
+  }
+
+  addBtn.addEventListener('click', function(){
+    const t = newTitle.value.trim();
+    if(!t || ctaActions.length >= 3) return;
+    const d = newDesc.value.trim();
+    ctaActions.push({title:t, desc:d});
+    saveCtaActions();
+    newTitle.value = '';
+    newDesc.value = '';
+    renderCtaList();
+    renderCtaOrb();
+    soundSaved();
+  });
+
+  function openCtaModal(){
+    if(wizardImg && !wizardImg.src){
+      const src = document.getElementById('lumosWizardImg');
+      if(src) wizardImg.src = src.src;
+    }
+    renderCtaList();
+    overlay.classList.add('open');
+    soundEureka();
+    startCtaTheme();
+    updateOrbBehavior();
+  }
+  function closeCtaModal(){
+    overlay.classList.remove('open');
+    stopCtaTheme();
+    updateOrbBehavior();
+  }
+  orb.addEventListener('click', openCtaModal);
+  closeBtn.addEventListener('click', closeCtaModal);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeCtaModal(); });
+
+  /* ---------- completing/removing an action: hold, boom, flash, close ---------- */
+  function flashScreenOrange(){
+    screenFlash.style.transition = 'none';
+    screenFlash.style.opacity = '0.85';
+    requestAnimationFrame(function(){
+      screenFlash.style.transition = 'opacity 0.9s ease';
+      screenFlash.style.opacity = '0';
+    });
+  }
+  function playCtaExplosion(){
+    if(sfxMuted) return;
+    const ctx = __sfxGetCtx();
+    if(!ctx) return;
+    const t0 = ctx.currentTime;
+    // descending thump
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(220, t0);
+    o.frequency.exponentialRampToValueAtTime(28, t0 + 0.5);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(0.38, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.55);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0); o.stop(t0 + 0.6);
+    // filtered noise burst
+    try{
+      const bufferSize = Math.floor(ctx.sampleRate * 0.4);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i = 0; i < bufferSize; i++){ data[i] = (Math.random()*2-1) * (1 - i/bufferSize); }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const filt = ctx.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.setValueAtTime(1800, t0);
+      filt.frequency.exponentialRampToValueAtTime(120, t0 + 0.4);
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(0.4, t0);
+      ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.4);
+      noise.connect(filt); filt.connect(ng); ng.connect(ctx.destination);
+      noise.start(t0);
+    }catch(e){}
+    // a couple of retro crackle blips
+    __playTone(90, 0.06, 0.12, 'square', 0.12);
+    __playTone(60, 0.16, 0.18, 'square', 0.10);
+  }
+  function completeCtaAction(idx){
+    ctaActions.splice(idx, 1);
+    saveCtaActions();
+    playCtaExplosion();
+    flashScreenOrange();
+    renderCtaOrb();
+    setTimeout(function(){
+      renderCtaList();
+      setTimeout(closeCtaModal, 550);
+    }, 300);
+  }
+
+  /* ---------- the same tune as The Stand in Rune ---------- */
+  const CTA_ROOT = 293.66; // D4
+  const CTA_BPM = 84;
+  const ctaBeat = 60 / CTA_BPM;
+  function ctaFreq(semi){ return CTA_ROOT * Math.pow(2, semi/12); }
+  const ctaMelody = [
+    [12,1],[16,0.5],[19,0.5],[16,1],[12,1],
+    [19,1],[17,0.5],[16,0.5],[14,1],[12,1],
+    [17,1],[21,0.5],[19,0.5],[17,1],[16,1],
+    [14,1],[12,0.5],[11,0.5],[12,2]
+  ];
+  const ctaChordRoots = [0,4,5,7];
+  let ctaGain = null, ctaLeadBus = null, ctaBassBus = null;
+  let ctaRunning = false, ctaTimer = null;
+  let ctaNextTime = 0, ctaNoteIndex = 0, ctaBarNextTime = 0, ctaBarIndex = 0;
+
+  function initCtaBus(){
+    const ctx = __sfxGetCtx();
+    if(!ctx || ctaGain) return;
+    ctaGain = ctx.createGain(); ctaGain.gain.value = 0;
+    ctaLeadBus = ctx.createGain(); ctaLeadBus.gain.value = 0.5;
+    ctaBassBus = ctx.createGain(); ctaBassBus.gain.value = 0.34;
+    ctaLeadBus.connect(ctaGain); ctaBassBus.connect(ctaGain);
+    ctaGain.connect(ctx.destination);
+  }
+  function ctaLeadNote(semi, time, dur){
+    const ctx = __sfxGetCtx();
+    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    o1.type = 'triangle'; o1.frequency.value = ctaFreq(semi);
+    o2.type = 'triangle'; o2.frequency.value = ctaFreq(semi) * 1.004;
+    const g2 = ctx.createGain(); g2.gain.value = 0.6;
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(0.42, time + 0.06);
+    g.gain.setValueAtTime(0.42, time + Math.max(0.06, dur - 0.18));
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur + 0.02);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(ctaLeadBus);
+    o1.start(time); o2.start(time); o1.stop(time + dur + 0.08); o2.stop(time + dur + 0.08);
+  }
+  function ctaBassNote(semi, time, dur){
+    const ctx = __sfxGetCtx();
+    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    o1.type = 'triangle'; o1.frequency.value = ctaFreq(semi - 12);
+    o2.type = 'triangle'; o2.frequency.value = ctaFreq(semi - 12 + 7);
+    const g2 = ctx.createGain(); g2.gain.value = 0.5;
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(0.28, time + dur * 0.3);
+    g.gain.linearRampToValueAtTime(0.18, time + dur * 0.75);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur + 0.05);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(ctaBassBus);
+    o1.start(time); o2.start(time); o1.stop(time + dur + 0.1); o2.stop(time + dur + 0.1);
+  }
+  function ctaScheduler(){
+    if(!ctaRunning) return;
+    const ctx = __sfxGetCtx();
+    if(!ctx) return;
+    const lookahead = 0.35;
+    while(ctaNextTime < ctx.currentTime + lookahead){
+      const note = ctaMelody[ctaNoteIndex % ctaMelody.length];
+      const dur = note[1] * ctaBeat;
+      ctaLeadNote(note[0], ctaNextTime, dur * 0.96);
+      ctaNextTime += dur;
+      ctaNoteIndex++;
+    }
+    while(ctaBarNextTime < ctx.currentTime + lookahead){
+      const root = ctaChordRoots[ctaBarIndex % ctaChordRoots.length];
+      ctaBassNote(root, ctaBarNextTime, ctaBeat * 4 * 0.98);
+      ctaBarNextTime += ctaBeat * 4;
+      ctaBarIndex++;
+    }
+    ctaTimer = setTimeout(ctaScheduler, 110);
+  }
+  function startCtaTheme(){
+    if(sfxMuted) return;
+    initCtaBus();
+    const ctx = __sfxGetCtx();
+    if(!ctx || !ctaGain) return;
+    if(!ctaRunning){
+      ctaRunning = true;
+      ctaNoteIndex = 0; ctaBarIndex = 0;
+      ctaNextTime = ctx.currentTime + 0.2;
+      ctaBarNextTime = ctx.currentTime + 0.2;
+      ctaScheduler();
+    }
+    ctaGain.gain.cancelScheduledValues(ctx.currentTime);
+    ctaGain.gain.linearRampToValueAtTime(0.85, ctx.currentTime + 0.6);
+  }
+  function stopCtaTheme(){
+    if(ctaGain){
+      const ctx = __sfxGetCtx();
+      if(ctx){
+        ctaGain.gain.cancelScheduledValues(ctx.currentTime);
+        ctaGain.gain.linearRampToValueAtTime(0.0, ctx.currentTime + 0.5);
+      }
+    }
+    ctaRunning = false;
+    if(ctaTimer){ clearTimeout(ctaTimer); ctaTimer = null; }
+  }
+  // stop the CTA tune if the global mute is toggled on while it's playing
+  if(typeof toggleSfxMute === 'function'){
+    const _origToggleSfxMute = toggleSfxMute;
+    toggleSfxMute = function(){
+      _origToggleSfxMute();
+      if(sfxMuted) stopCtaTheme();
+    };
+  }
+
+  renderCtaOrb();
 })();
 </script>
   <div class="backup-toast" id="backupToast"></div>
