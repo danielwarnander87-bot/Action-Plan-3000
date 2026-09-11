@@ -946,6 +946,8 @@
     text-align:right; background:transparent;
   }
   .budget-cell:focus{background:#fff8e0;}
+  .budget-cell.positive{ color:#1a8f3c; font-weight:700; }
+  .budget-cell.negative{ color:#c1121f; font-weight:700; }
   .budget-grid-hint{font-size:11px; color:#999; margin-bottom:10px; text-align:center;}
   .budget-launch-btn{
     width:100%; font-family:'Fredoka',sans-serif; font-weight:700; font-size:15px;
@@ -1044,6 +1046,12 @@
     background:transparent;
   }
   .retro-robot-theme .budget-cell:focus{ background:#1a2620; }
+  .retro-robot-theme .budget-cell.positive{
+    color:#39ff6a; text-shadow:0 0 6px rgba(57,255,106,0.95), 0 0 14px rgba(57,255,106,0.55);
+  }
+  .retro-robot-theme .budget-cell.negative{
+    color:#ff3b3b; text-shadow:0 0 6px rgba(255,59,59,0.95), 0 0 14px rgba(255,59,59,0.55);
+  }
   .retro-robot-theme .budget-grid-hint{ color:#9aa0a8; }
   .retro-robot-theme .budget-grid-hint strong{ color:#ffd23f; }
 
@@ -9465,11 +9473,18 @@ enhanceBlocksWith3D();
     });
     for(const r in rowColors){ applyRowColor(r); }
   }
+  function applyCellSign(input, id){
+    input.classList.remove('positive', 'negative');
+    if(!isNumericCell(id)) return;
+    const v = cellValue(id);
+    if(v > 0) input.classList.add('positive');
+    else if(v < 0) input.classList.add('negative');
+  }
   function renderGrid(skipId){
     tableEl.querySelectorAll('.budget-cell').forEach(function(input){
       const id = input.dataset.cell;
-      if(id === skipId) return;
-      input.value = displayValue(id);
+      if(id !== skipId) input.value = displayValue(id);
+      applyCellSign(input, id);
     });
   }
   tableEl.addEventListener('focusin', function(e){
@@ -9717,19 +9732,12 @@ enhanceBlocksWith3D();
   function computeGridTotal(){
     let total = 0;
     for(let r = 1; r <= GRID_ROWS; r++){
-      let label = '';
       let amountId = null;
       for(let c = 0; c < GRID_COLS; c++){
         const id = cellId(c, r);
-        const raw = gridRaw[id];
-        if(raw === undefined || raw === null || raw === '') continue;
-        if(!label && !isNumericCell(id)){
-          label = String(raw).trim();
-        } else if(isNumericCell(id)){
-          amountId = id;
-        }
+        if(isNumericCell(id)) amountId = id; // last numeric/formula cell in the row is "the amount"
       }
-      if(label && amountId) total += cellValue(amountId);
+      if(amountId) total += cellValue(amountId);
     }
     return total;
   }
