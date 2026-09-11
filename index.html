@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB4PSI1MCUiIHk9IjU4JSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI4MCI+8J+SjjwvdGV4dD48L3N2Zz4=">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=VT323&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=VT323&family=Kalam:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   :root{
     --pink:#E0119B;
@@ -847,6 +847,252 @@
   }
   .cta-empty-hint{font-size:12px; color:#999; text-align:center; padding:6px 0;}
   .cta-full-hint{font-size:12px; color:#999; text-align:center; margin-top:2px;}
+
+  /* ============================================================
+     BUDGET ORB — a smaller, calmer green orb for a scratch-pad
+     budget grid with spreadsheet-style formulas
+     ============================================================ */
+  .budget-orb{
+    position:fixed; z-index:599; top:16px; right:16px; bottom:auto; left:auto;
+    width:42px; height:42px; border-radius:50%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, #b8ffd9 0%, #1fae6b 55%, #0a5f3a 100%);
+    box-shadow:0 0 10px 3px rgba(31,174,107,0.6), 0 0 22px 8px rgba(31,174,107,0.28);
+    animation:budgetOrbPulse 3.6s ease-in-out infinite;
+    user-select:none;
+  }
+  .budget-orb-icon{
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:17px; color:#fff;
+    text-shadow:0 1px 3px rgba(0,0,0,0.5); pointer-events:none;
+  }
+  @keyframes budgetOrbPulse{
+    0%, 100%{ transform:scale(1); }
+    50%{ transform:scale(1.08); }
+  }
+  .budget-modal-box{ max-width:680px; }
+  .budget-body{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;}
+  .budget-grid-area{flex:1 1 340px; min-width:0;}
+  .budget-balance-panel{
+    flex:0 0 168px; background:#f4f0ff; border:2px solid var(--indigo-soft);
+    border-radius:12px; padding:12px; text-align:center;
+  }
+  .budget-balance-label{
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:13px; color:var(--indigo);
+    margin-bottom:6px;
+  }
+  .budget-balance-input{
+    width:100%; box-sizing:border-box; font-family:'Nunito',sans-serif; font-weight:700;
+    font-size:18px; text-align:center; padding:8px 6px; border:2px solid var(--indigo-soft);
+    border-radius:8px; color:var(--ink); margin-bottom:6px;
+  }
+  .budget-balance-stamp{font-size:10px; color:#888; line-height:1.4;}
+  .budget-log-week-btn{
+    width:100%; margin-top:10px; font-family:'Nunito',sans-serif; font-weight:700; font-size:12px;
+    background:#fff; border:2px solid var(--indigo-soft); color:var(--indigo);
+    border-radius:8px; padding:6px; cursor:pointer;
+  }
+  .budget-log-week-btn:hover{background:var(--indigo-soft);}
+  .budget-week-avg-label{
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:11px; color:var(--indigo);
+    margin-top:10px;
+  }
+  .budget-week-avg-value{font-size:13px; font-weight:800; color:var(--ink); margin-bottom:4px;}
+  .budget-week-log-list{font-size:10px; color:#888; text-align:left; line-height:1.5;}
+  .budget-summary{
+    border:2px solid var(--indigo-soft); border-radius:10px; padding:8px 12px; margin-bottom:10px;
+    background:#f8f6ff; font-family:'Nunito',sans-serif; font-size:13px;
+  }
+  .budget-summary-row{display:flex; justify-content:space-between; padding:2px 0;}
+  .budget-summary-final{
+    border-top:1px dashed var(--indigo-soft); margin-top:4px; padding-top:6px;
+    font-weight:800; color:var(--indigo); font-size:14px;
+  }
+  .budget-grid-ctrls{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;}
+  .budget-grid-ctrls button{
+    font-family:'Nunito',sans-serif; font-size:12px; font-weight:700;
+    border:2px solid var(--indigo-soft); background:#fff; color:var(--indigo);
+    border-radius:8px; padding:5px 10px; cursor:pointer;
+  }
+  .budget-grid-ctrls button:hover{background:var(--indigo-soft);}
+  .budget-grid-scroll{
+    max-width:100%; overflow-x:auto; overflow-y:auto; max-height:46vh;
+    border:2px solid var(--indigo-soft); border-radius:10px; margin-bottom:8px;
+  }
+  .budget-grid-table{border-collapse:collapse; font-family:'Nunito',sans-serif; table-layout:fixed;}
+  .budget-grid-table th{
+    background:var(--indigo); color:#fff; font-size:11px; font-weight:700;
+    padding:4px 2px; position:sticky; top:0; z-index:1; overflow:visible;
+  }
+  .budget-grid-table th.corner{background:#efe6ff; width:44px;}
+  .budget-grid-table th.rowhead-col{width:44px;}
+  .budget-col-resizer{
+    position:absolute; top:0; right:0; width:6px; height:100%;
+    cursor:col-resize; z-index:5; touch-action:none;
+  }
+  .budget-col-resizer:hover, .budget-col-resizer.resizing{background:rgba(255,255,255,0.4);}
+  .budget-grid-table td{border:1px solid #e4defa; padding:0;}
+  .budget-grid-table td.rowhead{
+    background:#f4f0ff; font-size:11px; font-weight:700; color:#666;
+    text-align:center; padding:2px; position:relative;
+  }
+  .budget-rowhead-inner{display:flex; align-items:center; justify-content:center; gap:3px;}
+  .budget-row-swatch{
+    width:12px; height:12px; border-radius:50%; border:1px solid #bbb;
+    cursor:pointer; flex:0 0 auto; background:#fff;
+  }
+  .budget-cell{
+    width:100%; box-sizing:border-box; border:none; outline:none;
+    font-family:'Nunito',sans-serif; font-size:12px; padding:5px 6px;
+    text-align:right; background:transparent;
+  }
+  .budget-cell:focus{background:#fff8e0;}
+  .budget-grid-hint{font-size:11px; color:#999; margin-bottom:10px; text-align:center;}
+  .budget-launch-btn{
+    width:100%; font-family:'Fredoka',sans-serif; font-weight:700; font-size:15px;
+    background:linear-gradient(90deg, #1fae6b, #0a5f3a); color:#fff; border:none;
+    border-radius:10px; padding:11px; cursor:pointer;
+  }
+  .budget-launch-status{
+    font-size:12px; color:#0a5f3a; text-align:center; margin-top:8px; min-height:16px;
+  }
+
+  /* ============================================================
+     RETRO ROBOT THEME — tin-toy 80s control-panel skin for the
+     Budget Notepad, inspired by vintage electronic robot toys
+     ============================================================ */
+  .retro-robot-theme{
+    position:relative;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 10px),
+      linear-gradient(160deg, #3a3f47 0%, #23262b 55%, #16181c 100%);
+    border:6px solid #c1121f; border-radius:22px;
+    box-shadow:
+      0 0 0 3px #ffb703,
+      0 0 0 9px #1a1a1a,
+      0 18px 50px rgba(0,0,0,0.55),
+      inset 0 0 30px rgba(0,0,0,0.5);
+    color:#e8e6df;
+    padding-top:22px;
+  }
+  .retro-bolt{
+    position:absolute; top:14px; width:14px; height:14px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #f5f5f0, #9a9a92 60%, #55554e 100%);
+    box-shadow:inset 0 0 2px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .retro-bolt.tl{ left:18px; }
+  .retro-bolt.tr{ right:18px; }
+  .retro-power-led{
+    position:absolute; top:19px; left:50%; transform:translateX(-50%);
+    width:9px; height:9px; border-radius:50%;
+    background:#ff2e2e; box-shadow:0 0 6px 2px rgba(255,46,46,0.9);
+    animation:retroLedBlink 1.6s steps(1) infinite;
+  }
+  @keyframes retroLedBlink{
+    0%, 60%{ opacity:1; }
+    61%, 100%{ opacity:0.25; }
+  }
+  .retro-robot-theme .cta-modal-head{ padding:0 6px; }
+  .retro-title{
+    font-family:'Press Start 2P', 'Fredoka', sans-serif;
+    font-size:13px; color:#ffd23f; letter-spacing:0.02em;
+    text-shadow:2px 2px 0 #c1121f, 0 0 12px rgba(255,210,63,0.5);
+    display:flex; align-items:center; gap:6px; line-height:1.6;
+  }
+  .retro-model{ color:#7fe8ff; text-shadow:2px 2px 0 #0a5f7a, 0 0 10px rgba(127,232,255,0.6); }
+  .retro-subtitle{
+    font-family:'VT323', monospace; font-size:13px; letter-spacing:0.12em;
+    color:#8fe38f; text-align:center; margin:2px 0 14px; padding:0 6px;
+    text-shadow:0 0 6px rgba(143,227,143,0.6);
+  }
+  .retro-close{
+    background:linear-gradient(180deg, #ff5a5a, #c1121f);
+    color:#fff; border:2px solid #7a0d13; border-radius:50%;
+    width:30px; height:30px; font-size:18px; line-height:1;
+    box-shadow:0 3px 0 #7a0d13, inset 0 1px 1px rgba(255,255,255,0.4);
+  }
+  .retro-close:active{ box-shadow:0 1px 0 #7a0d13; transform:translateY(2px); }
+
+  .retro-robot-theme .budget-grid-ctrls button{
+    font-family:'VT323', monospace; font-size:14px; font-weight:400; letter-spacing:0.04em;
+    background:linear-gradient(180deg, #4c5866, #2c333b);
+    border:2px solid #12151a; color:#ffd23f;
+    box-shadow:0 3px 0 #12151a, inset 0 1px 0 rgba(255,255,255,0.15);
+    border-radius:6px;
+  }
+  .retro-robot-theme .budget-grid-ctrls button:hover{ background:linear-gradient(180deg, #5c6a7a, #363e47); }
+  .retro-robot-theme .budget-grid-ctrls button:active{ box-shadow:0 1px 0 #12151a; transform:translateY(2px); }
+
+  .retro-robot-theme .budget-grid-scroll{
+    border:3px solid #12151a; border-radius:10px;
+    background:#0c0e11;
+    box-shadow:inset 0 0 14px rgba(0,0,0,0.7);
+  }
+  .retro-robot-theme .budget-grid-table th{
+    background:linear-gradient(180deg, #c1121f, #8a0d16); color:#ffe9a8;
+    font-family:'VT323', monospace; font-size:14px; letter-spacing:0.1em;
+    border-bottom:2px solid #12151a;
+  }
+  .retro-robot-theme .budget-grid-table th.corner{ background:#2c333b; }
+  .retro-robot-theme .budget-grid-table td{ border-color:#1e242b; background:#0c0e11; }
+  .retro-robot-theme .budget-grid-table td.rowhead{
+    background:#171b20; color:#ffd23f; font-family:'VT323', monospace; font-size:15px;
+  }
+  .retro-robot-theme .budget-row-swatch{ border-color:#555; }
+  .retro-robot-theme .budget-cell{
+    color:#7fff9e; font-family:'VT323', monospace; font-size:15px;
+    text-shadow:0 0 5px rgba(127,255,158,0.6);
+    background:transparent;
+  }
+  .retro-robot-theme .budget-cell:focus{ background:#1a2620; }
+  .retro-robot-theme .budget-grid-hint{ color:#9aa0a8; }
+  .retro-robot-theme .budget-grid-hint strong{ color:#ffd23f; }
+
+  .retro-robot-theme .budget-summary{
+    background:#0c0e11; border:3px solid #12151a; border-radius:10px;
+    color:#7fff9e; font-family:'VT323', monospace; font-size:16px;
+    box-shadow:inset 0 0 14px rgba(0,0,0,0.7);
+  }
+  .retro-robot-theme .budget-summary-row span:first-child{ color:#9aa0a8; font-size:13px; letter-spacing:0.08em; }
+  .retro-robot-theme .budget-summary-final{
+    border-top:1px dashed #2c333b; color:#ffd23f !important;
+    text-shadow:0 0 8px rgba(255,210,63,0.6); font-size:20px !important;
+  }
+  .retro-robot-theme .budget-summary-final span:first-child{ color:#ffd23f !important; }
+
+  .retro-robot-theme .budget-balance-panel{
+    background:#171b20; border:3px solid #12151a; border-radius:12px;
+    box-shadow:0 0 0 3px #ffb703 inset;
+  }
+  .retro-robot-theme .budget-balance-label{
+    font-family:'Press Start 2P', monospace; font-size:9px; color:#ffd23f; letter-spacing:0.02em;
+  }
+  .retro-robot-theme .budget-balance-input{
+    background:#0c0e11; border:2px solid #12151a; color:#ff5a5a;
+    font-family:'VT323', monospace; font-size:24px;
+    text-shadow:0 0 8px rgba(255,90,90,0.7);
+  }
+  .retro-robot-theme .budget-balance-stamp{ color:#8fe38f; font-family:'VT323', monospace; font-size:12px; }
+  .retro-robot-theme .budget-log-week-btn{
+    font-family:'VT323', monospace; font-size:14px;
+    background:linear-gradient(180deg, #4c5866, #2c333b);
+    border:2px solid #12151a; color:#7fe8ff;
+    box-shadow:0 3px 0 #12151a; border-radius:6px;
+  }
+  .retro-robot-theme .budget-log-week-btn:active{ box-shadow:0 1px 0 #12151a; transform:translateY(2px); }
+  .retro-robot-theme .budget-week-avg-label{ font-family:'Press Start 2P', monospace; font-size:8px; color:#ffd23f; }
+  .retro-robot-theme .budget-week-avg-value{ font-family:'VT323', monospace; font-size:18px; color:#7fff9e; }
+  .retro-robot-theme .budget-week-log-list{ font-family:'VT323', monospace; font-size:12px; color:#8fa0a8; }
+
+  .retro-robot-theme .budget-launch-btn{
+    font-family:'Press Start 2P', monospace; font-size:12px; letter-spacing:0.02em;
+    background:linear-gradient(180deg, #ffb703, #c1121f);
+    border:3px solid #12151a; color:#1a1a1a;
+    box-shadow:0 4px 0 #7a0d13, inset 0 1px 0 rgba(255,255,255,0.4);
+    border-radius:10px;
+  }
+  .retro-robot-theme .budget-launch-btn:active{ box-shadow:0 1px 0 #7a0d13; transform:translateY(3px); }
+  .retro-robot-theme .budget-launch-status{ color:#7fff9e; font-family:'VT323', monospace; font-size:14px; }
+
 
   .cta-screen-flash{
     position:fixed; inset:0; z-index:950; pointer-events:none;
@@ -3037,6 +3283,51 @@
     <span class="cta-orb-count" id="ctaOrbCount"></span>
   </div>
   <div class="cta-screen-flash" id="ctaScreenFlash"></div>
+  <div class="cta-orb budget-orb" id="budgetOrb" title="Budget Notepad">
+    <span class="budget-orb-icon">$</span>
+  </div>
+  <div class="cta-modal-overlay" id="budgetModalOverlay">
+    <div class="cta-modal-box budget-modal-box retro-robot-theme">
+      <div class="retro-bolt tl"></div>
+      <div class="retro-bolt tr"></div>
+      <div class="retro-power-led"></div>
+      <div class="cta-modal-head">
+        <span class="cta-modal-title retro-title">🤖 BUDGET-BOT <span class="retro-model">3000</span></span>
+        <button class="cta-modal-close retro-close" id="budgetModalClose" type="button">&times;</button>
+      </div>
+      <div class="retro-subtitle">ELECTRONIC LEDGER UNIT &middot; SOME ASSEMBLY REQUIRED</div>
+      <div class="budget-body">
+        <div class="budget-grid-area">
+          <div class="budget-grid-ctrls">
+            <button type="button" id="budgetAddRow">+ Row</button>
+            <button type="button" id="budgetDelRow">&minus; Row</button>
+            <button type="button" id="budgetAddCol">+ Col</button>
+            <button type="button" id="budgetDelCol">&minus; Col</button>
+            <button type="button" id="budgetClear">Clear</button>
+          </div>
+          <div class="budget-grid-scroll"><table class="budget-grid-table" id="budgetGridTable"></table></div>
+          <div class="budget-grid-hint">Drag a column's right edge to resize it. Tap a row's dot to color it. Use <strong>negative numbers for money going out</strong> (bills) and positive for money coming in — Balance = Starting Balance + all entries. Launch pulls labeled rows into Bills.</div>
+          <div class="budget-summary" id="budgetSummary">
+            <div class="budget-summary-row"><span>Starting Balance</span><span id="budgetSumStart">$0.00</span></div>
+            <div class="budget-summary-row"><span>Net of Entries</span><span id="budgetSumTotal">$0.00</span></div>
+            <div class="budget-summary-row budget-summary-final"><span>Balance</span><span id="budgetSumFinal">$0.00</span></div>
+          </div>
+        </div>
+        <div class="budget-balance-panel">
+          <div class="budget-balance-label">Current Balance</div>
+          <input type="text" class="budget-balance-input" id="budgetBalanceInput" placeholder="$0.00">
+          <div class="budget-balance-stamp" id="budgetBalanceStamp">not set yet</div>
+          <button type="button" class="budget-log-week-btn" id="budgetLogWeekBtn">📌 Log This Week</button>
+          <div class="budget-week-avg-label">4-Week Average</div>
+          <div class="budget-week-avg-value" id="budgetWeekAvg">— (0/4 logged)</div>
+          <div class="budget-week-log-list" id="budgetWeekLogList"></div>
+        </div>
+      </div>
+      <button type="button" class="budget-launch-btn" id="budgetLaunchBtn">🚀 Launch to Bills</button>
+      <div class="budget-launch-status" id="budgetLaunchStatus"></div>
+    </div>
+  </div>
+
   <div class="cta-modal-overlay" id="ctaModalOverlay">
     <div class="cta-modal-box">
       <div class="cta-modal-head">
@@ -8978,6 +9269,565 @@ enhanceBlocksWith3D();
   }
 
   renderCtaOrb();
+})();
+
+/* ============================================================
+   BUDGET NOTEPAD — a smaller green orb, a formula-capable grid,
+   and a Launch button that pushes labeled rows into Bills
+   ============================================================ */
+(function(){
+  const orb = document.getElementById('budgetOrb');
+  const overlay = document.getElementById('budgetModalOverlay');
+  const closeBtn = document.getElementById('budgetModalClose');
+  const tableEl = document.getElementById('budgetGridTable');
+  const launchBtn = document.getElementById('budgetLaunchBtn');
+  const launchStatus = document.getElementById('budgetLaunchStatus');
+  const balanceInput = document.getElementById('budgetBalanceInput');
+  const balanceStamp = document.getElementById('budgetBalanceStamp');
+
+  const GRID_KEY = 'actionPlan3000_budgetGrid';
+  const SIZE_KEY = 'actionPlan3000_budgetGridSize';
+  const COLW_KEY = 'actionPlan3000_budgetColWidths';
+  const ROWCOLOR_KEY = 'actionPlan3000_budgetRowColors';
+  const BALANCE_KEY = 'actionPlan3000_budgetBalance';
+  const MIN_COLS = 2, MAX_COLS = 12, MIN_ROWS = 3, MAX_ROWS = 60;
+  const DEFAULT_COL_WIDTH = 90, MIN_COL_WIDTH = 46, MAX_COL_WIDTH = 320;
+  let GRID_COLS = 6, GRID_ROWS = 12;
+  try{
+    const size = JSON.parse(localStorage.getItem(SIZE_KEY) || 'null');
+    if(size && size.cols) GRID_COLS = Math.max(MIN_COLS, Math.min(MAX_COLS, size.cols));
+    if(size && size.rows) GRID_ROWS = Math.max(MIN_ROWS, Math.min(MAX_ROWS, size.rows));
+  }catch(e){}
+  let gridRaw = {};
+  try{ gridRaw = JSON.parse(localStorage.getItem(GRID_KEY) || '{}'); }catch(e){ gridRaw = {}; }
+  let colWidths = [];
+  try{ colWidths = JSON.parse(localStorage.getItem(COLW_KEY) || '[]'); }catch(e){ colWidths = []; }
+  let rowColors = {};
+  try{ rowColors = JSON.parse(localStorage.getItem(ROWCOLOR_KEY) || '{}'); }catch(e){ rowColors = {}; }
+  let budgetBalance = null;
+  try{ budgetBalance = JSON.parse(localStorage.getItem(BALANCE_KEY) || 'null'); }catch(e){ budgetBalance = null; }
+
+  function saveGridSize(){ try{ localStorage.setItem(SIZE_KEY, JSON.stringify({cols:GRID_COLS, rows:GRID_ROWS})); }catch(e){} }
+  function saveGridRaw(){ try{ localStorage.setItem(GRID_KEY, JSON.stringify(gridRaw)); }catch(e){} }
+  function saveColWidths(){ try{ localStorage.setItem(COLW_KEY, JSON.stringify(colWidths)); }catch(e){} }
+  function saveRowColors(){ try{ localStorage.setItem(ROWCOLOR_KEY, JSON.stringify(rowColors)); }catch(e){} }
+  function saveBalance(){ try{ localStorage.setItem(BALANCE_KEY, JSON.stringify(budgetBalance)); }catch(e){} }
+  function ensureColWidths(){
+    for(let c = 0; c < GRID_COLS; c++){
+      if(typeof colWidths[c] !== 'number') colWidths[c] = DEFAULT_COL_WIDTH;
+    }
+    colWidths.length = GRID_COLS;
+  }
+  function colLetter(i){ return String.fromCharCode(65 + i); }
+  function cellId(c, r){ return colLetter(c) + r; }
+
+  function cellValue(id, seen){
+    seen = seen || {};
+    if(seen[id]) return 0; // guard against circular refs
+    seen[id] = true;
+    const raw = gridRaw[id];
+    if(raw === undefined || raw === null || raw === '') return 0;
+    if(typeof raw === 'string' && raw.charAt(0) === '='){
+      return evalFormula(raw.slice(1), seen);
+    }
+    const n = parseFloat(raw);
+    return isNaN(n) ? 0 : n;
+  }
+  function evalFormula(expr, seen){
+    try{
+      expr = expr.toUpperCase();
+      expr = expr.replace(/(SUM|AVG|AVERAGE)\(([A-Za-z])(\d{1,3}):([A-Za-z])(\d{1,3})\)/g, function(m, fn, c1, r1, c2, r2){
+        const col1 = c1.charCodeAt(0) - 65, col2 = c2.charCodeAt(0) - 65;
+        const row1 = parseInt(r1, 10), row2 = parseInt(r2, 10);
+        const vals = [];
+        for(let c = Math.min(col1, col2); c <= Math.max(col1, col2); c++){
+          for(let r = Math.min(row1, row2); r <= Math.max(row1, row2); r++){
+            vals.push(cellValue(colLetter(c) + r, seen));
+          }
+        }
+        const sum = vals.reduce(function(a, b){ return a + b; }, 0);
+        return String(fn === 'SUM' ? sum : (vals.length ? sum / vals.length : 0));
+      });
+      expr = expr.replace(/\b([A-Za-z])(\d{1,3})\b/g, function(m){
+        return String(cellValue(m, seen));
+      });
+      if(!/^[0-9+\-*/().\s]*$/.test(expr)) return 0;
+      // eslint-disable-next-line no-new-func
+      const result = Function('"use strict"; return (' + (expr.trim() === '' ? '0' : expr) + ');')();
+      return typeof result === 'number' && isFinite(result) ? result : 0;
+    }catch(e){ return 0; }
+  }
+  function displayValue(id){
+    const raw = gridRaw[id];
+    if(raw === undefined || raw === null || raw === '') return '';
+    if(typeof raw === 'string' && raw.charAt(0) === '='){
+      const v = cellValue(id);
+      return Math.round(v * 100) / 100;
+    }
+    return raw;
+  }
+
+  /* ---------- column drag-to-resize ---------- */
+  let resizingCol = null, resizeStartX = 0, resizeStartWidth = 0;
+  function onResizerDown(e, colIndex, handleEl){
+    e.preventDefault();
+    resizingCol = colIndex;
+    resizeStartX = (e.touches ? e.touches[0].clientX : e.clientX);
+    resizeStartWidth = colWidths[colIndex] || DEFAULT_COL_WIDTH;
+    handleEl.classList.add('resizing');
+    document.addEventListener('mousemove', onResizerMove);
+    document.addEventListener('mouseup', onResizerUp);
+    document.addEventListener('touchmove', onResizerMove, {passive:false});
+    document.addEventListener('touchend', onResizerUp);
+  }
+  function onResizerMove(e){
+    if(resizingCol === null) return;
+    if(e.cancelable) e.preventDefault();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    const delta = x - resizeStartX;
+    const w = Math.max(MIN_COL_WIDTH, Math.min(MAX_COL_WIDTH, resizeStartWidth + delta));
+    colWidths[resizingCol] = w;
+    const colEl = tableEl.querySelector('col[data-col="' + resizingCol + '"]');
+    if(colEl) colEl.style.width = w + 'px';
+  }
+  function onResizerUp(){
+    if(resizingCol === null) return;
+    tableEl.querySelectorAll('.budget-col-resizer.resizing').forEach(function(h){ h.classList.remove('resizing'); });
+    resizingCol = null;
+    saveColWidths();
+    document.removeEventListener('mousemove', onResizerMove);
+    document.removeEventListener('mouseup', onResizerUp);
+    document.removeEventListener('touchmove', onResizerMove);
+    document.removeEventListener('touchend', onResizerUp);
+  }
+
+  /* ---------- row color swatches ---------- */
+  let colorPickerRow = null;
+  const colorPicker = document.createElement('input');
+  colorPicker.type = 'color';
+  colorPicker.style.position = 'fixed';
+  colorPicker.style.top = '-999px';
+  colorPicker.style.left = '-999px';
+  document.body.appendChild(colorPicker);
+  colorPicker.addEventListener('input', function(){
+    if(colorPickerRow === null) return;
+    setRowColor(colorPickerRow, colorPicker.value);
+  });
+  function setRowColor(row, color){
+    if(color){ rowColors[row] = color; } else { delete rowColors[row]; }
+    saveRowColors();
+    applyRowColor(row);
+  }
+  function applyRowColor(row){
+    const tr = tableEl.querySelector('tr[data-row="' + row + '"]');
+    if(!tr) return;
+    tr.style.background = rowColors[row] || '';
+    const dot = tr.querySelector('.budget-row-swatch');
+    if(dot) dot.style.background = rowColors[row] || '#fff';
+  }
+  function openRowColorPicker(row, anchorEl){
+    colorPickerRow = row;
+    const rect = anchorEl.getBoundingClientRect();
+    colorPicker.style.top = rect.top + 'px';
+    colorPicker.style.left = rect.left + 'px';
+    colorPicker.value = rowColors[row] || '#ffffff';
+    colorPicker.click();
+  }
+
+  function buildGridTable(){
+    ensureColWidths();
+    let html = '<colgroup><col style="width:40px">';
+    for(let c = 0; c < GRID_COLS; c++) html += '<col data-col="' + c + '" style="width:' + colWidths[c] + 'px">';
+    html += '</colgroup>';
+    html += '<thead><tr><th class="corner rowhead-col"></th>';
+    for(let c = 0; c < GRID_COLS; c++){
+      html += '<th data-col="' + c + '">' + colLetter(c) + '<span class="budget-col-resizer" data-col="' + c + '"></span></th>';
+    }
+    html += '</tr></thead><tbody>';
+    for(let r = 1; r <= GRID_ROWS; r++){
+      html += '<tr data-row="' + r + '"><td class="rowhead"><div class="budget-rowhead-inner"><span class="budget-row-swatch" data-row="' + r + '" title="Color this row"></span><span>' + r + '</span></div></td>';
+      for(let c = 0; c < GRID_COLS; c++){
+        html += '<td><input type="text" class="budget-cell" data-cell="' + cellId(c, r) + '"></td>';
+      }
+      html += '</tr>';
+    }
+    html += '</tbody>';
+    tableEl.innerHTML = html;
+    tableEl.querySelectorAll('.budget-col-resizer').forEach(function(handle){
+      const c = parseInt(handle.dataset.col, 10);
+      handle.addEventListener('mousedown', function(e){ onResizerDown(e, c, handle); });
+      handle.addEventListener('touchstart', function(e){ onResizerDown(e, c, handle); }, {passive:false});
+    });
+    tableEl.querySelectorAll('.budget-row-swatch').forEach(function(dot){
+      const r = parseInt(dot.dataset.row, 10);
+      dot.style.background = rowColors[r] || '#fff';
+      dot.addEventListener('click', function(){ openRowColorPicker(r, dot); });
+    });
+    for(const r in rowColors){ applyRowColor(r); }
+  }
+  function renderGrid(skipId){
+    tableEl.querySelectorAll('.budget-cell').forEach(function(input){
+      const id = input.dataset.cell;
+      if(id === skipId) return;
+      input.value = displayValue(id);
+    });
+  }
+  tableEl.addEventListener('focusin', function(e){
+    if(!e.target.classList.contains('budget-cell')) return;
+    const id = e.target.dataset.cell;
+    const raw = gridRaw[id];
+    e.target.value = (raw === undefined || raw === null) ? '' : raw;
+  });
+  tableEl.addEventListener('focusout', function(e){
+    if(!e.target.classList.contains('budget-cell')) return;
+    renderGrid();
+  });
+  tableEl.addEventListener('input', function(e){
+    if(!e.target.classList.contains('budget-cell')) return;
+    const id = e.target.dataset.cell;
+    const v = e.target.value;
+    if(v === '') delete gridRaw[id]; else gridRaw[id] = v;
+    saveGridRaw();
+    renderGrid(id);
+    renderSummary();
+    try{ soundType(); }catch(err){}
+  });
+  tableEl.addEventListener('keydown', function(e){
+    if(!e.target.classList.contains('budget-cell')) return;
+    const id = e.target.dataset.cell;
+    const col = id.charCodeAt(0) - 65;
+    const row = parseInt(id.slice(1), 10);
+    let nc = col, nr = row;
+    if(e.key === 'Enter'){ nr = row + 1; }
+    else if(e.key === 'ArrowDown'){ nr = row + 1; }
+    else if(e.key === 'ArrowUp'){ nr = row - 1; }
+    else if(e.key === 'ArrowLeft' && e.target.selectionStart === 0){ nc = col - 1; }
+    else if(e.key === 'ArrowRight' && e.target.selectionStart === e.target.value.length){ nc = col + 1; }
+    else return;
+    if(nr < 1 || nr > GRID_ROWS || nc < 0 || nc >= GRID_COLS) return;
+    e.preventDefault();
+    const next = tableEl.querySelector('.budget-cell[data-cell="' + cellId(nc, nr) + '"]');
+    if(next) next.focus();
+  });
+
+  function resizeGrid(cols, rows){
+    GRID_COLS = Math.max(MIN_COLS, Math.min(MAX_COLS, cols));
+    GRID_ROWS = Math.max(MIN_ROWS, Math.min(MAX_ROWS, rows));
+    saveGridSize();
+    buildGridTable();
+    renderGrid();
+    renderSummary();
+  }
+  document.getElementById('budgetAddRow').addEventListener('click', function(){ resizeGrid(GRID_COLS, GRID_ROWS + 1); });
+  document.getElementById('budgetDelRow').addEventListener('click', function(){ resizeGrid(GRID_COLS, GRID_ROWS - 1); });
+  document.getElementById('budgetAddCol').addEventListener('click', function(){ resizeGrid(GRID_COLS + 1, GRID_ROWS); });
+  document.getElementById('budgetDelCol').addEventListener('click', function(){ resizeGrid(GRID_COLS - 1, GRID_ROWS); });
+  document.getElementById('budgetClear').addEventListener('click', function(){
+    if(!window.confirm('Clear the whole budget grid?')) return;
+    gridRaw = {};
+    saveGridRaw();
+    renderGrid();
+    renderSummary();
+  });
+
+  /* ---------- an original 80s-tech synth arpeggio, for that
+     tin-toy-robot control-panel feeling — plays only while this
+     modal is open ---------- */
+  const BUDGET_SYNTH_ROOT = 220; // A3
+  const BUDGET_SYNTH_BPM = 138;
+  const budgetSynthEighth = 60 / BUDGET_SYNTH_BPM / 2;
+  function budgetSynthFreq(semi){ return BUDGET_SYNTH_ROOT * Math.pow(2, semi / 12); }
+  // Am - F - C - G, arpeggiated — a very "retro synth" progression
+  const BUDGET_CHORDS = [
+    {root:0, third:3},   // Am
+    {root:-4, third:0},  // F  (major third = +4 from F root)
+    {root:3, third:7},   // C  (major)
+    {root:-2, third:2}   // G  (major)
+  ];
+  let budgetSynthGain = null, budgetLeadBus = null, budgetBassBus = null, budgetHatBus = null;
+  let budgetSynthRunning = false, budgetSynthTimer = null;
+  let budgetArpNextTime = 0, budgetArpIndex = 0, budgetBassNextTime = 0, budgetBassIndex = 0;
+  function initBudgetSynthBus(){
+    const ctx = __sfxGetCtx();
+    if(!ctx || budgetSynthGain) return;
+    budgetSynthGain = ctx.createGain(); budgetSynthGain.gain.value = 0;
+    budgetLeadBus = ctx.createGain(); budgetLeadBus.gain.value = 0.34;
+    budgetBassBus = ctx.createGain(); budgetBassBus.gain.value = 0.4;
+    budgetHatBus = ctx.createGain(); budgetHatBus.gain.value = 0.18;
+    budgetLeadBus.connect(budgetSynthGain); budgetBassBus.connect(budgetSynthGain); budgetHatBus.connect(budgetSynthGain);
+    budgetSynthGain.connect(ctx.destination);
+  }
+  function budgetArpNote(semi, time, dur){
+    const ctx = __sfxGetCtx();
+    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    o1.type = 'square'; o1.frequency.value = budgetSynthFreq(semi);
+    o2.type = 'square'; o2.frequency.value = budgetSynthFreq(semi) * 1.006;
+    const g2 = ctx.createGain(); g2.gain.value = 0.55;
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(0.3, time + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur * 0.85);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(budgetLeadBus);
+    o1.start(time); o2.start(time); o1.stop(time + dur + 0.03); o2.stop(time + dur + 0.03);
+  }
+  function budgetBassNote(semi, time, dur){
+    const ctx = __sfxGetCtx();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'triangle'; o.frequency.value = budgetSynthFreq(semi - 12);
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(0.4, time + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + dur * 0.9);
+    o.connect(g); g.connect(budgetBassBus);
+    o.start(time); o.stop(time + dur + 0.03);
+  }
+  function budgetHatTick(time){
+    const ctx = __sfxGetCtx();
+    const bufferSize = Math.floor(ctx.sampleRate * 0.03);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i = 0; i < bufferSize; i++){ data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize); }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'highpass'; filt.frequency.value = 6000;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.25, time);
+    g.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+    noise.connect(filt); filt.connect(g); g.connect(budgetHatBus);
+    noise.start(time);
+  }
+  function budgetSynthScheduler(){
+    if(!budgetSynthRunning) return;
+    const ctx = __sfxGetCtx();
+    if(!ctx) return;
+    const lookahead = 0.3;
+    while(budgetArpNextTime < ctx.currentTime + lookahead){
+      const barIndex = Math.floor(budgetArpIndex / 8) % BUDGET_CHORDS.length;
+      const stepInBar = budgetArpIndex % 8;
+      const chord = BUDGET_CHORDS[barIndex];
+      const pattern = [0, chord.third, 7, 12, 7, chord.third, 0, chord.third];
+      budgetArpNote(chord.root + pattern[stepInBar], budgetArpNextTime, budgetSynthEighth * 0.9);
+      if(stepInBar % 2 === 1) budgetHatTick(budgetArpNextTime);
+      budgetArpNextTime += budgetSynthEighth;
+      budgetArpIndex++;
+    }
+    while(budgetBassNextTime < ctx.currentTime + lookahead){
+      const barIndex = budgetBassIndex % BUDGET_CHORDS.length;
+      const chord = BUDGET_CHORDS[barIndex];
+      budgetBassNote(chord.root, budgetBassNextTime, budgetSynthEighth * 8 * 0.95);
+      budgetBassNextTime += budgetSynthEighth * 8;
+      budgetBassIndex++;
+    }
+    budgetSynthTimer = setTimeout(budgetSynthScheduler, 90);
+  }
+  function startBudgetSynth(){
+    if(sfxMuted) return;
+    initBudgetSynthBus();
+    const ctx = __sfxGetCtx();
+    if(!ctx || !budgetSynthGain) return;
+    if(!budgetSynthRunning){
+      budgetSynthRunning = true;
+      budgetArpIndex = 0; budgetBassIndex = 0;
+      budgetArpNextTime = ctx.currentTime + 0.15;
+      budgetBassNextTime = ctx.currentTime + 0.15;
+      budgetSynthScheduler();
+    }
+    budgetSynthGain.gain.cancelScheduledValues(ctx.currentTime);
+    budgetSynthGain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.5);
+  }
+  function stopBudgetSynth(){
+    if(budgetSynthGain){
+      const ctx = __sfxGetCtx();
+      if(ctx){
+        budgetSynthGain.gain.cancelScheduledValues(ctx.currentTime);
+        budgetSynthGain.gain.linearRampToValueAtTime(0.0, ctx.currentTime + 0.4);
+      }
+    }
+    budgetSynthRunning = false;
+    if(budgetSynthTimer){ clearTimeout(budgetSynthTimer); budgetSynthTimer = null; }
+  }
+
+  function openBudgetModal(){
+    buildGridTable();
+    renderGrid();
+    renderBalance();
+    renderSummary();
+    renderWeekLog();
+    launchStatus.textContent = '';
+    overlay.classList.add('open');
+    try{ soundEureka(); }catch(e){}
+    startBudgetSynth();
+  }
+  function closeBudgetModal(){
+    overlay.classList.remove('open');
+    stopBudgetSynth();
+  }
+  orb.addEventListener('click', openBudgetModal);
+  closeBtn.addEventListener('click', closeBudgetModal);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeBudgetModal(); });
+
+  /* ---------- balance, with an automatic date/time stamp ---------- */
+  function formatStamp(iso){
+    const d = new Date(iso);
+    if(isNaN(d.getTime())) return '';
+    const dateStr = d.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+    const timeStr = d.toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit'});
+    return 'Updated ' + dateStr + ' \u2022 ' + timeStr;
+  }
+  function renderBalance(){
+    if(budgetBalance && typeof budgetBalance.amount === 'string'){
+      balanceInput.value = budgetBalance.amount;
+      balanceStamp.textContent = formatStamp(budgetBalance.stamp) || 'not set yet';
+    } else {
+      balanceInput.value = '';
+      balanceStamp.textContent = 'not set yet';
+    }
+  }
+  function commitBalance(){
+    const v = balanceInput.value.trim();
+    if(v === ''){
+      budgetBalance = null;
+      saveBalance();
+      balanceStamp.textContent = 'not set yet';
+      renderSummary();
+      return;
+    }
+    budgetBalance = {amount:v, stamp:new Date().toISOString()};
+    saveBalance();
+    balanceStamp.textContent = formatStamp(budgetBalance.stamp);
+    renderSummary();
+    try{ soundSaved(); }catch(e){}
+  }
+  balanceInput.addEventListener('change', commitBalance);
+  balanceInput.addEventListener('blur', commitBalance);
+  balanceInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); balanceInput.blur(); }
+  });
+
+  /* ---------- balance summary + a rolling 4-week average ---------- */
+  function isNumericCell(id){
+    const raw = gridRaw[id];
+    if(raw === undefined || raw === null || raw === '') return false;
+    if(typeof raw === 'string' && raw.charAt(0) === '=') return true;
+    return !isNaN(parseFloat(raw));
+  }
+  function formatMoney(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toFixed(2);
+  }
+  function computeGridTotal(){
+    let total = 0;
+    for(let r = 1; r <= GRID_ROWS; r++){
+      let label = '';
+      let amountId = null;
+      for(let c = 0; c < GRID_COLS; c++){
+        const id = cellId(c, r);
+        const raw = gridRaw[id];
+        if(raw === undefined || raw === null || raw === '') continue;
+        if(!label && !isNumericCell(id)){
+          label = String(raw).trim();
+        } else if(isNumericCell(id)){
+          amountId = id;
+        }
+      }
+      if(label && amountId) total += cellValue(amountId);
+    }
+    return total;
+  }
+  function computeFinalBalance(){
+    const start = parseFloat(budgetBalance && budgetBalance.amount) || 0;
+    return start + computeGridTotal();
+  }
+  function renderSummary(){
+    const start = parseFloat(budgetBalance && budgetBalance.amount) || 0;
+    const total = computeGridTotal();
+    document.getElementById('budgetSumStart').textContent = formatMoney(start);
+    document.getElementById('budgetSumTotal').textContent = formatMoney(total);
+    document.getElementById('budgetSumFinal').textContent = formatMoney(start + total);
+  }
+
+  /* ---------- a rolling 4-week balance log, for a Mon–Sun rhythm ---------- */
+  const WEEKLOG_KEY = 'actionPlan3000_budgetWeekLog';
+  let weekLog = [];
+  try{ weekLog = JSON.parse(localStorage.getItem(WEEKLOG_KEY) || '[]'); }catch(e){ weekLog = []; }
+  function saveWeekLog(){ try{ localStorage.setItem(WEEKLOG_KEY, JSON.stringify(weekLog)); }catch(e){} }
+  function renderWeekLog(){
+    const avgEl = document.getElementById('budgetWeekAvg');
+    const listEl = document.getElementById('budgetWeekLogList');
+    if(weekLog.length === 0){
+      avgEl.textContent = '\u2014 (0/4 logged)';
+    } else {
+      const sum = weekLog.reduce(function(a, w){ return a + w.balance; }, 0);
+      avgEl.textContent = formatMoney(sum / weekLog.length) + ' (' + weekLog.length + '/4 logged)';
+    }
+    listEl.innerHTML = '';
+    weekLog.slice().reverse().forEach(function(w){
+      const row = document.createElement('div');
+      const d = new Date(w.stamp);
+      const dateStr = isNaN(d.getTime()) ? '' : d.toLocaleDateString(undefined, {month:'short', day:'numeric'});
+      row.textContent = dateStr + ': ' + formatMoney(w.balance);
+      listEl.appendChild(row);
+    });
+  }
+  document.getElementById('budgetLogWeekBtn').addEventListener('click', function(){
+    weekLog.push({stamp:new Date().toISOString(), balance:computeFinalBalance()});
+    if(weekLog.length > 4) weekLog = weekLog.slice(weekLog.length - 4);
+    saveWeekLog();
+    renderWeekLog();
+    try{ soundSaved(); }catch(e){}
+  });
+
+  /* ---------- Launch: pull labeled rows into the Bills list ---------- */
+  function launchToBills(){
+    if(typeof BLOCK_DATA === 'undefined' || typeof renderBulletList !== 'function' || typeof persist !== 'function'){
+      launchStatus.textContent = 'Could not reach the Bills list.';
+      return;
+    }
+    let added = 0;
+    for(let r = 1; r <= GRID_ROWS; r++){
+      let label = '';
+      let amountId = null;
+      for(let c = 0; c < GRID_COLS; c++){
+        const id = cellId(c, r);
+        const raw = gridRaw[id];
+        if(raw === undefined || raw === null || raw === '') continue;
+        if(!label && !isNumericCell(id)){
+          label = String(raw).trim();
+        } else if(isNumericCell(id)){
+          amountId = id; // keep the last numeric/formula cell in the row as the amount
+        }
+      }
+      if(!label || !amountId) continue;
+      const amount = cellValue(amountId);
+      const formatted = '$' + Math.abs(amount).toFixed(2);
+      if(!BLOCK_DATA.bills) BLOCK_DATA.bills = [];
+      BLOCK_DATA.bills.push({
+        id: (typeof uid === 'function') ? uid() : ('b' + Date.now() + r),
+        stamp: (typeof nowStamp === 'function') ? nowStamp() : '',
+        text: label + ' — ' + formatted,
+        done: false,
+        priority: 0
+      });
+      added++;
+    }
+    if(added === 0){
+      launchStatus.textContent = 'Nothing to launch yet — add a label and an amount to a row first.';
+      return;
+    }
+    renderBulletList('bills');
+    persist();
+    launchStatus.textContent = 'Sent ' + added + ' item' + (added === 1 ? '' : 's') + ' to Bills. Check the Bills block to review.';
+    try{ soundSaved(); }catch(e){}
+  }
+  launchBtn.addEventListener('click', launchToBills);
+
+  // stop the retro synth tune if the global mute is toggled on while it's playing
+  if(typeof toggleSfxMute === 'function'){
+    const _origToggleSfxMuteForBudget = toggleSfxMute;
+    toggleSfxMute = function(){
+      _origToggleSfxMuteForBudget();
+      if(sfxMuted) stopBudgetSynth();
+    };
+  }
 })();
 </script>
   <div class="backup-toast" id="backupToast"></div>
