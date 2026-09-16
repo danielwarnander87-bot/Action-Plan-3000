@@ -1284,12 +1284,20 @@
     color:rgba(220,230,255,0.35); font-family:'Kalam',cursive; font-size:16px;
   }
   .blueprint-note{
-    position:absolute; max-width:88%; min-width:14px; min-height:1.4em;
+    position:absolute; max-width:88%; min-width:90px; min-height:1.6em;
     background:transparent; border:none; outline:none;
     color:#eaf6ff; font-family:'Kalam',cursive; font-size:16px; line-height:1.5;
     white-space:pre-wrap; word-break:break-word; cursor:text;
+    box-sizing:border-box; padding:2px 4px;
   }
   .blueprint-note:focus{ box-shadow:0 0 0 1px rgba(200,225,255,0.3); border-radius:4px; }
+  .blueprint-note:empty{
+    border:1.5px dashed rgba(200,225,255,0.4); border-radius:4px;
+  }
+  .blueprint-note:empty::before{
+    content:"type here\2026"; color:rgba(220,230,255,0.4); pointer-events:none;
+  }
+  .blueprint-note:empty:focus{ border-color:rgba(200,225,255,0.7); }
   .blueprint-titleblock{
     margin-top:10px; border-top:1px solid rgba(200,225,255,0.3); padding-top:7px;
     display:flex; gap:14px; flex-wrap:wrap;
@@ -10736,8 +10744,12 @@ enhanceBlocksWith3D();
     freeNotes.forEach(function(n){ notesCanvas.appendChild(makeNoteEl(n)); });
   }
   renderFreeNotes();
+  notesCanvas.addEventListener('mousedown', function(e){
+    if(e.target === notesCanvas) e.preventDefault(); // belt-and-suspenders: mice fire this one too
+  });
   notesCanvas.addEventListener('pointerdown', function(e){
     if(e.target !== notesCanvas) return; // tapped an existing note — let it take focus normally
+    e.preventDefault(); // stop the browser's default "clicked something non-editable" focus-steal
     const rect = notesCanvas.getBoundingClientRect();
     const xPct = Math.max(0, Math.min(92, ((e.clientX - rect.left) / rect.width) * 100));
     const yPct = Math.max(0, Math.min(90, ((e.clientY - rect.top) / rect.height) * 100));
