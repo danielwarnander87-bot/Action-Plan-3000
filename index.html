@@ -1303,6 +1303,7 @@
     font-size:clamp(16px, 4vw, 32px);
   }
   .blueprint-cal-bg .bmc-day.today{ color:#ffd27e; font-weight:700; }
+  .blueprint-cal-bg .bmc-day.girls-day{ color:var(--pink); text-shadow:0 0 8px rgba(224,17,155,0.55); }
   .blueprint-cal-bg .bmc-day.this-week{ background:rgba(var(--bp-line-rgb),0.22); border-radius:4px; }
   .blueprint-day-bg{
     position:absolute; inset:0; pointer-events:none; overflow:hidden;
@@ -1318,6 +1319,9 @@
     color:var(--bp-ink); font-weight:700;
   }
   .blueprint-day-bg.today .bp-day-dow, .blueprint-day-bg.today .bp-day-num{ color:#ffd27e; }
+  .blueprint-day-bg.girls-day .bp-day-dow, .blueprint-day-bg.girls-day .bp-day-num{
+    color:var(--pink); text-shadow:0 0 16px rgba(224,17,155,0.5);
+  }
   .blueprint-notes-canvas{
     position:absolute; inset:0; z-index:1; cursor:text; padding:2px;
     box-sizing:border-box;
@@ -10733,7 +10737,7 @@ const __ideaBoards = [];
 function closeOtherIdeaBoards(except){
   __ideaBoards.forEach(function(b){ if(b && b !== except) b.closeIfOpen(); });
 }
-function createIdeaBoard(boardId, storagePrefix){
+function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
   const handle = document.querySelector('.blueprint-handle[data-board="' + boardId + '"]');
   const panel = document.querySelector('.blueprint-panel[data-board="' + boardId + '"]');
   if(!handle || !panel) return null;
@@ -10783,6 +10787,11 @@ function createIdeaBoard(boardId, storagePrefix){
   }
   updateViewToggleLabel();
 
+  function isGirlsDay(d){
+    if(!showGirlsSchedule) return false;
+    if(typeof girlsSchedule === 'undefined' || typeof mondayOf !== 'function' || typeof weekKey !== 'function') return false;
+    return girlsSchedule[weekKey(mondayOf(d))] === 'girls';
+  }
   function renderMiniCal(){
     const y = bmcCursor.getFullYear(), m = bmcCursor.getMonth();
     bmcMonthLabel.textContent = bmcCursor.toLocaleDateString('en-US', {month:'short', year:'numeric'}).toUpperCase();
@@ -10803,6 +10812,7 @@ function createIdeaBoard(boardId, storagePrefix){
       let cls = 'bmc-day';
       if(isCurrentMonth && today.getDate() === d) cls += ' today';
       if(row === todayRow) cls += ' this-week';
+      if(isGirlsDay(new Date(y, m, d))) cls += ' girls-day';
       const cell = document.createElement('span');
       cell.className = cls;
       cell.textContent = d;
@@ -10814,6 +10824,7 @@ function createIdeaBoard(boardId, storagePrefix){
     dayBg.querySelector('.bp-day-dow').textContent = dayCursor.toLocaleDateString('en-US', {weekday:'long'}).toUpperCase();
     dayBg.querySelector('.bp-day-num').textContent = dayCursor.getDate();
     dayBg.classList.toggle('today', sameYMD(dayCursor, new Date()));
+    dayBg.classList.toggle('girls-day', isGirlsDay(dayCursor));
   }
   function renderBackgroundAndNotes(){
     if(viewMode === 'month'){
@@ -10937,6 +10948,27 @@ function createIdeaBoard(boardId, storagePrefix){
     if(!notesByDate[key]) notesByDate[key] = [];
     return notesByDate[key];
   }
+  /* ---------- inline "on the spot" math: end anything with = inside a
+     note and it computes right there, like a scratchpad calculator ---------- */
+  function maybeEvaluateFormula(el){
+    const text = el.textContent;
+    if(text.charAt(text.length - 1) !== '=') return; // only fire the instant '=' is typed
+    const beforeEq = text.slice(0, -1);
+    let j = beforeEq.length - 1;
+    while(j >= 0 && /[0-9.+\-*/()%\s]/.test(beforeEq[j])) j--;
+    const expr = beforeEq.slice(j + 1).trim();
+    if(!expr || !/[0-9]/.test(expr)) return; // need at least one digit to bother
+    let result;
+    try{ result = Function('"use strict"; return (' + expr + ')')(); }catch(e){ return; }
+    if(typeof result !== 'number' || !isFinite(result)) return;
+    const rounded = Math.round(result * 10000) / 10000; // trim float noise
+    try{
+      document.execCommand('insertText', false, ' ' + rounded);
+    }catch(e){
+      el.textContent = text + ' ' + rounded;
+    }
+    try{ soundClick(); }catch(e){}
+  }
   function makeNoteEl(note, notesArr){
     const el = document.createElement('div');
     el.className = 'blueprint-note';
@@ -10950,6 +10982,7 @@ function createIdeaBoard(boardId, storagePrefix){
     el.addEventListener('input', function(){
       note.text = el.textContent;
       saveNotesByDate();
+      maybeEvaluateFormula(el);
     });
     el.addEventListener('blur', function(){
       if(!el.textContent.trim()){
@@ -11145,9 +11178,9 @@ function createIdeaBoard(boardId, storagePrefix){
 
   return boardApi;
 }
-__ideaBoards.push(createIdeaBoard('ideas', 'actionPlan3000_ideaBoard'));
-__ideaBoards.push(createIdeaBoard('work', 'actionPlan3000_workBoard'));
-__ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard'));
+__ideaBoards.push(createIdeaBoard('ideas', 'actionPlan3000_ideaBoard', true));
+__ideaBoards.push(createIdeaBoard('work', 'actionPlan3000_workBoard', false));
+__ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true));
 
 /* ============================================================
    THE OMEN — left-side drawer: a 3-question nightly reflection
