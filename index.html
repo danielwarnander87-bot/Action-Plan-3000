@@ -969,6 +969,85 @@
   }
 
   /* ============================================================
+     THE PULSE — a color-shifting orb that reads Budget Master,
+     Budget Bot, and the Paycheck tab, and boils them down into
+     one "how am I doing" signal plus a quick side-by-side chart
+     ============================================================ */
+  .pulse-orb{
+    position:fixed; z-index:598; top:16px; left:16px;
+    width:42px; height:42px; border-radius:50%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.6s ease, box-shadow 0.6s ease;
+    user-select:none;
+  }
+  .pulse-orb-icon{
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:16px; color:#fff;
+    text-shadow:0 1px 3px rgba(0,0,0,0.5); pointer-events:none;
+  }
+  .pulse-orb.status-green{
+    background:radial-gradient(circle at 35% 30%, #baffd4 0%, #1fae6b 55%, #0a5f3a 100%);
+    box-shadow:0 0 10px 3px rgba(31,174,107,0.6), 0 0 22px 8px rgba(31,174,107,0.28);
+    animation:pulseOrbBeat 3.6s ease-in-out infinite;
+  }
+  .pulse-orb.status-yellow{
+    background:radial-gradient(circle at 35% 30%, #fff0b8 0%, #d69a1f 55%, #7a520a 100%);
+    box-shadow:0 0 12px 4px rgba(214,154,31,0.6), 0 0 24px 9px rgba(214,154,31,0.3);
+    animation:pulseOrbBeat 2.2s ease-in-out infinite;
+  }
+  .pulse-orb.status-red{
+    background:radial-gradient(circle at 35% 30%, #ffd0c4 0%, #d6371f 55%, #7a1408 100%);
+    box-shadow:0 0 16px 5px rgba(214,55,31,0.7), 0 0 30px 12px rgba(214,55,31,0.4);
+    animation:pulseOrbAlert 0.9s ease-in-out infinite;
+  }
+  .pulse-orb.status-unknown{
+    background:radial-gradient(circle at 35% 30%, #d8d8e0 0%, #8a8a98 55%, #4a4a55 100%);
+    box-shadow:0 0 8px 2px rgba(138,138,152,0.5);
+  }
+  @keyframes pulseOrbBeat{ 0%, 100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+  @keyframes pulseOrbAlert{ 0%, 100%{ transform:scale(1); filter:brightness(1); } 50%{ transform:scale(1.12); filter:brightness(1.3); } }
+
+  .pulse-modal-box{ max-width:420px; }
+  .pulse-banner{
+    border-radius:12px; padding:12px 14px; margin-bottom:12px; text-align:center;
+    font-family:'Fredoka',sans-serif;
+  }
+  .pulse-banner.status-green{ background:#e8fbf0; border:2px solid #1fae6b; }
+  .pulse-banner.status-yellow{ background:#fff8e0; border:2px solid #d69a1f; }
+  .pulse-banner.status-red{ background:#ffece8; border:2px solid #d6371f; }
+  .pulse-banner.status-unknown{ background:#f2f2f5; border:2px solid #8a8a98; }
+  .pulse-banner-title{ font-weight:700; font-size:17px; color:var(--ink); }
+  .pulse-banner-sub{ font-family:'Nunito',sans-serif; font-size:12px; color:#666; margin-top:4px; line-height:1.4; }
+
+  .pulse-source-row{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:8px 10px; border:2px solid var(--indigo-soft); border-radius:10px; margin-bottom:8px;
+    font-family:'Nunito',sans-serif; background:#fbf9ff;
+  }
+  .pulse-source-left{ display:flex; align-items:center; gap:8px; min-width:0; }
+  .pulse-source-name{ font-weight:700; font-size:13px; color:var(--ink); }
+  .pulse-source-sub{ font-size:11px; color:#888; margin-top:1px; }
+  .pulse-source-value{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:16px; flex:0 0 auto; }
+  .pulse-source-dot{ width:10px; height:10px; border-radius:50%; flex:0 0 auto; }
+  .pulse-dot-green{ background:#1fae6b; }
+  .pulse-dot-yellow{ background:#d69a1f; }
+  .pulse-dot-red{ background:#d6371f; }
+  .pulse-dot-unknown{ background:#aaa; }
+  .pulse-source-missing{ font-size:11px; color:#999; font-style:italic; }
+
+  .pulse-chart-wrap{ margin:14px 0 10px; }
+  .pulse-chart-label{
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:11px; color:var(--indigo);
+    text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;
+  }
+  .pulse-refresh-btn{
+    width:100%; font-family:'Nunito',sans-serif; font-weight:700; font-size:12px;
+    background:#fff; border:2px solid var(--indigo-soft); color:var(--indigo);
+    border-radius:8px; padding:7px; cursor:pointer; margin-top:4px;
+  }
+  .pulse-refresh-btn:hover{ background:var(--indigo-soft); }
+  .pulse-updated{ font-size:10px; color:#999; text-align:center; margin-top:6px; }
+
+  /* ============================================================
      RETRO ROBOT THEME — tin-toy 80s control-panel skin for the
      Budget Notepad, inspired by vintage electronic robot toys
      ============================================================ */
@@ -3991,6 +4070,65 @@
       </div>
       <button type="button" class="budget-launch-btn" id="budgetLaunchBtn">🚀 Launch to Bills</button>
       <div class="budget-launch-status" id="budgetLaunchStatus"></div>
+    </div>
+  </div>
+
+  <div class="pulse-orb status-unknown" id="pulseOrb" title="Financial Pulse">
+    <span class="pulse-orb-icon">&#128147;</span>
+  </div>
+  <div class="cta-modal-overlay" id="pulseModalOverlay">
+    <div class="cta-modal-box pulse-modal-box">
+      <div class="cta-modal-head">
+        <span class="cta-modal-title">💓 FINANCIAL PULSE</span>
+        <button class="cta-modal-close" id="pulseModalClose" type="button">&times;</button>
+      </div>
+      <div class="pulse-banner status-unknown" id="pulseBanner">
+        <div class="pulse-banner-title" id="pulseBannerTitle">Reading the numbers&hellip;</div>
+        <div class="pulse-banner-sub" id="pulseBannerSub"></div>
+      </div>
+
+      <div class="pulse-source-row">
+        <div class="pulse-source-left">
+          <span class="pulse-source-dot pulse-dot-unknown" id="pulseDotMaster"></span>
+          <div>
+            <div class="pulse-source-name">Budget Master</div>
+            <div class="pulse-source-sub" id="pulseSubMaster">this month's projection</div>
+          </div>
+        </div>
+        <div class="pulse-source-value" id="pulseValMaster">&mdash;</div>
+      </div>
+      <div class="pulse-source-row">
+        <div class="pulse-source-left">
+          <span class="pulse-source-dot pulse-dot-unknown" id="pulseDotBot"></span>
+          <div>
+            <div class="pulse-source-name">Budget Bot</div>
+            <div class="pulse-source-sub" id="pulseSubBot">quick-calc balance</div>
+          </div>
+        </div>
+        <div class="pulse-source-value" id="pulseValBot">&mdash;</div>
+      </div>
+      <div class="pulse-source-row">
+        <div class="pulse-source-left">
+          <span class="pulse-source-dot pulse-dot-unknown" id="pulseDotPaycheck"></span>
+          <div>
+            <div class="pulse-source-name">Paycheck</div>
+            <div class="pulse-source-sub" id="pulseSubPaycheck">left after this check's pulls</div>
+          </div>
+        </div>
+        <div class="pulse-source-value" id="pulseValPaycheck">&mdash;</div>
+      </div>
+
+      <div class="pulse-chart-wrap">
+        <div class="pulse-chart-label">Side by side</div>
+        <div id="pulseChartHolder"></div>
+      </div>
+      <div class="pulse-chart-wrap" id="pulseSparkWrap" style="display:none;">
+        <div class="pulse-chart-label">Budget Bot &mdash; last few weeks</div>
+        <div id="pulseSparkHolder"></div>
+      </div>
+
+      <button type="button" class="pulse-refresh-btn" id="pulseRefreshBtn">&#8635; Refresh</button>
+      <div class="pulse-updated" id="pulseUpdated"></div>
     </div>
   </div>
 
@@ -10937,6 +11075,20 @@ enhanceBlocksWith3D();
       if(sfxMuted) stopBudgetSynth();
     };
   }
+
+  // expose this block's numbers to THE PULSE, and nudge it awake whenever
+  // the balance, grid, or week log here changes
+  window.__apBudgetBot = {
+    getStart: function(){ return parseFloat(budgetBalance && budgetBalance.amount) || 0; },
+    getFinalBalance: computeFinalBalance,
+    getWeekLog: function(){ return weekLog.slice(); }
+  };
+  const _origSaveBalanceForPulse = saveBalance;
+  saveBalance = function(){ _origSaveBalanceForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
+  const _origSaveGridRawForPulse = saveGridRaw;
+  saveGridRaw = function(){ _origSaveGridRawForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
+  const _origSaveWeekLogForPulse = saveWeekLog;
+  saveWeekLog = function(){ _origSaveWeekLogForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
 })();
 
 /* ============================================================
@@ -11607,7 +11759,8 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw) state = Object.assign(state, JSON.parse(raw));
   }catch(e){}
-  function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+  function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} if(window.__apPulseRefresh) window.__apPulseRefresh(); }
+  let lastBottomLine = 0, lastHalf = 0;
 
   function money(n){
     const sign = n < 0 ? '-' : '';
@@ -11669,6 +11822,8 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     }
 
     state.paycheck = paycheck; state.rent = rent; state.daycare = daycare; state.gas = gas;
+    lastBottomLine = remaining;
+    lastHalf = half;
   }
 
   function setDaycareToggle(on){
@@ -11747,6 +11902,248 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   }
   handle.addEventListener('pointerup', finishDrag);
   handle.addEventListener('pointercancel', finishDrag);
+
+  // expose this block's numbers to THE PULSE
+  window.__apPaycheck = {
+    getBottomLine: function(){ return lastBottomLine; },
+    getHalf: function(){ return lastHalf; },
+    getDaycareThisPeriod: function(){ return state.daycareThisPeriod; }
+  };
+})();
+
+/* ============================================================
+   THE PULSE — reads Budget Master (a separate page, via the
+   local storage they share on the same site), Budget Bot, and
+   the Paycheck tab, and boils all three into one color-coded
+   read on how things are looking, plus a side-by-side chart
+   ============================================================ */
+(function(){
+  const orb = document.getElementById('pulseOrb');
+  const overlay = document.getElementById('pulseModalOverlay');
+  const closeBtn = document.getElementById('pulseModalClose');
+  const refreshBtn = document.getElementById('pulseRefreshBtn');
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function dateKeyLocal(y, m, d){ return y + '-' + pad2(m + 1) + '-' + pad2(d); }
+  function money(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toFixed(2);
+  }
+
+  /* ---------- Budget Master: read its shared local-storage key directly
+     (works once it has been opened at least once on this same site/origin) ---------- */
+  function readBudgetMaster(){
+    let store = null;
+    try{ store = JSON.parse(localStorage.getItem('budgetCalendar_v1') || 'null'); }catch(e){ store = null; }
+    if(!store || !store.entries) return null;
+
+    const today = new Date();
+    const year = today.getFullYear(), month = today.getMonth();
+    const mk = year + '-' + pad2(month + 1);
+    const startBal = (store.startingBalances && store.startingBalances[mk]) || 0;
+    const entries = store.entries || {};
+    const overrides = store.balanceOverrides || {};
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayKey = dateKeyLocal(year, month, today.getDate());
+
+    let running = startBal, totalIncome = 0, totalExpense = 0, todayBalance = startBal;
+    for(let d = 1; d <= daysInMonth; d++){
+      const dk = dateKeyLocal(year, month, d);
+      const dayEntries = entries[dk] || [];
+      let net = 0;
+      dayEntries.forEach(function(e){
+        if(e.amount === null || e.amount === undefined) return;
+        if(e.type === 'income'){ totalIncome += e.amount; net += e.amount; }
+        else { totalExpense += e.amount; net -= e.amount; }
+      });
+      const override = overrides[dk];
+      const hasOverride = (override !== undefined && override !== null && override !== '');
+      const actualStart = hasOverride ? parseFloat(override) : running;
+      running = actualStart + net;
+      if(dk === todayKey) todayBalance = running;
+    }
+    return {
+      projected: startBal + totalIncome - totalExpense,
+      todayBalance: todayBalance
+    };
+  }
+
+  /* ---------- status thresholds, one per source (each on its own natural scale) ---------- */
+  function statusFor(kind, value){
+    if(kind === 'master' || kind === 'bot'){
+      if(value < 0) return 'red';
+      if(value < 500) return 'yellow';
+      return 'green';
+    }
+    // paycheck bottom line — smaller numbers by nature (one check's leftover)
+    if(value < 0) return 'red';
+    if(value < 100) return 'yellow';
+    return 'green';
+  }
+  const STATUS_RANK = {red: 2, yellow: 1, green: 0, unknown: -1};
+  const STATUS_LABEL = {
+    green: 'Comfortable', yellow: 'Tight', red: 'Underwater', unknown: 'Reading the numbers\u2026'
+  };
+
+  /* ---------- a plain inline-SVG bar chart, no library needed ---------- */
+  function renderBarChart(holder, bars){
+    const w = 340, h = 140, padL = 8, padR = 8, padT = 10, padB = 22;
+    const values = bars.map(function(b){ return b.value; }).filter(function(v){ return v !== null; });
+    const maxAbs = Math.max(50, ...values.map(function(v){ return Math.abs(v); }));
+    const zeroY = padT + (h - padT - padB) * (maxAbs / (maxAbs * 2));
+    const usableW = w - padL - padR;
+    const barW = usableW / bars.length * 0.5;
+    const gap = usableW / bars.length;
+    let svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="max-width:360px;display:block;margin:0 auto;font-family:Nunito,sans-serif;">';
+    svg += '<line x1="' + padL + '" y1="' + zeroY + '" x2="' + (w - padR) + '" y2="' + zeroY + '" stroke="#ddd" stroke-width="1"/>';
+    bars.forEach(function(b, i){
+      const cx = padL + gap * i + gap / 2;
+      if(b.value === null){
+        svg += '<text x="' + cx + '" y="' + (zeroY) + '" text-anchor="middle" font-size="10" fill="#aaa">n/a</text>';
+      } else {
+        const scale = (h - padT - padB) / 2 / maxAbs;
+        const barH = Math.abs(b.value) * scale;
+        const y = b.value >= 0 ? zeroY - barH : zeroY;
+        const color = b.color || '#888';
+        svg += '<rect x="' + (cx - barW / 2) + '" y="' + y + '" width="' + barW + '" height="' + Math.max(1, barH) + '" fill="' + color + '" rx="3"/>';
+        svg += '<text x="' + cx + '" y="' + (b.value >= 0 ? y - 4 : y + barH + 12) + '" text-anchor="middle" font-size="10" fill="#555">' + money(b.value) + '</text>';
+      }
+      svg += '<text x="' + cx + '" y="' + (h - 6) + '" text-anchor="middle" font-size="10" fill="#888">' + b.label + '</text>';
+    });
+    svg += '</svg>';
+    holder.innerHTML = svg;
+  }
+
+  function renderSparkline(holder, points){
+    if(!points.length){ holder.innerHTML = ''; return; }
+    const w = 300, h = 60, pad = 8;
+    const vals = points.map(function(p){ return p.balance; });
+    const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+    const range = (max - min) || 1;
+    const stepX = points.length > 1 ? (w - pad * 2) / (points.length - 1) : 0;
+    const coords = points.map(function(p, i){
+      const x = pad + stepX * i;
+      const y = pad + (h - pad * 2) * (1 - (p.balance - min) / range);
+      return x + ',' + y;
+    });
+    let svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" style="max-width:320px;display:block;margin:0 auto;">';
+    svg += '<polyline points="' + coords.join(' ') + '" fill="none" stroke="#1fae6b" stroke-width="2"/>';
+    coords.forEach(function(c){
+      const parts = c.split(',');
+      svg += '<circle cx="' + parts[0] + '" cy="' + parts[1] + '" r="3" fill="#1fae6b"/>';
+    });
+    svg += '</svg>';
+    holder.innerHTML = svg;
+  }
+
+  function setDot(id, status){
+    const el = document.getElementById(id);
+    el.className = 'pulse-source-dot pulse-dot-' + status;
+  }
+
+  function refresh(){
+    const master = readBudgetMaster();
+    const bot = window.__apBudgetBot ? window.__apBudgetBot.getFinalBalance() : null;
+    const botWeekLog = window.__apBudgetBot ? window.__apBudgetBot.getWeekLog() : [];
+    const paycheck = window.__apPaycheck ? window.__apPaycheck.getBottomLine() : null;
+
+    const statuses = [];
+
+    // Budget Master row
+    if(master){
+      const s = statusFor('master', master.projected);
+      statuses.push(s);
+      setDot('pulseDotMaster', s);
+      document.getElementById('pulseValMaster').textContent = money(master.projected);
+      document.getElementById('pulseSubMaster').textContent = 'projected end of month \u2014 ' + money(master.todayBalance) + ' as of today';
+    } else {
+      setDot('pulseDotMaster', 'unknown');
+      document.getElementById('pulseValMaster').innerHTML = '<span class="pulse-source-missing">not opened yet</span>';
+      document.getElementById('pulseSubMaster').textContent = 'open Budget Master once on this site so it can share its numbers';
+    }
+
+    // Budget Bot row
+    if(bot !== null && window.__apBudgetBot){
+      const s = statusFor('bot', bot);
+      statuses.push(s);
+      setDot('pulseDotBot', s);
+      document.getElementById('pulseValBot').textContent = money(bot);
+    } else {
+      setDot('pulseDotBot', 'unknown');
+      document.getElementById('pulseValBot').innerHTML = '<span class="pulse-source-missing">no data</span>';
+    }
+
+    // Paycheck row
+    if(paycheck !== null && window.__apPaycheck){
+      const s = statusFor('paycheck', paycheck);
+      statuses.push(s);
+      setDot('pulseDotPaycheck', s);
+      document.getElementById('pulseValPaycheck').textContent = money(paycheck);
+      document.getElementById('pulseSubPaycheck').textContent = window.__apPaycheck.getDaycareThisPeriod() ? 'left after this check\u2019s pulls (daycare week)' : 'left after this check\u2019s pulls (off week)';
+    } else {
+      setDot('pulseDotPaycheck', 'unknown');
+      document.getElementById('pulseValPaycheck').innerHTML = '<span class="pulse-source-missing">no data</span>';
+    }
+
+    // overall = worst of whatever we actually have
+    let overall = 'unknown';
+    if(statuses.length){
+      overall = statuses.reduce(function(worst, s){ return STATUS_RANK[s] > STATUS_RANK[worst] ? s : worst; }, 'green');
+    }
+
+    const colorMap = {green:'#1fae6b', yellow:'#d69a1f', red:'#d6371f', unknown:'#8a8a98'};
+    orb.className = 'pulse-orb status-' + overall;
+    const banner = document.getElementById('pulseBanner');
+    banner.className = 'pulse-banner status-' + overall;
+    document.getElementById('pulseBannerTitle').textContent = STATUS_LABEL[overall];
+    if(overall === 'unknown'){
+      document.getElementById('pulseBannerSub').textContent = 'Open Budget Master, Budget Bot, or the Paycheck tab at least once so there\u2019s something to read.';
+    } else if(overall === 'red'){
+      document.getElementById('pulseBannerSub').textContent = 'At least one source is showing a number below zero \u2014 worth a closer look before it compounds.';
+    } else if(overall === 'yellow'){
+      document.getElementById('pulseBannerSub').textContent = 'Nothing\u2019s underwater, but at least one source is running thin.';
+    } else {
+      document.getElementById('pulseBannerSub').textContent = 'Budget Master, Budget Bot, and the Paycheck tab are all showing room to breathe.';
+    }
+
+    // chart: side-by-side bars for whichever of the three we have
+    renderBarChart(document.getElementById('pulseChartHolder'), [
+      {label:'Master', value: master ? master.projected : null, color: colorMap[master ? statusFor('master', master.projected) : 'unknown']},
+      {label:'Bot', value: (bot !== null && window.__apBudgetBot) ? bot : null, color: colorMap[(bot !== null && window.__apBudgetBot) ? statusFor('bot', bot) : 'unknown']},
+      {label:'Paycheck', value: (paycheck !== null && window.__apPaycheck) ? paycheck : null, color: colorMap[(paycheck !== null && window.__apPaycheck) ? statusFor('paycheck', paycheck) : 'unknown']}
+    ]);
+
+    // sparkline: Budget Bot's own rolling week log, if it has any entries
+    const sparkWrap = document.getElementById('pulseSparkWrap');
+    if(botWeekLog && botWeekLog.length){
+      sparkWrap.style.display = '';
+      renderSparkline(document.getElementById('pulseSparkHolder'), botWeekLog);
+    } else {
+      sparkWrap.style.display = 'none';
+    }
+
+    document.getElementById('pulseUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit'});
+  }
+
+  function openModal(){ refresh(); overlay.classList.add('open'); }
+  function closeModal(){ overlay.classList.remove('open'); }
+
+  orb.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
+  refreshBtn.addEventListener('click', refresh);
+
+  // let the other three tools nudge the orb awake the moment they save
+  window.__apPulseRefresh = refresh;
+  // Budget Master lives on its own page, so its saves only reach us via the
+  // storage event (fired when another tab on the same site writes) —
+  // that, plus a slow poll as a safety net, keeps the orb's color current
+  window.addEventListener('storage', function(e){
+    if(e.key === 'budgetCalendar_v1') refresh();
+  });
+  setInterval(refresh, 20000);
+
+  refresh();
 })();
 </script>
   <div class="backup-toast" id="backupToast"></div>
