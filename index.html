@@ -1047,6 +1047,54 @@
   .pulse-refresh-btn:hover{ background:var(--indigo-soft); }
   .pulse-updated{ font-size:10px; color:#999; text-align:center; margin-top:6px; }
 
+  .pulse-snapshot-panel{
+    border:2px dashed var(--indigo-soft); border-radius:10px; padding:10px; margin:2px 0 14px;
+    background:#fbf9ff;
+  }
+  .pulse-snap-balances, .pulse-snap-payday{ display:flex; gap:10px; margin-bottom:8px; }
+  .pulse-snap-bal-field{ flex:1; display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .pulse-snap-bal-field label{ font-family:'Fredoka',sans-serif; font-size:11px; color:var(--indigo); font-weight:700; }
+  .pulse-snap-bal-field input[type="date"]{
+    font-family:'Nunito',sans-serif; font-size:13px; padding:6px 8px; border:2px solid var(--indigo-soft);
+    border-radius:8px; width:100%; box-sizing:border-box;
+  }
+  .pulse-amount{
+    display:flex; align-items:center; border:2px solid var(--indigo-soft); border-radius:8px;
+    padding:4px 8px; background:#fff;
+  }
+  .pulse-amount span{ color:#999; margin-right:2px; font-size:13px; }
+  .pulse-amount input{ border:none; outline:none; font-family:'Nunito',sans-serif; font-size:13px; width:100%; text-align:right; }
+  .pulse-amount.small{ min-width:70px; padding:3px 6px; }
+  .pulse-snap-bill-row{ display:flex; gap:5px; align-items:center; margin-bottom:6px; flex-wrap:wrap; }
+  .pulse-snap-bill-row input[type="text"].bill-name{
+    flex:1 1 110px; min-width:90px; font-family:'Nunito',sans-serif; font-size:12px; padding:6px 7px;
+    border:2px solid var(--indigo-soft); border-radius:8px;
+  }
+  .pulse-snap-bill-row input[type="text"].bill-label{
+    flex:1 1 70px; min-width:64px; font-family:'Nunito',sans-serif; font-size:11px; padding:6px 7px;
+    border:2px solid var(--indigo-soft); border-radius:8px; color:#888;
+  }
+  .pulse-snap-bill-row select{
+    font-family:'Nunito',sans-serif; font-size:11px; padding:5px 4px; border:2px solid var(--indigo-soft);
+    border-radius:8px; background:#fff;
+  }
+  .pulse-bill-remove{
+    background:transparent; border:1px solid rgba(214,55,31,0.4); color:#d6371f; width:26px; height:26px;
+    border-radius:6px; cursor:pointer; font-size:13px; flex:0 0 auto;
+  }
+  .pulse-add-bill-btn{
+    width:100%; font-family:'Nunito',sans-serif; font-weight:700; font-size:12px; background:#fff;
+    border:2px dashed var(--indigo-soft); color:var(--indigo); border-radius:8px; padding:7px; cursor:pointer;
+    margin-bottom:6px;
+  }
+  .pulse-add-bill-btn:hover{ background:var(--indigo-soft); }
+  .pulse-snap-results{ border-top:1px dashed var(--indigo-soft); margin-top:4px; padding-top:8px; }
+  .pulse-snap-result-row{
+    display:flex; justify-content:space-between; font-family:'Fredoka',sans-serif; font-weight:700;
+    font-size:13px; color:var(--ink); padding:3px 0;
+  }
+  .pulse-snap-result-row.negative{ color:#d6371f; }
+
   /* ============================================================
      RETRO ROBOT THEME — tin-toy 80s control-panel skin for the
      Budget Notepad, inspired by vintage electronic robot toys
@@ -4116,6 +4164,46 @@
           </div>
         </div>
         <div class="pulse-source-value" id="pulseValPaycheck">&mdash;</div>
+      </div>
+      <div class="pulse-source-row">
+        <div class="pulse-source-left">
+          <span class="pulse-source-dot pulse-dot-unknown" id="pulseDotSnapshot"></span>
+          <div>
+            <div class="pulse-source-name">Cash Snapshot</div>
+            <div class="pulse-source-sub" id="pulseSubSnapshot">checking + savings vs. bills</div>
+          </div>
+        </div>
+        <div class="pulse-source-value" id="pulseValSnapshot">&mdash;</div>
+      </div>
+
+      <div class="pulse-snapshot-panel">
+        <div class="pulse-snap-balances">
+          <div class="pulse-snap-bal-field">
+            <label>Checking</label>
+            <div class="pulse-amount"><span>$</span><input type="number" id="snapChecking" step="0.01"></div>
+          </div>
+          <div class="pulse-snap-bal-field">
+            <label>Savings</label>
+            <div class="pulse-amount"><span>$</span><input type="number" id="snapSavings" step="0.01"></div>
+          </div>
+        </div>
+        <div class="pulse-snap-payday">
+          <div class="pulse-snap-bal-field">
+            <label>Next payday</label>
+            <input type="date" id="snapPaydayDate">
+          </div>
+          <div class="pulse-snap-bal-field">
+            <label>Amount</label>
+            <div class="pulse-amount"><span>$</span><input type="number" id="snapPaydayAmount" step="0.01"></div>
+          </div>
+        </div>
+        <div class="pulse-chart-label">Bills (mark each before or after payday)</div>
+        <div id="pulseSnapBillsList"></div>
+        <button type="button" class="pulse-add-bill-btn" id="pulseAddBillBtn">+ add a bill</button>
+        <div class="pulse-snap-results">
+          <div class="pulse-snap-result-row"><span>Liquid until payday</span><span id="snapLiquidBefore">$0.00</span></div>
+          <div class="pulse-snap-result-row"><span>After payday lands</span><span id="snapAfterPayday">$0.00</span></div>
+        </div>
       </div>
 
       <div class="pulse-chart-wrap">
@@ -11930,6 +12018,111 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     return sign + '$' + Math.abs(n).toFixed(2);
   }
 
+  /* ---------- Cash Snapshot: a manually-kept checking/savings + bills
+     ledger, seeded once with what Daniel's already told the chat ---------- */
+  const SNAP_KEY = 'actionPlan3000_pulseSnapshot';
+  let snapState = {
+    checking: 52.00,
+    savings: 436.00,
+    paydayDate: '2026-09-24',
+    paydayAmount: 1685.79,
+    bills: [
+      {id:'snap1', name:'Amazon credit card pull', amount:40.00, when:'before', label:'soon'},
+      {id:'snap2', name:'Daycare', amount:321.00, when:'before', label:'next week'},
+      {id:'snap3', name:'Student loan', amount:179.58, when:'before', label:''},
+      {id:'snap4', name:'PayPal (credit card)', amount:68.00, when:'before', label:''},
+      {id:'snap5', name:'Car payment', amount:228.00, when:'after', label:'coming up'},
+      {id:'snap6', name:'Rent', amount:925.00, when:'after', label:'due the 1st'}
+    ]
+  };
+  try{
+    const raw = localStorage.getItem(SNAP_KEY);
+    if(raw) snapState = JSON.parse(raw);
+  }catch(e){}
+  function saveSnap(){
+    try{ localStorage.setItem(SNAP_KEY, JSON.stringify(snapState)); }catch(e){}
+    refresh();
+  }
+
+  const snapChecking = document.getElementById('snapChecking');
+  const snapSavings = document.getElementById('snapSavings');
+  const snapPaydayDate = document.getElementById('snapPaydayDate');
+  const snapPaydayAmount = document.getElementById('snapPaydayAmount');
+  const snapBillsList = document.getElementById('pulseSnapBillsList');
+
+  function renderSnapBills(){
+    snapBillsList.innerHTML = '';
+    snapState.bills.forEach(function(bill, i){
+      const row = document.createElement('div');
+      row.className = 'pulse-snap-bill-row';
+      const beforeSel = bill.when === 'before' ? 'selected' : '';
+      const afterSel = bill.when === 'after' ? 'selected' : '';
+      row.innerHTML =
+        '<input type="text" class="bill-name" placeholder="bill name" value="' + (bill.name || '').replace(/"/g,'&quot;') + '" data-idx="' + i + '" data-field="name">' +
+        '<div class="pulse-amount small"><span>$</span><input type="number" step="0.01" value="' + bill.amount + '" data-idx="' + i + '" data-field="amount"></div>' +
+        '<select data-idx="' + i + '" data-field="when"><option value="before" ' + beforeSel + '>before</option><option value="after" ' + afterSel + '>after</option></select>' +
+        '<input type="text" class="bill-label" placeholder="date/note" value="' + (bill.label || '').replace(/"/g,'&quot;') + '" data-idx="' + i + '" data-field="label">' +
+        '<button type="button" class="pulse-bill-remove" data-idx="' + i + '">&times;</button>';
+      snapBillsList.appendChild(row);
+    });
+    snapBillsList.querySelectorAll('input, select').forEach(function(inp){
+      const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
+      inp.addEventListener(evt, function(e){
+        const idx = +e.target.dataset.idx, field = e.target.dataset.field;
+        snapState.bills[idx][field] = field === 'amount' ? (parseFloat(e.target.value) || 0) : e.target.value;
+        saveSnap();
+      });
+    });
+    snapBillsList.querySelectorAll('.pulse-bill-remove').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        snapState.bills.splice(+e.target.dataset.idx, 1);
+        renderSnapBills();
+        saveSnap();
+      });
+    });
+  }
+
+  document.getElementById('pulseAddBillBtn').addEventListener('click', function(){
+    snapState.bills.push({id:'snap' + Date.now(), name:'', amount:0, when:'before', label:''});
+    renderSnapBills();
+    saveSnap();
+  });
+
+  [ [snapChecking,'checking'], [snapSavings,'savings'], [snapPaydayDate,'paydayDate'], [snapPaydayAmount,'paydayAmount'] ].forEach(function(pair){
+    pair[0].addEventListener('input', function(){
+      snapState[pair[1]] = (pair[1] === 'paydayDate') ? pair[0].value : (parseFloat(pair[0].value) || 0);
+      saveSnap();
+    });
+  });
+
+  function computeSnapshot(){
+    let beforeTotal = 0, afterTotal = 0;
+    snapState.bills.forEach(function(b){
+      const amt = parseFloat(b.amount) || 0;
+      if(b.when === 'after') afterTotal += amt; else beforeTotal += amt;
+    });
+    const checking = parseFloat(snapState.checking) || 0;
+    const savings = parseFloat(snapState.savings) || 0;
+    const paydayAmount = parseFloat(snapState.paydayAmount) || 0;
+    const liquidBeforePayday = checking + savings - beforeTotal;
+    const afterPaydayBalance = liquidBeforePayday + paydayAmount - afterTotal;
+    return {liquidBeforePayday: liquidBeforePayday, afterPaydayBalance: afterPaydayBalance};
+  }
+
+  function snapStatus(liquidBefore, afterPayday){
+    const s1 = liquidBefore < 0 ? 'red' : (liquidBefore < 100 ? 'yellow' : 'green');
+    const s2 = afterPayday < 0 ? 'red' : (afterPayday < 300 ? 'yellow' : 'green');
+    const rank = {red:2, yellow:1, green:0};
+    return rank[s1] > rank[s2] ? s1 : s2;
+  }
+
+  // fill the inputs from saved/default state once, before the first render
+  snapChecking.value = snapState.checking;
+  snapSavings.value = snapState.savings;
+  snapPaydayDate.value = snapState.paydayDate;
+  snapPaydayAmount.value = snapState.paydayAmount;
+  renderSnapBills();
+
   /* ---------- Budget Master: read its shared local-storage key directly
      (works once it has been opened at least once on this same site/origin) ---------- */
   function readBudgetMaster(){
@@ -12085,6 +12278,18 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
       document.getElementById('pulseValPaycheck').innerHTML = '<span class="pulse-source-missing">no data</span>';
     }
 
+    // Cash Snapshot row — the manually-kept checking/savings + bills ledger
+    const snap = computeSnapshot();
+    const snapS = snapStatus(snap.liquidBeforePayday, snap.afterPaydayBalance);
+    statuses.push(snapS);
+    setDot('pulseDotSnapshot', snapS);
+    document.getElementById('pulseValSnapshot').textContent = money(snap.liquidBeforePayday);
+    document.getElementById('pulseSubSnapshot').textContent = 'then ' + money(snap.afterPaydayBalance) + ' once payday lands';
+    document.getElementById('snapLiquidBefore').textContent = money(snap.liquidBeforePayday);
+    document.getElementById('snapLiquidBefore').parentElement.classList.toggle('negative', snap.liquidBeforePayday < 0);
+    document.getElementById('snapAfterPayday').textContent = money(snap.afterPaydayBalance);
+    document.getElementById('snapAfterPayday').parentElement.classList.toggle('negative', snap.afterPaydayBalance < 0);
+
     // overall = worst of whatever we actually have
     let overall = 'unknown';
     if(statuses.length){
@@ -12103,14 +12308,15 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     } else if(overall === 'yellow'){
       document.getElementById('pulseBannerSub').textContent = 'Nothing\u2019s underwater, but at least one source is running thin.';
     } else {
-      document.getElementById('pulseBannerSub').textContent = 'Budget Master, Budget Bot, and the Paycheck tab are all showing room to breathe.';
+      document.getElementById('pulseBannerSub').textContent = 'Budget Master, Budget Bot, the Paycheck tab, and the Cash Snapshot are all showing room to breathe.';
     }
 
-    // chart: side-by-side bars for whichever of the three we have
+    // chart: side-by-side bars for whichever of the four we have
     renderBarChart(document.getElementById('pulseChartHolder'), [
       {label:'Master', value: master ? master.projected : null, color: colorMap[master ? statusFor('master', master.projected) : 'unknown']},
       {label:'Bot', value: (bot !== null && window.__apBudgetBot) ? bot : null, color: colorMap[(bot !== null && window.__apBudgetBot) ? statusFor('bot', bot) : 'unknown']},
-      {label:'Paycheck', value: (paycheck !== null && window.__apPaycheck) ? paycheck : null, color: colorMap[(paycheck !== null && window.__apPaycheck) ? statusFor('paycheck', paycheck) : 'unknown']}
+      {label:'Paycheck', value: (paycheck !== null && window.__apPaycheck) ? paycheck : null, color: colorMap[(paycheck !== null && window.__apPaycheck) ? statusFor('paycheck', paycheck) : 'unknown']},
+      {label:'Cash', value: snap.liquidBeforePayday, color: colorMap[snapS]}
     ]);
 
     // sparkline: Budget Bot's own rolling week log, if it has any entries
