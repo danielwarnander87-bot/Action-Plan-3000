@@ -1078,6 +1078,10 @@
     font-family:'Nunito',sans-serif; font-size:11px; padding:5px 4px; border:2px solid var(--indigo-soft);
     border-radius:8px; background:#fff;
   }
+  .pulse-snap-bill-row input[type="number"].bill-day{
+    width:44px; flex:0 0 auto; font-family:'Nunito',sans-serif; font-size:12px; padding:6px 4px;
+    border:2px solid var(--indigo-soft); border-radius:8px; text-align:center;
+  }
   .pulse-bill-remove{
     background:transparent; border:1px solid rgba(214,55,31,0.4); color:#d6371f; width:26px; height:26px;
     border-radius:6px; cursor:pointer; font-size:13px; flex:0 0 auto;
@@ -1094,6 +1098,124 @@
     font-size:13px; color:var(--ink); padding:3px 0;
   }
   .pulse-snap-result-row.negative{ color:#d6371f; }
+
+  /* ============================================================
+     THE BACKBONE — a left-side pull-out: lays the whole month
+     out day 1 through the last day, using Robo Tracker's current
+     balance as the anchor and walking forward through whatever
+     bills and paydays Cash Snapshot knows about
+     ============================================================ */
+  .spine-handle{
+    position:fixed; top:22%; left:0; transform:translateY(-50%);
+    z-index:1051; width:34px; height:96px;
+    background:linear-gradient(180deg, #3a3550, #17151f);
+    border:2px solid rgba(206,196,230,0.4); border-left:none;
+    border-radius:0 10px 10px 0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    cursor:grab; touch-action:none; user-select:none;
+    box-shadow:4px 0 14px rgba(0,0,0,0.4);
+  }
+  .spine-handle:active{ cursor:grabbing; }
+  .spine-handle-icon{ font-size:15px; filter:drop-shadow(0 0 4px rgba(206,196,230,0.7)); }
+  .spine-handle-label{
+    writing-mode:vertical-rl; text-orientation:mixed;
+    font-family:'VT323', monospace; font-size:13px; letter-spacing:0.14em;
+    color:#e2d9f5;
+  }
+  .spine-panel{
+    --sp-ink:#eee9fb; --sp-ink-dim:#cfc7e6; --sp-sub:#a99fc9; --sp-sub2:#8478a8;
+    --sp-line-rgb:180,168,220; --sp-glow:rgba(180,168,220,0.5);
+    --sp-good:#7fe3a8; --sp-bad:#ff9186; --sp-warn:#e8c877;
+    position:fixed; top:0; left:0; height:100%; width:min(520px, 94vw);
+    z-index:1050; transform:translateX(-100%);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(180,168,220,0.12), transparent 45%),
+      linear-gradient(165deg, #1c1930 0%, #100e1c 55%, #08070f 100%);
+    box-shadow:20px 0 60px rgba(0,0,0,0.55);
+    overflow:hidden;
+  }
+  .spine-panel.dragging{ transition:none !important; }
+  .spine-panel.open{ transition:transform 0.4s cubic-bezier(.2,.8,.3,1); }
+  .spine-panel.closed{ transition:transform 0.35s ease; }
+  .spine-content{
+    position:relative; z-index:3; height:100%; box-sizing:border-box;
+    display:flex; flex-direction:column; padding:16px 18px 18px; overflow-y:auto;
+    font-family:'Nunito', sans-serif; color:var(--sp-ink-dim);
+  }
+  .spine-topbar{ display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; }
+  .spine-close{
+    background:rgba(var(--sp-line-rgb),0.1); border:1px solid rgba(var(--sp-line-rgb),0.35);
+    color:var(--sp-ink-dim); width:30px; height:30px; border-radius:50%; font-size:18px; line-height:1;
+    cursor:pointer; flex:0 0 auto;
+  }
+  .spine-heading{ flex:1 1 auto; text-align:center; }
+  .spine-title{
+    font-family:'VT323', monospace; font-size:24px; letter-spacing:0.1em; color:var(--sp-ink);
+    text-shadow:0 0 10px var(--sp-glow);
+  }
+  .spine-sub{ font-size:12px; color:var(--sp-sub); margin-top:2px; }
+
+  .spine-summary{
+    display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;
+  }
+  .spine-summary-card{
+    flex:1 1 130px; border:1px solid rgba(var(--sp-line-rgb),0.3); border-radius:10px;
+    background:rgba(255,255,255,0.03); padding:8px 10px;
+  }
+  .spine-summary-label{ font-size:10px; letter-spacing:0.08em; color:var(--sp-sub2); text-transform:uppercase; }
+  .spine-summary-value{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:17px; color:var(--sp-ink); margin-top:2px; }
+  .spine-summary-value.good{ color:var(--sp-good); }
+  .spine-summary-value.bad{ color:var(--sp-bad); }
+  .spine-summary-value.warn{ color:var(--sp-warn); }
+
+  .spine-unscheduled{
+    border:1px dashed rgba(var(--sp-line-rgb),0.35); border-radius:10px; padding:8px 10px; margin-bottom:12px;
+    font-size:12px;
+  }
+  .spine-unscheduled-title{ font-weight:700; color:var(--sp-sub); margin-bottom:4px; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; }
+  .spine-unscheduled-item{ display:flex; justify-content:space-between; padding:2px 0; color:var(--sp-ink-dim); }
+
+  .spine-timeline{ position:relative; padding-left:26px; }
+  .spine-timeline::before{
+    content:''; position:absolute; left:9px; top:4px; bottom:4px; width:2px;
+    background:linear-gradient(180deg, rgba(var(--sp-line-rgb),0.5), rgba(var(--sp-line-rgb),0.1));
+  }
+  .spine-day-row{ position:relative; padding:6px 0 6px 6px; margin-bottom:2px; }
+  .spine-day-dot{
+    position:absolute; left:-26px; top:9px; width:11px; height:11px; border-radius:50%;
+    background:#3a3550; border:2px solid rgba(var(--sp-line-rgb),0.5);
+  }
+  .spine-day-row.is-today .spine-day-dot{
+    background:var(--sp-ink); border-color:var(--sp-ink); box-shadow:0 0 8px var(--sp-glow);
+  }
+  .spine-day-row.has-payday .spine-day-dot{ background:var(--sp-good); border-color:var(--sp-good); box-shadow:0 0 6px rgba(127,227,168,0.6); }
+  .spine-day-row.is-past{ opacity:0.45; }
+  .spine-day-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .spine-day-label{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:13px; color:var(--sp-ink); }
+  .spine-day-label small{ font-family:'Nunito',sans-serif; font-weight:400; color:var(--sp-sub2); margin-left:4px; }
+  .spine-day-balance{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:13px; color:var(--sp-ink-dim); }
+  .spine-day-balance.good{ color:var(--sp-good); }
+  .spine-day-balance.bad{ color:var(--sp-bad); }
+  .spine-day-chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:4px; }
+  .spine-chip{
+    font-size:11px; padding:3px 8px; border-radius:20px; white-space:nowrap;
+    border:1px solid rgba(var(--sp-line-rgb),0.3); background:rgba(255,255,255,0.04); color:var(--sp-ink-dim);
+  }
+  .spine-chip.bill{ border-color:rgba(255,145,134,0.4); color:#ffc2ba; }
+  .spine-chip.payday{ border-color:rgba(127,227,168,0.5); color:#bdf5d3; font-weight:700; }
+
+  .spine-refresh-btn{
+    width:100%; font-family:'Nunito',sans-serif; font-weight:700; font-size:12px;
+    background:transparent; border:1px solid rgba(var(--sp-line-rgb),0.35); color:var(--sp-ink-dim);
+    border-radius:8px; padding:7px; cursor:pointer; margin-top:12px;
+  }
+  .spine-refresh-btn:hover{ background:rgba(var(--sp-line-rgb),0.1); color:var(--sp-ink); }
+  .spine-empty-note{ font-size:12px; color:var(--sp-sub2); text-align:center; padding:10px 4px; }
+
+  @media (max-width:640px){
+    .spine-panel{ width:100vw; }
+    .spine-title{ font-size:20px; }
+  }
 
   /* ============================================================
      RETRO ROBOT THEME — tin-toy 80s control-panel skin for the
@@ -4197,7 +4319,7 @@
             <div class="pulse-amount"><span>$</span><input type="number" id="snapPaydayAmount" step="0.01"></div>
           </div>
         </div>
-        <div class="pulse-chart-label">Bills (mark each before or after payday)</div>
+        <div class="pulse-chart-label">Bills (before/after payday, plus a day of month for Backbone)</div>
         <div id="pulseSnapBillsList"></div>
         <button type="button" class="pulse-add-bill-btn" id="pulseAddBillBtn">+ add a bill</button>
         <div class="pulse-snap-results">
@@ -4365,6 +4487,46 @@
         <div><span>SHEET</span>PAYCHECK LEDGER</div>
         <div><span>SCALE</span>N.T.S.</div>
       </div>
+    </div>
+  </div>
+
+  <div class="spine-handle" id="spineHandle" title="Drag to open the Backbone">
+    <span class="spine-handle-icon">&#129437;</span>
+    <span class="spine-handle-label">BACKBONE</span>
+  </div>
+  <div class="spine-panel" id="spinePanel">
+    <div class="spine-content">
+      <div class="spine-topbar">
+        <button type="button" class="spine-close" id="spineClose" title="Close">&times;</button>
+        <div class="spine-heading">
+          <div class="spine-title">THE BACKBONE</div>
+          <div class="spine-sub" id="spineSub">the month, day by day</div>
+        </div>
+      </div>
+
+      <div class="spine-summary">
+        <div class="spine-summary-card">
+          <div class="spine-summary-label">Robo Tracker anchor</div>
+          <div class="spine-summary-value" id="spineAnchor">&mdash;</div>
+        </div>
+        <div class="spine-summary-card">
+          <div class="spine-summary-label">Next payday</div>
+          <div class="spine-summary-value" id="spineNextPayday">&mdash;</div>
+        </div>
+        <div class="spine-summary-card">
+          <div class="spine-summary-label">End of month</div>
+          <div class="spine-summary-value" id="spineEndOfMonth">&mdash;</div>
+        </div>
+      </div>
+
+      <div class="spine-unscheduled" id="spineUnscheduledWrap" style="display:none;">
+        <div class="spine-unscheduled-title">No exact date yet (set a day in Pulse &rarr; Cash Snapshot)</div>
+        <div id="spineUnscheduledList"></div>
+      </div>
+
+      <div class="spine-timeline" id="spineTimeline"></div>
+
+      <button type="button" class="spine-refresh-btn" id="spineRefreshBtn">&#8635; Refresh</button>
     </div>
   </div>
 
@@ -12027,12 +12189,12 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     paydayDate: '2026-09-24',
     paydayAmount: 1685.79,
     bills: [
-      {id:'snap1', name:'Amazon credit card pull', amount:40.00, when:'before', label:'soon'},
-      {id:'snap2', name:'Daycare', amount:321.00, when:'before', label:'next week'},
-      {id:'snap3', name:'Student loan', amount:179.58, when:'before', label:''},
-      {id:'snap4', name:'PayPal (credit card)', amount:68.00, when:'before', label:''},
-      {id:'snap5', name:'Car payment', amount:228.00, when:'after', label:'coming up'},
-      {id:'snap6', name:'Rent', amount:925.00, when:'after', label:'due the 1st'}
+      {id:'snap1', name:'Amazon Store Card', amount:48.94, when:'before', label:'', day:19},
+      {id:'snap2', name:'Daycare', amount:321.00, when:'before', label:'next week', day:null},
+      {id:'snap3', name:'Student loan (SoFi)', amount:179.58, when:'before', label:'', day:21},
+      {id:'snap4', name:'PayPal Installment', amount:67.66, when:'before', label:'', day:27},
+      {id:'snap5', name:'Car payment', amount:228.00, when:'after', label:'coming up', day:null},
+      {id:'snap6', name:'Rent (your half)', amount:925.00, when:'after', label:'due the 1st', day:1}
     ]
   };
   try{
@@ -12042,6 +12204,7 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   function saveSnap(){
     try{ localStorage.setItem(SNAP_KEY, JSON.stringify(snapState)); }catch(e){}
     refresh();
+    if(window.__apBackboneRefresh) window.__apBackboneRefresh();
   }
 
   const snapChecking = document.getElementById('snapChecking');
@@ -12061,7 +12224,8 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
         '<input type="text" class="bill-name" placeholder="bill name" value="' + (bill.name || '').replace(/"/g,'&quot;') + '" data-idx="' + i + '" data-field="name">' +
         '<div class="pulse-amount small"><span>$</span><input type="number" step="0.01" value="' + bill.amount + '" data-idx="' + i + '" data-field="amount"></div>' +
         '<select data-idx="' + i + '" data-field="when"><option value="before" ' + beforeSel + '>before</option><option value="after" ' + afterSel + '>after</option></select>' +
-        '<input type="text" class="bill-label" placeholder="date/note" value="' + (bill.label || '').replace(/"/g,'&quot;') + '" data-idx="' + i + '" data-field="label">' +
+        '<input type="number" class="bill-day" min="1" max="31" placeholder="day" title="day of month, for the Backbone timeline" value="' + (bill.day || '') + '" data-idx="' + i + '" data-field="day">' +
+        '<input type="text" class="bill-label" placeholder="note" value="' + (bill.label || '').replace(/"/g,'&quot;') + '" data-idx="' + i + '" data-field="label">' +
         '<button type="button" class="pulse-bill-remove" data-idx="' + i + '">&times;</button>';
       snapBillsList.appendChild(row);
     });
@@ -12069,7 +12233,9 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
       const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
       inp.addEventListener(evt, function(e){
         const idx = +e.target.dataset.idx, field = e.target.dataset.field;
-        snapState.bills[idx][field] = field === 'amount' ? (parseFloat(e.target.value) || 0) : e.target.value;
+        if(field === 'amount'){ snapState.bills[idx][field] = parseFloat(e.target.value) || 0; }
+        else if(field === 'day'){ snapState.bills[idx][field] = e.target.value ? Math.max(1, Math.min(31, parseInt(e.target.value, 10))) : null; }
+        else { snapState.bills[idx][field] = e.target.value; }
         saveSnap();
       });
     });
@@ -12083,10 +12249,19 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   }
 
   document.getElementById('pulseAddBillBtn').addEventListener('click', function(){
-    snapState.bills.push({id:'snap' + Date.now(), name:'', amount:0, when:'before', label:''});
+    snapState.bills.push({id:'snap' + Date.now(), name:'', amount:0, when:'before', label:'', day:null});
     renderSnapBills();
     saveSnap();
   });
+
+  // expose Cash Snapshot data for THE BACKBONE
+  window.__apSnapshot = {
+    getBills: function(){ return snapState.bills.slice(); },
+    getPaydayDate: function(){ return snapState.paydayDate; },
+    getPaydayAmount: function(){ return parseFloat(snapState.paydayAmount) || 0; },
+    getChecking: function(){ return parseFloat(snapState.checking) || 0; },
+    getSavings: function(){ return parseFloat(snapState.savings) || 0; }
+  };
 
   [ [snapChecking,'checking'], [snapSavings,'savings'], [snapPaydayDate,'paydayDate'], [snapPaydayAmount,'paydayAmount'] ].forEach(function(pair){
     pair[0].addEventListener('input', function(){
@@ -12350,6 +12525,217 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   setInterval(refresh, 20000);
 
   refresh();
+})();
+
+/* ============================================================
+   THE BACKBONE — left-side drawer: the whole month, day 1
+   through the last day, anchored to Robo Tracker's current
+   balance and walked forward through Cash Snapshot's bills
+   and paydays
+   ============================================================ */
+(function(){
+  const handle = document.getElementById('spineHandle');
+  const panel = document.getElementById('spinePanel');
+  const closeBtn = document.getElementById('spineClose');
+  const refreshBtn = document.getElementById('spineRefreshBtn');
+
+  function money(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toFixed(2);
+  }
+  function statusClass(n){ return n < 0 ? 'bad' : (n < 200 ? 'warn' : 'good'); }
+
+  function findPaydaysInMonth(paydayDateStr, year, month){
+    const result = [];
+    if(!paydayDateStr) return result;
+    const base = new Date(paydayDateStr + 'T00:00:00');
+    if(isNaN(base.getTime())) return result;
+    for(let k = -10; k <= 10; k++){
+      const d = new Date(base.getTime());
+      d.setDate(d.getDate() + k * 14);
+      if(d.getFullYear() === year && d.getMonth() === month) result.push(d.getDate());
+    }
+    return Array.from(new Set(result)).sort(function(a, b){ return a - b; });
+  }
+
+  function render(){
+    const now = new Date();
+    const year = now.getFullYear(), month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = now.getDate();
+    const monthName = now.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+    document.getElementById('spineSub').textContent = monthName;
+
+    const hasSnapshot = !!window.__apSnapshot;
+    const hasBot = !!window.__apBudgetBot;
+    const bills = hasSnapshot ? window.__apSnapshot.getBills() : [];
+    const paydayDateStr = hasSnapshot ? window.__apSnapshot.getPaydayDate() : null;
+    const paydayAmount = hasSnapshot ? window.__apSnapshot.getPaydayAmount() : 0;
+    const anchorBalance = hasBot ? window.__apBudgetBot.getFinalBalance() : null;
+
+    // anchor card
+    const anchorEl = document.getElementById('spineAnchor');
+    if(anchorBalance !== null){
+      anchorEl.textContent = money(anchorBalance);
+      anchorEl.className = 'spine-summary-value ' + statusClass(anchorBalance);
+    } else {
+      anchorEl.innerHTML = '<span class="pulse-source-missing">no Robo Tracker balance set</span>';
+      anchorEl.className = 'spine-summary-value';
+    }
+
+    const paydays = findPaydaysInMonth(paydayDateStr, year, month);
+    const nextPaydayEl = document.getElementById('spineNextPayday');
+    const upcomingPayday = paydays.find(function(d){ return d >= today; });
+    if(upcomingPayday){
+      nextPaydayEl.textContent = monthName.split(' ')[0] + ' ' + upcomingPayday + ' \u00b7 ' + money(paydayAmount);
+    } else if(paydayDateStr){
+      nextPaydayEl.innerHTML = '<span class="pulse-source-missing">not this month</span>';
+    } else {
+      nextPaydayEl.innerHTML = '<span class="pulse-source-missing">set in Pulse</span>';
+    }
+
+    // group scheduled bills by day, and pull out anything with no day set
+    const billsByDay = {};
+    const unscheduled = [];
+    bills.forEach(function(b){
+      const day = parseInt(b.day, 10);
+      if(day && day >= 1 && day <= 31){
+        const d = Math.min(day, daysInMonth);
+        if(!billsByDay[d]) billsByDay[d] = [];
+        billsByDay[d].push(b);
+      } else {
+        unscheduled.push(b);
+      }
+    });
+
+    const unschedWrap = document.getElementById('spineUnscheduledWrap');
+    const unschedList = document.getElementById('spineUnscheduledList');
+    if(unscheduled.length){
+      unschedWrap.style.display = '';
+      unschedList.innerHTML = unscheduled.map(function(b){
+        return '<div class="spine-unscheduled-item"><span>' + (b.name || 'Bill') + (b.label ? ' \u2014 ' + b.label : '') + '</span><span>' + money(parseFloat(b.amount) || 0) + '</span></div>';
+      }).join('');
+    } else {
+      unschedWrap.style.display = 'none';
+    }
+
+    // walk forward from today using the Robo Tracker anchor
+    let running = (anchorBalance !== null) ? anchorBalance : null;
+    const dayEndBalance = {};
+    for(let d = today; d <= daysInMonth; d++){
+      const items = billsByDay[d] || [];
+      if(running !== null){
+        items.forEach(function(b){ running -= (parseFloat(b.amount) || 0); });
+        if(paydays.indexOf(d) > -1) running += paydayAmount;
+        dayEndBalance[d] = running;
+      }
+    }
+
+    const endEl = document.getElementById('spineEndOfMonth');
+    const lastDayBal = dayEndBalance[daysInMonth];
+    if(lastDayBal !== undefined){
+      endEl.textContent = money(lastDayBal);
+      endEl.className = 'spine-summary-value ' + statusClass(lastDayBal);
+    } else {
+      endEl.innerHTML = '<span class="pulse-source-missing">need Robo Tracker balance</span>';
+      endEl.className = 'spine-summary-value';
+    }
+
+    // the timeline itself, day 1 through the last day
+    const timeline = document.getElementById('spineTimeline');
+    let html = '';
+    for(let d = 1; d <= daysInMonth; d++){
+      const items = billsByDay[d] || [];
+      const isPayday = paydays.indexOf(d) > -1;
+      const isToday = d === today;
+      const isPast = d < today;
+      let rowClass = 'spine-day-row';
+      if(isToday) rowClass += ' is-today';
+      if(isPast) rowClass += ' is-past';
+      if(isPayday) rowClass += ' has-payday';
+
+      let chips = '';
+      items.forEach(function(b){
+        chips += '<span class="spine-chip bill">' + (b.name || 'Bill') + ' \u2014 ' + money(parseFloat(b.amount) || 0) + '</span>';
+      });
+      if(isPayday) chips += '<span class="spine-chip payday">\ud83d\udcb0 Payday +' + money(paydayAmount) + '</span>';
+
+      let balanceHtml = '';
+      if(!isPast && dayEndBalance[d] !== undefined){
+        balanceHtml = '<span class="spine-day-balance ' + statusClass(dayEndBalance[d]) + '">' + money(dayEndBalance[d]) + '</span>';
+      }
+
+      if(!items.length && !isPayday && !isToday){
+        // quiet day — skip rendering a full block, just a thin marker, to keep the scroll short
+        html += '<div class="' + rowClass + '"><span class="spine-day-dot"></span>' +
+          '<div class="spine-day-head"><span class="spine-day-label" style="opacity:0.55;">' + monthName.split(' ')[0] + ' ' + d + '</span>' + balanceHtml + '</div></div>';
+        continue;
+      }
+
+      html += '<div class="' + rowClass + '">' +
+        '<span class="spine-day-dot"></span>' +
+        '<div class="spine-day-head">' +
+          '<span class="spine-day-label">' + monthName.split(' ')[0] + ' ' + d + (isToday ? '<small>today</small>' : '') + '</span>' +
+          balanceHtml +
+        '</div>' +
+        (chips ? '<div class="spine-day-chips">' + chips + '</div>' : '') +
+      '</div>';
+    }
+    timeline.innerHTML = html;
+
+    if(!hasSnapshot && !hasBot){
+      timeline.innerHTML = '<div class="spine-empty-note">Open the Paycheck tab, Pulse, or Robo Tracker at least once so the Backbone has something to work from.</div>';
+    }
+  }
+
+  function openPanel(){
+    panelOpen = true;
+    panel.classList.remove('closed'); panel.classList.add('open');
+    panel.style.transform = 'translateX(0)';
+    render();
+  }
+  function closePanel(){
+    panelOpen = false;
+    panel.classList.remove('open'); panel.classList.add('closed');
+    panel.style.transform = 'translateX(-100%)';
+  }
+  closeBtn.addEventListener('click', closePanel);
+  refreshBtn.addEventListener('click', render);
+  window.__apBackboneRefresh = render;
+
+  let panelOpen = false;
+  let dragStartX = 0, dragging = false, moved = false, panelWidth = 520;
+  handle.addEventListener('pointerdown', function(e){
+    dragging = true; moved = false; dragStartX = e.clientX;
+    panelWidth = panel.getBoundingClientRect().width || 520;
+    panel.classList.add('dragging'); panel.classList.remove('open','closed');
+    if(!panelOpen){ panel.style.transform = 'translateX(-100%)'; }
+    handle.setPointerCapture(e.pointerId);
+  });
+  handle.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    const delta = e.clientX - dragStartX;
+    if(Math.abs(delta) > 5) moved = true;
+    let base = panelOpen ? 0 : -panelWidth;
+    let pos = base + delta;
+    pos = Math.max(-panelWidth, Math.min(0, pos));
+    panel.style.transform = 'translateX(' + pos + 'px)';
+  });
+  function finishDrag(e){
+    if(!dragging) return;
+    dragging = false;
+    panel.classList.remove('dragging');
+    if(!moved){
+      if(panelOpen) closePanel(); else openPanel();
+      return;
+    }
+    const delta = e.clientX - dragStartX;
+    const base = panelOpen ? 0 : -panelWidth;
+    const pos = Math.max(-panelWidth, Math.min(0, base + delta));
+    if(pos > -panelWidth * 0.4) openPanel(); else closePanel();
+  }
+  handle.addEventListener('pointerup', finishDrag);
+  handle.addEventListener('pointercancel', finishDrag);
 })();
 </script>
   <div class="backup-toast" id="backupToast"></div>
