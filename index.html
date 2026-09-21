@@ -5010,8 +5010,9 @@
         <button class="bullet-add-btn" type="button" onclick="document.getElementById('loadFileInput').click()">📂 Load from File</button>
         <button class="bullet-add-btn no-print" type="button" onclick="saveToVault()">🏺 Save to Vault</button>
         <button class="bullet-add-btn no-print" type="button" onclick="loadFromVault()">📤 Load from Vault</button>
+        <button class="bullet-add-btn no-print" type="button" onclick="checkPigeonMailNow()">🐦 Check Pigeon Mail</button>
       </div>
-      <div class="files-storage-note">Keep files under ~3MB each — this is browser storage, not the cloud.</div>
+      <div class="files-storage-note">Keep files under ~3MB each — this is browser storage, not the cloud. Pigeon mail is auto-checked every 15 minutes.</div>
     </div>
 
     <div class="block journalblock full-width" id="journalBlock" data-block-id="journal">
@@ -5078,6 +5079,7 @@
       <input type="file" id="loadFileInput" accept="application/json" style="display:none;" onchange="loadFromFile(event)">
       <button class="clear-btn sync-btn no-print" onclick="saveToVault()">🏺 Save to Vault</button>
       <button class="clear-btn sync-btn no-print" onclick="loadFromVault()">📤 Load from Vault</button>
+      <button class="clear-btn sync-btn no-print" onclick="checkPigeonMailNow()">🐦 Check Pigeon Mail</button>
       <button class="clear-btn sync-btn" onclick="carryOverUnfinishedClick()">⬅️ Carry Over Unfinished</button>
       <button class="clear-btn sync-btn" onclick="viewLastWeekJournal()">📔 View Last Week's Journal</button>
       <button class="clear-btn" onclick="clearWeek()">↺ Clear this week</button>
@@ -5432,6 +5434,35 @@
       <div class="zq-grid" id="zqGrid"></div>
     </div>
   </div>
+
+<script type="module">
+  /* ============================================================
+     THE VAULT — direct Firestore read access, used by the Messenger
+     Pigeon auto-loader below to poll for new notes every 15 minutes
+     without needing a Vault popup window open.
+     ============================================================ */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+  import {
+    getFirestore, collection, getDocs, query, where, orderBy
+  } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQO6RJHBzF5wHYw49XbF3pm-A1j5hgJAc",
+    authDomain: "vault-9ddb0.firebaseapp.com",
+    projectId: "vault-9ddb0",
+    storageBucket: "vault-9ddb0.firebasestorage.app",
+    messagingSenderId: "42599315639",
+    appId: "1:42599315639:web:7cc5629720045807cff532",
+    measurementId: "G-9LVQG0RM6S"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window._fbVault = { db, collection, getDocs, query, where, orderBy };
+  window._fbVaultReady = true;
+  window.dispatchEvent(new Event('fbvault-ready'));
+</script>
 
 <script>
 /* ============================================================
@@ -9608,6 +9639,132 @@ function saveToVault(){
   }
 }
 
+/* ============================================================
+   MESSENGER PIGEON AUTO-LOADER — polls The Vault's shared
+   Firestore "artifacts" collection every 15 minutes for new
+   mp-<category>-<timestamp>.json notes and files each one onto
+   the matching idea/work/family board as a dated sticky note,
+   with no popup window required (reads Firestore directly).
+   ============================================================ */
+const PIGEON_PROCESSED_KEY = 'actionPlan3000_pigeonProcessedIds';
+const PIGEON_POLL_MS = 15 * 60 * 1000;
+
+// Category → board routing. "Idea tab" (the Idea Board drawer) is the
+// catch-all for anything that isn't clearly Work or a family member/event.
+const PIGEON_ROUTES = {
+  'Mental Note': 'ideas',
+  'Finance': 'ideas',
+  'Work': 'work',
+  'Kaydance': 'family',
+  'Cece': 'family',
+  'Lex': 'family',
+  'Asher': 'family',
+  'Family Events': 'family'
+};
+const PIGEON_BOARD_PREFIX = {
+  ideas: 'actionPlan3000_ideaBoard',
+  work: 'actionPlan3000_workBoard',
+  family: 'actionPlan3000_familyBoard'
+};
+
+function pigeonPad2(n){ return String(n).padStart(2, '0'); }
+function pigeonMonthKey(d){ return 'm:' + d.getFullYear() + '-' + pigeonPad2(d.getMonth() + 1); }
+
+function pigeonNoteBody(entry){
+  if(entry.category === 'Work' || entry.category === 'Mental Note') return entry.text;
+  return '[' + entry.category + '] ' + entry.text;
+}
+
+function pigeonLoadProcessedIds(){
+  try{ return JSON.parse(localStorage.getItem(PIGEON_PROCESSED_KEY) || '[]'); }catch(e){ return []; }
+}
+function pigeonSaveProcessedIds(ids){
+  const trimmed = ids.slice(-1000); // cap so this never grows unbounded
+  try{ localStorage.setItem(PIGEON_PROCESSED_KEY, JSON.stringify(trimmed)); }catch(e){}
+}
+
+function pigeonAddNoteToBoard(boardId, dateObj, text){
+  const prefix = PIGEON_BOARD_PREFIX[boardId] || PIGEON_BOARD_PREFIX.ideas;
+  const storeKey = prefix + 'NotesByDate';
+  let notesByDate = {};
+  try{ notesByDate = JSON.parse(localStorage.getItem(storeKey) || '{}') || {}; }catch(e){ notesByDate = {}; }
+  const key = pigeonMonthKey(dateObj);
+  if(!notesByDate[key]) notesByDate[key] = [];
+  const arr = notesByDate[key];
+  const idx = arr.length;
+  const xPct = 4 + (idx % 5) * 18;
+  const yPct = 4 + Math.floor(idx / 5) * 15;
+  arr.push({
+    id: 'pigeon' + Date.now() + Math.random().toString(36).slice(2, 6),
+    xPct: Math.min(xPct, 78),
+    yPct: Math.min(yPct, 82),
+    text: '🐦 ' + text
+  });
+  try{ localStorage.setItem(storeKey, JSON.stringify(notesByDate)); }catch(e){}
+  document.dispatchEvent(new CustomEvent('pigeon-notes-updated', { detail: { boardId: boardId } }));
+}
+
+function waitForFbVault(){
+  return new Promise(function(resolve){
+    if(window._fbVaultReady){ resolve(); return; }
+    window.addEventListener('fbvault-ready', function(){ resolve(); }, { once: true });
+  });
+}
+function pigeonUtf8FromBase64(b64){
+  return decodeURIComponent(escape(atob(b64)));
+}
+
+let pigeonPollRunning = false;
+async function pollMessengerPigeon(showResultToast){
+  if(pigeonPollRunning) return;
+  pigeonPollRunning = true;
+  try{
+    await waitForFbVault();
+    const { db, collection, getDocs, query, where, orderBy } = window._fbVault;
+    const q = query(
+      collection(db, 'artifacts'),
+      where('name', '>=', 'mp-'),
+      where('name', '<', 'mp-'),
+      orderBy('name')
+    );
+    const snap = await getDocs(q);
+    const processed = pigeonLoadProcessedIds();
+    const processedSet = new Set(processed);
+    let filedCount = 0;
+    snap.forEach(function(docSnap){
+      if(processedSet.has(docSnap.id)) return;
+      processed.push(docSnap.id);
+      processedSet.add(docSnap.id);
+      const data = docSnap.data();
+      try{
+        const json = pigeonUtf8FromBase64(data.dataBase64 || '');
+        const entry = JSON.parse(json);
+        if(entry.kind !== 'messenger-pigeon-note') return;
+        const boardId = PIGEON_ROUTES[entry.category] || 'ideas';
+        const dateObj = entry.ts ? new Date(entry.ts) : new Date();
+        pigeonAddNoteToBoard(boardId, dateObj, entry.text || '');
+        filedCount++;
+      }catch(e){ /* not a pigeon note we can read — skip it */ }
+    });
+    pigeonSaveProcessedIds(processed);
+    if(filedCount > 0){
+      showBackupToast('🐦 ' + filedCount + ' pigeon note' + (filedCount === 1 ? '' : 's') + ' filed onto your boards');
+    } else if(showResultToast){
+      showBackupToast('🐦 No new pigeon mail waiting in the Vault.');
+    }
+  }catch(e){
+    if(showResultToast) showBackupToast('⚠️ Could not reach the Vault to check for pigeon mail.');
+  }finally{
+    pigeonPollRunning = false;
+  }
+}
+function checkPigeonMailNow(){
+  showBackupToast('🐦 Checking the Vault for pigeon mail…');
+  pollMessengerPigeon(true);
+}
+setInterval(function(){ pollMessengerPigeon(false); }, PIGEON_POLL_MS);
+setTimeout(function(){ pollMessengerPigeon(false); }, 3000);
+
 function showBackupToast(msg){
   const t=document.getElementById('backupToast');
   if(!t)return;
@@ -11664,6 +11821,15 @@ function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
     arr.forEach(function(n){ notesCanvas.appendChild(makeNoteEl(n, arr)); });
   }
   renderBackgroundAndNotes();
+  /* refresh instantly if the Messenger Pigeon auto-loader just filed a
+     note onto this board while it happens to be open */
+  document.addEventListener('pigeon-notes-updated', function(e){
+    if(e.detail && e.detail.boardId === boardId){
+      notesByDate = {};
+      try{ notesByDate = JSON.parse(localStorage.getItem(NOTES_BY_DATE_KEY) || '{}') || {}; }catch(err){ notesByDate = {}; }
+      renderBackgroundAndNotes();
+    }
+  });
   notesCanvas.addEventListener('mousedown', function(e){
     if(e.target === notesCanvas) e.preventDefault(); // belt-and-suspenders: mice fire this one too
   });
