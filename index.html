@@ -3991,9 +3991,137 @@
     .quote-text{font-size:14px;}
     footer{justify-content:center;margin-top:8px;padding:0 14px;}
   }
+
+  /* ============================================================
+     LOCK SCREEN — a rich, blurry cyan wall that blocks the whole
+     app until tapped, then asks for a passcode
+     ============================================================ */
+  #apLockScreen{
+    position:fixed; inset:0; z-index:999999;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(120% 90% at 20% 15%, rgba(56,232,225,0.55), transparent 55%),
+      radial-gradient(110% 100% at 85% 20%, rgba(14,140,184,0.6), transparent 55%),
+      radial-gradient(140% 120% at 50% 95%, rgba(6,60,92,0.85), transparent 60%),
+      linear-gradient(160deg, #062430 0%, #073a4a 45%, #0a1626 100%);
+    overflow:hidden; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  #apLockScreen.ap-unlocking{animation:apLockDissolve .6s ease forwards;}
+  @keyframes apLockDissolve{ to{ opacity:0; visibility:hidden; } }
+  .ap-lock-blob{
+    position:absolute; border-radius:50%; filter:blur(60px);
+    background:radial-gradient(circle, rgba(96,244,236,0.75), rgba(96,244,236,0) 70%);
+    animation:apLockDrift 14s ease-in-out infinite;
+  }
+  .ap-lock-blob.b1{width:340px; height:340px; top:-60px; left:-80px; animation-duration:16s;}
+  .ap-lock-blob.b2{width:280px; height:280px; bottom:-60px; right:-40px; background:radial-gradient(circle, rgba(24,190,216,0.7), rgba(24,190,216,0) 70%); animation-duration:19s; animation-delay:-4s;}
+  .ap-lock-blob.b3{width:220px; height:220px; top:35%; right:12%; background:radial-gradient(circle, rgba(180,255,250,0.55), rgba(180,255,250,0) 70%); animation-duration:12s; animation-delay:-7s;}
+  @keyframes apLockDrift{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(24px,-18px) scale(1.12); }
+  }
+  .ap-lock-glass{
+    position:relative; z-index:1; width:min(320px, 84vw); padding:38px 28px 30px;
+    border-radius:26px; text-align:center; color:#EAFBFA;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(180,250,245,0.28);
+    backdrop-filter:blur(22px) saturate(140%); -webkit-backdrop-filter:blur(22px) saturate(140%);
+    box-shadow:0 30px 80px rgba(0,20,30,0.5), inset 0 1px 0 rgba(255,255,255,0.18);
+  }
+  .ap-lock-icon{width:54px; height:54px; margin:0 auto 14px; opacity:0.95; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));}
+  .ap-lock-icon svg{width:100%; height:100%; display:block;}
+  .ap-lock-title{font-family:'Fredoka',sans-serif; font-weight:600; font-size:19px; letter-spacing:0.5px; margin-bottom:6px;}
+  .ap-lock-hint{font-family:'Nunito',sans-serif; font-size:13px; color:rgba(230,255,253,0.72); min-height:18px; transition:opacity .15s ease;}
+  .ap-lock-hint.ap-lock-error{color:#ffb4c6;}
+  .ap-lock-dots{display:flex; gap:14px; justify-content:center; margin:22px 0 26px;}
+  .ap-lock-dot{width:13px; height:13px; border-radius:50%; border:2px solid rgba(200,250,246,0.55); background:transparent; transition:background .12s ease, transform .12s ease, border-color .12s ease;}
+  .ap-lock-dot.filled{background:#8FFFF3; border-color:#8FFFF3; transform:scale(1.15); box-shadow:0 0 10px rgba(143,255,243,0.8);}
+  .ap-lock-dots.ap-lock-shake{animation:apLockShake .38s ease;}
+  @keyframes apLockShake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-9px); }
+    40%{ transform:translateX(8px); }
+    60%{ transform:translateX(-6px); }
+    80%{ transform:translateX(5px); }
+  }
+  .ap-lock-keypad{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:230px; margin:0 auto;}
+  .ap-lock-key{
+    all:unset; box-sizing:border-box; width:100%; aspect-ratio:1; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-family:'Fredoka',sans-serif; font-size:19px; color:#EAFBFA;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(180,250,245,0.22);
+    transition:background .12s ease, transform .08s ease;
+  }
+  .ap-lock-key:hover{background:rgba(143,255,243,0.16);}
+  .ap-lock-key:active{transform:scale(.9); background:rgba(143,255,243,0.28);}
+  .ap-lock-key.ap-lock-key-back{font-size:15px; color:rgba(230,255,253,0.75);}
+  .ap-lock-tap-hint{
+    position:relative; z-index:1; color:rgba(220,255,252,0.85); font-family:'Nunito',sans-serif;
+    font-size:14px; letter-spacing:1.5px; text-transform:uppercase; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+  }
+  .ap-lock-tap-icon{width:64px; height:64px; opacity:0.95; animation:apLockPulse 2.4s ease-in-out infinite;}
+  .ap-lock-tap-icon svg{width:100%; height:100%; display:block;}
+  @keyframes apLockPulse{
+    0%,100%{ transform:scale(1); opacity:0.85; }
+    50%{ transform:scale(1.08); opacity:1; }
+  }
+  #apLockScreen.ap-lock-entering .ap-lock-tap-layer{display:none;}
+  #apLockScreen:not(.ap-lock-entering) .ap-lock-glass{display:none;}
 </style>
 </head>
 <body>
+
+  <div id="apLockScreen">
+    <div class="ap-lock-blob b1"></div>
+    <div class="ap-lock-blob b2"></div>
+    <div class="ap-lock-blob b3"></div>
+
+    <div class="ap-lock-tap-layer ap-lock-tap-hint" id="apLockTapLayer">
+      <div class="ap-lock-tap-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="12" y="21" width="24" height="19" rx="4" fill="rgba(143,255,243,0.18)" stroke="#8FFFF3" stroke-width="2"></rect>
+          <path d="M17 21 V15 a7 7 0 0 1 14 0 v6" stroke="#8FFFF3" stroke-width="2.4" fill="none" stroke-linecap="round"></path>
+          <circle cx="24" cy="29" r="2.6" fill="#8FFFF3"></circle>
+          <line x1="24" y1="31" x2="24" y2="35" stroke="#8FFFF3" stroke-width="2.2" stroke-linecap="round"></line>
+        </svg>
+      </div>
+      <div>Action Plan 3000 is locked</div>
+      <div style="font-size:11px; letter-spacing:2.5px; opacity:0.65;">tap to unlock</div>
+    </div>
+
+    <div class="ap-lock-glass">
+      <div class="ap-lock-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="12" y="21" width="24" height="19" rx="4" fill="rgba(143,255,243,0.18)" stroke="#8FFFF3" stroke-width="2"></rect>
+          <path d="M17 21 V15 a7 7 0 0 1 14 0 v6" stroke="#8FFFF3" stroke-width="2.4" fill="none" stroke-linecap="round"></path>
+          <circle cx="24" cy="29" r="2.6" fill="#8FFFF3"></circle>
+          <line x1="24" y1="31" x2="24" y2="35" stroke="#8FFFF3" stroke-width="2.2" stroke-linecap="round"></line>
+        </svg>
+      </div>
+      <div class="ap-lock-title">Enter Passcode</div>
+      <div class="ap-lock-hint" id="apLockHint">&nbsp;</div>
+      <div class="ap-lock-dots" id="apLockDots">
+        <div class="ap-lock-dot"></div>
+        <div class="ap-lock-dot"></div>
+        <div class="ap-lock-dot"></div>
+        <div class="ap-lock-dot"></div>
+      </div>
+      <div class="ap-lock-keypad" id="apLockKeypad">
+        <button type="button" class="ap-lock-key" data-key="1">1</button>
+        <button type="button" class="ap-lock-key" data-key="2">2</button>
+        <button type="button" class="ap-lock-key" data-key="3">3</button>
+        <button type="button" class="ap-lock-key" data-key="4">4</button>
+        <button type="button" class="ap-lock-key" data-key="5">5</button>
+        <button type="button" class="ap-lock-key" data-key="6">6</button>
+        <button type="button" class="ap-lock-key" data-key="7">7</button>
+        <button type="button" class="ap-lock-key" data-key="8">8</button>
+        <button type="button" class="ap-lock-key" data-key="9">9</button>
+        <div></div>
+        <button type="button" class="ap-lock-key" data-key="0">0</button>
+        <button type="button" class="ap-lock-key ap-lock-key-back" data-key="back">&larr;</button>
+      </div>
+    </div>
+  </div>
 
   <svg class="scene-bg" viewBox="0 0 320 180" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -5465,6 +5593,187 @@
 </script>
 
 <script>
+/* ============================================================
+   LOCK SCREEN — blocks the app behind a blurred cyan wall until
+   tapped, then asks for a 4-digit passcode. This is a soft privacy
+   screen (client-side only, no real encryption behind it) meant to
+   keep a passer-by from seeing your planner at a glance — not a
+   substitute for securing the data itself.
+   ============================================================ */
+(function(){
+  const LOCK_CODE_KEY = 'ap3000_lockCode';
+  const UNLOCK_FLAG_KEY = 'ap3000_sessionUnlocked';
+  const RESET_TRICK_CODE = '0101'; // enter this instead of the passcode to open the reset wizard
+
+  let LOCK_CODE = '0425';
+  try{ LOCK_CODE = localStorage.getItem(LOCK_CODE_KEY) || LOCK_CODE; }catch(e){}
+
+  const screenEl = document.getElementById('apLockScreen');
+  if(!screenEl) return;
+
+  let unlocked = false;
+  try{ unlocked = sessionStorage.getItem(UNLOCK_FLAG_KEY) === '1'; }catch(e){}
+  if(unlocked){
+    screenEl.remove();
+    return;
+  }
+
+  const tapLayer = document.getElementById('apLockTapLayer');
+  const dotsEl = document.getElementById('apLockDots');
+  const hintEl = document.getElementById('apLockHint');
+  const keypad = document.getElementById('apLockKeypad');
+  const titleEl = document.querySelector('.ap-lock-title');
+  const dots = dotsEl.querySelectorAll('.ap-lock-dot');
+  let entered = '';
+
+  // mode: 'entry' (normal unlock) | 'reset1' (pick a new code) | 'reset2' (confirm it)
+  let mode = 'entry';
+  let pendingNewCode = '';
+
+  let cancelBtn = document.getElementById('apLockCancel');
+  if(!cancelBtn){
+    cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.id = 'apLockCancel';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = "all:unset;cursor:pointer;display:none;margin-top:16px;font-family:'Nunito',sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:rgba(230,255,253,0.55);";
+    keypad.parentNode.appendChild(cancelBtn);
+  }
+
+  let lockCtx = null;
+  function lockTick(freq){
+    try{
+      if(!lockCtx) lockCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(lockCtx.state === 'suspended') lockCtx.resume();
+      const o = lockCtx.createOscillator(), g = lockCtx.createGain();
+      o.type = 'sine';
+      o.frequency.value = freq || 520;
+      g.gain.setValueAtTime(0.09, lockCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, lockCtx.currentTime + 0.09);
+      o.connect(g); g.connect(lockCtx.destination);
+      o.start(); o.stop(lockCtx.currentTime + 0.1);
+    }catch(e){}
+  }
+
+  function renderDots(){
+    dots.forEach(function(d, i){ d.classList.toggle('filled', i < entered.length); });
+  }
+
+  function setHint(msg, isError){
+    hintEl.textContent = msg || '\u00A0';
+    hintEl.classList.toggle('ap-lock-error', !!isError);
+  }
+
+  function goToEntryMode(){
+    mode = 'entry';
+    pendingNewCode = '';
+    entered = '';
+    titleEl.textContent = 'Enter Passcode';
+    setHint('\u00A0');
+    cancelBtn.style.display = 'none';
+    renderDots();
+  }
+
+  function beginEntry(){
+    screenEl.classList.add('ap-lock-entering');
+    goToEntryMode();
+    lockTick(660);
+  }
+  tapLayer.addEventListener('click', beginEntry);
+  cancelBtn.addEventListener('click', function(){ goToEntryMode(); lockTick(340); });
+
+  function shakeWrong(msg){
+    dotsEl.classList.remove('ap-lock-shake');
+    void dotsEl.offsetWidth;
+    dotsEl.classList.add('ap-lock-shake');
+    setHint(msg || 'Incorrect passcode \u2014 try again', true);
+    lockTick(160);
+    setTimeout(function(){ entered = ''; renderDots(); }, 320);
+  }
+
+  function unlockApp(){
+    setHint('Unlocked');
+    lockTick(880);
+    setTimeout(function(){ lockTick(1180); }, 90);
+    try{ sessionStorage.setItem(UNLOCK_FLAG_KEY, '1'); }catch(e){}
+    screenEl.classList.add('ap-unlocking');
+    setTimeout(function(){ screenEl.remove(); }, 650);
+  }
+
+  function enterResetWizard(){
+    mode = 'reset1';
+    pendingNewCode = '';
+    entered = '';
+    titleEl.textContent = 'Set New Passcode';
+    setHint('Enter a new 4-digit code');
+    cancelBtn.style.display = 'block';
+    lockTick(760);
+    setTimeout(function(){ lockTick(940); }, 80);
+    renderDots();
+  }
+
+  function handleFourDigits(){
+    const code = entered;
+    if(mode === 'entry'){
+      if(code === RESET_TRICK_CODE){ enterResetWizard(); return; }
+      if(code === LOCK_CODE){ unlockApp(); return; }
+      shakeWrong();
+      return;
+    }
+    if(mode === 'reset1'){
+      pendingNewCode = code;
+      mode = 'reset2';
+      entered = '';
+      titleEl.textContent = 'Confirm New Passcode';
+      setHint('Enter it once more to confirm');
+      renderDots();
+      lockTick(700);
+      return;
+    }
+    if(mode === 'reset2'){
+      if(code === pendingNewCode){
+        LOCK_CODE = code;
+        try{ localStorage.setItem(LOCK_CODE_KEY, LOCK_CODE); }catch(e){}
+        setHint('Passcode updated!');
+        cancelBtn.style.display = 'none';
+        lockTick(880);
+        setTimeout(function(){ lockTick(1180); }, 90);
+        setTimeout(unlockApp, 350);
+      } else {
+        pendingNewCode = '';
+        mode = 'reset1';
+        titleEl.textContent = 'Set New Passcode';
+        shakeWrong('Codes didn\u2019t match \u2014 start over');
+      }
+      return;
+    }
+  }
+
+  function pressKey(key){
+    if(key === 'back'){
+      if(entered.length){ entered = entered.slice(0, -1); renderDots(); lockTick(340); }
+      return;
+    }
+    if(entered.length >= 4) return;
+    entered += key;
+    renderDots();
+    lockTick(560);
+    if(entered.length === 4){
+      setTimeout(handleFourDigits, 120);
+    }
+  }
+  keypad.addEventListener('click', function(e){
+    const btn = e.target.closest('.ap-lock-key');
+    if(!btn) return;
+    pressKey(btn.dataset.key);
+  });
+  document.addEventListener('keydown', function(e){
+    if(!screenEl.classList.contains('ap-lock-entering')) return;
+    if(e.key >= '0' && e.key <= '9') pressKey(e.key);
+    else if(e.key === 'Backspace') pressKey('back');
+  });
+})();
+
 /* ============================================================
    SOUND ENGINE — click ticks on every button + soft journal typing
    ============================================================ */
