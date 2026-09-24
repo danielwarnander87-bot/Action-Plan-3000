@@ -1638,6 +1638,13 @@
     content:"type here\2026"; color:rgba(var(--bp-line-rgb),0.55); pointer-events:none;
   }
   .blueprint-note:empty:focus{ border-color:rgba(var(--bp-line-rgb),0.7); }
+  .blueprint-note.bp-note-dragging{
+    cursor:grabbing; z-index:5; pointer-events:none;
+    background:rgba(var(--bp-line-rgb),0.08);
+    border-radius:5px; box-shadow:0 6px 18px rgba(0,0,0,0.22);
+    transform:scale(1.04); transition:transform .08s ease;
+  }
+  .blueprint-notes-canvas.bp-drop-armed{ cursor:crosshair; }
   .blueprint-titleblock{
     margin-top:10px; border-top:1px solid rgba(var(--bp-line-rgb),0.3); padding-top:7px;
     display:flex; gap:14px; flex-wrap:wrap;
@@ -12109,6 +12116,11 @@ function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
     el.textContent = note.text || '';
     el.dataset.id = note.id;
     el.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
+    el.addEventListener('dblclick', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      startDragNote(el, note);
+    });
     el.addEventListener('input', function(){
       note.text = el.textContent;
       saveNotesByDate();
@@ -12129,6 +12141,64 @@ function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
     notesCanvas.innerHTML = '';
     arr.forEach(function(n){ notesCanvas.appendChild(makeNoteEl(n, arr)); });
   }
+
+  /* ---------- double-click to pick a note up, click to drop it —
+     so notes filed on top of each other (by hand or by the pigeon)
+     can be spread back out instead of just stacking ---------- */
+  let dragState = null; // {el, note, origX, origY}
+
+  function onDragMove(e){
+    if(!dragState) return;
+    const rect = notesCanvas.getBoundingClientRect();
+    const xPct = Math.max(0, Math.min(92, ((e.clientX - rect.left) / rect.width) * 100));
+    const yPct = Math.max(0, Math.min(90, ((e.clientY - rect.top) / rect.height) * 100));
+    dragState.el.style.left = xPct + '%';
+    dragState.el.style.top = yPct + '%';
+    dragState.note.xPct = xPct;
+    dragState.note.yPct = yPct;
+  }
+  function onDragCommitClick(e){
+    if(!dragState) return;
+    e.preventDefault();
+    e.stopPropagation();
+    endDrag(true);
+  }
+  function onDragKey(e){
+    if(e.key === 'Escape') endDrag(false);
+  }
+  function endDrag(commit){
+    if(!dragState) return;
+    const st = dragState;
+    st.el.classList.remove('bp-note-dragging');
+    st.el.contentEditable = 'true';
+    notesCanvas.classList.remove('bp-drop-armed');
+    document.removeEventListener('pointermove', onDragMove);
+    document.removeEventListener('pointerdown', onDragCommitClick, true);
+    document.removeEventListener('keydown', onDragKey);
+    dragState = null;
+    if(commit){
+      saveNotesByDate();
+      try{ soundClick(); }catch(e){}
+    } else {
+      st.el.style.left = st.origX + '%';
+      st.el.style.top = st.origY + '%';
+      st.note.xPct = st.origX;
+      st.note.yPct = st.origY;
+    }
+  }
+  function startDragNote(el, note){
+    if(dragState) endDrag(true); // drop whatever was already being moved
+    el.blur();
+    dragState = { el: el, note: note, origX: note.xPct, origY: note.yPct };
+    el.contentEditable = 'false';
+    el.classList.add('bp-note-dragging');
+    notesCanvas.classList.add('bp-drop-armed');
+    document.addEventListener('pointermove', onDragMove);
+    document.addEventListener('pointerdown', onDragCommitClick, true);
+    document.addEventListener('keydown', onDragKey);
+    try{ playGraphiteTick(); }catch(e){}
+  }
+
   renderBackgroundAndNotes();
   /* refresh instantly if the Messenger Pigeon auto-loader just filed a
      note onto this board while it happens to be open */
