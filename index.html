@@ -870,6 +870,38 @@
     50%{ transform:scale(1.08); }
   }
   .budget-modal-box{ max-width:680px; }
+  .budget-head-actions{ display:flex; align-items:center; gap:8px; }
+  .budget-split-toggle{
+    font-family:'Press Start 2P', monospace; font-size:8px; letter-spacing:0.02em;
+    background:linear-gradient(180deg, #46525f, #2c333b); color:#d8dee4;
+    border:2px solid #1e242b; border-radius:6px; padding:6px 8px; cursor:pointer;
+    box-shadow:0 3px 0 #12151a; white-space:nowrap;
+  }
+  .budget-split-toggle:active{ box-shadow:0 1px 0 #12151a; transform:translateY(2px); }
+  .budget-split-toggle.active{
+    background:linear-gradient(180deg, #1f6cae, #0a3a5f); color:#bfe0ff;
+    border-color:#0a3a5f; box-shadow:0 3px 0 #062038;
+  }
+  .budget-lanes{ display:flex; gap:16px; align-items:flex-start; }
+  .budget-lane{ flex:1 1 100%; min-width:0; }
+  .budget-lane-label{ display:none; }
+  .budget-lane-b{ display:none; }
+  .budget-modal-box.split-mode{ max-width:1180px; }
+  .budget-modal-box.split-mode .budget-lane{ flex:1 1 50%; }
+  .budget-modal-box.split-mode .budget-lane-b{ display:block; border-left:2px dashed rgba(31,108,174,0.5); padding-left:14px; }
+  .budget-modal-box.split-mode .budget-lane-label{
+    display:block; font-family:'Press Start 2P', monospace; font-size:9px;
+    color:#ffd23f; margin-bottom:6px; letter-spacing:0.04em;
+  }
+  .budget-modal-box.split-mode .budget-lane-b .budget-lane-label{ color:#7fc4ff; }
+  .budget-combined-bar{ display:none; }
+  .budget-modal-box.split-mode .budget-combined-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:12px; padding:10px 14px; border:2px solid #ffd23f; border-radius:10px;
+    background:#0c0e11;
+  }
+  .budget-combined-label{ font-family:'Press Start 2P', monospace; font-size:9px; color:#ffd23f; }
+  .budget-combined-value{ font-family:'VT323', monospace; font-size:22px; color:#7fff9e; }
   .budget-body{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;}
   .budget-grid-area{flex:1 1 340px; min-width:0;}
   .budget-balance-panel{
@@ -2053,6 +2085,24 @@
   .retro-robot-theme .budget-launch-btn:active{ box-shadow:0 1px 0 #7a0d13; transform:translateY(3px); }
   .retro-robot-theme .budget-launch-status{ color:#7fff9e; font-family:'VT323', monospace; font-size:14px; }
 
+  /* ---------- Budget-Bot TWIN — same robot chassis, blue accents
+     instead of red, so the two are easy to tell apart at a glance ---------- */
+  .retro-robot-theme-blue{ border-color:#1256c1; }
+  .retro-robot-theme-blue .retro-power-led{
+    background:#2e8bff; box-shadow:0 0 6px 2px rgba(46,139,255,0.9);
+  }
+  .retro-robot-theme-blue .retro-title{ text-shadow:2px 2px 0 #1256c1, 0 0 12px rgba(255,210,63,0.5); }
+  .retro-robot-theme-blue .retro-model{ color:#ffd23f; text-shadow:2px 2px 0 #7a5a00, 0 0 10px rgba(255,210,63,0.6); }
+  .retro-robot-theme-blue .retro-close{
+    background:linear-gradient(180deg, #6ab6ff, #1256c1);
+    border-color:#0d3a7a; box-shadow:0 3px 0 #0d3a7a, inset 0 1px 1px rgba(255,255,255,0.4);
+  }
+  .retro-robot-theme-blue .retro-close:active{ box-shadow:0 1px 0 #0d3a7a; transform:translateY(2px); }
+  .retro-robot-theme-blue .budget-launch-btn{
+    background:linear-gradient(180deg, #7fe8ff, #1256c1);
+    box-shadow:0 4px 0 #0d3a7a, inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .retro-robot-theme-blue .budget-launch-btn:active{ box-shadow:0 1px 0 #0d3a7a; transform:translateY(3px); }
 
   .cta-screen-flash{
     position:fixed; inset:0; z-index:950; pointer-events:none;
@@ -4371,53 +4421,109 @@
     <span class="cta-orb-count" id="ctaOrbCount"></span>
   </div>
   <div class="cta-screen-flash" id="ctaScreenFlash"></div>
-  <div class="cta-orb budget-orb" id="budgetOrb" title="Budget Notepad">
+  <div id="budgetOrbTwin" style="display:none" aria-hidden="true"></div>
+  <div id="budgetModalOverlayTwin" style="display:none" aria-hidden="true"></div>
+  <button id="budgetModalCloseTwin" type="button" style="display:none" aria-hidden="true"></button>
+
+  <div class="cta-orb budget-orb" id="budgetOrb" title="Budget-Bot">
     <span class="budget-orb-icon">$</span>
   </div>
   <div class="cta-modal-overlay" id="budgetModalOverlay">
-    <div class="cta-modal-box budget-modal-box retro-robot-theme">
+    <div class="cta-modal-box budget-modal-box retro-robot-theme" id="budgetModalBox">
       <div class="retro-bolt tl"></div>
       <div class="retro-bolt tr"></div>
       <div class="retro-power-led"></div>
       <div class="cta-modal-head">
         <span class="cta-modal-title retro-title">🤖 BUDGET-BOT <span class="retro-model">3000</span></span>
-        <button class="cta-modal-close retro-close" id="budgetModalClose" type="button">&times;</button>
+        <div class="budget-head-actions">
+          <button type="button" class="budget-split-toggle" id="budgetSplitToggle" title="Track two starting balances side by side, linked to one combined total">🎛️ Split View</button>
+          <button class="cta-modal-close retro-close" id="budgetModalClose" type="button">&times;</button>
+        </div>
       </div>
       <div class="retro-subtitle">ELECTRONIC LEDGER UNIT &middot; SOME ASSEMBLY REQUIRED</div>
-      <div class="budget-body">
-        <div class="budget-grid-area">
-          <div class="budget-grid-ctrls">
-            <button type="button" id="budgetAddRow">+ Row</button>
-            <button type="button" id="budgetDelRow">&minus; Row</button>
-            <button type="button" id="budgetAddCol">+ Col</button>
-            <button type="button" id="budgetDelCol">&minus; Col</button>
-            <button type="button" id="budgetClear">Clear</button>
-            <label class="budget-import-btn" for="budgetCsvInput">&#128228; Import CSV</label>
-            <input type="file" id="budgetCsvInput" accept=".csv,text/csv" hidden>
-            <label class="budget-import-btn" for="budgetPdfInput">&#128260; View in Mirror</label>
-            <input type="file" id="budgetPdfInput" accept=".pdf,application/pdf" hidden>
+
+      <div class="budget-lanes" id="budgetLanes">
+        <div class="budget-lane budget-lane-a">
+          <div class="budget-lane-label">Channel A</div>
+          <div class="budget-body">
+            <div class="budget-grid-area">
+              <div class="budget-grid-ctrls">
+                <button type="button" id="budgetAddRow">+ Row</button>
+                <button type="button" id="budgetDelRow">&minus; Row</button>
+                <button type="button" id="budgetAddCol">+ Col</button>
+                <button type="button" id="budgetDelCol">&minus; Col</button>
+                <button type="button" id="budgetClear">Clear</button>
+                <label class="budget-import-btn" for="budgetCsvInput">&#128228; Import CSV</label>
+                <input type="file" id="budgetCsvInput" accept=".csv,text/csv" hidden>
+                <label class="budget-import-btn" for="budgetPdfInput">&#128260; View in Mirror</label>
+                <input type="file" id="budgetPdfInput" accept=".pdf,application/pdf" hidden>
+              </div>
+              <div class="budget-import-status" id="budgetImportStatus"></div>
+              <div class="budget-grid-scroll"><table class="budget-grid-table" id="budgetGridTable"></table></div>
+              <div class="budget-grid-hint">Drag a column's right edge to resize it. Tap a row's dot to color it. Use <strong>negative numbers for money going out</strong> (bills) and positive for money coming in — Balance = Starting Balance + all entries. Launch pulls labeled rows into Bills.</div>
+              <div class="budget-summary" id="budgetSummary">
+                <div class="budget-summary-row"><span>Starting Balance</span><span id="budgetSumStart">$0.00</span></div>
+                <div class="budget-summary-row"><span>Net of Entries</span><span id="budgetSumTotal">$0.00</span></div>
+                <div class="budget-summary-row budget-summary-final"><span>Balance</span><span id="budgetSumFinal">$0.00</span></div>
+              </div>
+            </div>
+            <div class="budget-balance-panel">
+              <div class="budget-balance-label">Current Balance</div>
+              <input type="text" class="budget-balance-input" id="budgetBalanceInput" placeholder="$0.00">
+              <div class="budget-balance-stamp" id="budgetBalanceStamp">not set yet</div>
+              <button type="button" class="budget-log-week-btn" id="budgetLogWeekBtn">📌 Log This Week</button>
+              <div class="budget-week-avg-label">4-Week Average</div>
+              <div class="budget-week-avg-value" id="budgetWeekAvg">— (0/4 logged)</div>
+              <div class="budget-week-log-list" id="budgetWeekLogList"></div>
+            </div>
           </div>
-          <div class="budget-import-status" id="budgetImportStatus"></div>
-          <div class="budget-grid-scroll"><table class="budget-grid-table" id="budgetGridTable"></table></div>
-          <div class="budget-grid-hint">Drag a column's right edge to resize it. Tap a row's dot to color it. Use <strong>negative numbers for money going out</strong> (bills) and positive for money coming in — Balance = Starting Balance + all entries. Launch pulls labeled rows into Bills.</div>
-          <div class="budget-summary" id="budgetSummary">
-            <div class="budget-summary-row"><span>Starting Balance</span><span id="budgetSumStart">$0.00</span></div>
-            <div class="budget-summary-row"><span>Net of Entries</span><span id="budgetSumTotal">$0.00</span></div>
-            <div class="budget-summary-row budget-summary-final"><span>Balance</span><span id="budgetSumFinal">$0.00</span></div>
-          </div>
+          <button type="button" class="budget-launch-btn" id="budgetLaunchBtn">🚀 Launch to Bills</button>
+          <div class="budget-launch-status" id="budgetLaunchStatus"></div>
         </div>
-        <div class="budget-balance-panel">
-          <div class="budget-balance-label">Current Balance</div>
-          <input type="text" class="budget-balance-input" id="budgetBalanceInput" placeholder="$0.00">
-          <div class="budget-balance-stamp" id="budgetBalanceStamp">not set yet</div>
-          <button type="button" class="budget-log-week-btn" id="budgetLogWeekBtn">📌 Log This Week</button>
-          <div class="budget-week-avg-label">4-Week Average</div>
-          <div class="budget-week-avg-value" id="budgetWeekAvg">— (0/4 logged)</div>
-          <div class="budget-week-log-list" id="budgetWeekLogList"></div>
+
+        <div class="budget-lane budget-lane-b">
+          <div class="budget-lane-label">Channel B</div>
+          <div class="budget-body">
+            <div class="budget-grid-area">
+              <div class="budget-grid-ctrls">
+                <button type="button" id="budgetAddRowTwin">+ Row</button>
+                <button type="button" id="budgetDelRowTwin">&minus; Row</button>
+                <button type="button" id="budgetAddColTwin">+ Col</button>
+                <button type="button" id="budgetDelColTwin">&minus; Col</button>
+                <button type="button" id="budgetClearTwin">Clear</button>
+                <label class="budget-import-btn" for="budgetCsvInputTwin">&#128228; Import CSV</label>
+                <input type="file" id="budgetCsvInputTwin" accept=".csv,text/csv" hidden>
+                <label class="budget-import-btn" for="budgetPdfInputTwin">&#128260; View in Mirror</label>
+                <input type="file" id="budgetPdfInputTwin" accept=".pdf,application/pdf" hidden>
+              </div>
+              <div class="budget-import-status" id="budgetImportStatusTwin"></div>
+              <div class="budget-grid-scroll"><table class="budget-grid-table" id="budgetGridTableTwin"></table></div>
+              <div class="budget-grid-hint">Drag a column's right edge to resize it. Tap a row's dot to color it. Use <strong>negative numbers for money going out</strong> (bills) and positive for money coming in — Balance = Starting Balance + all entries. Launch pulls labeled rows into Bills.</div>
+              <div class="budget-summary" id="budgetSummaryTwin">
+                <div class="budget-summary-row"><span>Starting Balance</span><span id="budgetSumStartTwin">$0.00</span></div>
+                <div class="budget-summary-row"><span>Net of Entries</span><span id="budgetSumTotalTwin">$0.00</span></div>
+                <div class="budget-summary-row budget-summary-final"><span>Balance</span><span id="budgetSumFinalTwin">$0.00</span></div>
+              </div>
+            </div>
+            <div class="budget-balance-panel">
+              <div class="budget-balance-label">Current Balance</div>
+              <input type="text" class="budget-balance-input" id="budgetBalanceInputTwin" placeholder="$0.00">
+              <div class="budget-balance-stamp" id="budgetBalanceStampTwin">not set yet</div>
+              <button type="button" class="budget-log-week-btn" id="budgetLogWeekBtnTwin">📌 Log This Week</button>
+              <div class="budget-week-avg-label">4-Week Average</div>
+              <div class="budget-week-avg-value" id="budgetWeekAvgTwin">— (0/4 logged)</div>
+              <div class="budget-week-log-list" id="budgetWeekLogListTwin"></div>
+            </div>
+          </div>
+          <button type="button" class="budget-launch-btn" id="budgetLaunchBtnTwin">🚀 Launch to Bills</button>
+          <div class="budget-launch-status" id="budgetLaunchStatusTwin"></div>
         </div>
       </div>
-      <button type="button" class="budget-launch-btn" id="budgetLaunchBtn">🚀 Launch to Bills</button>
-      <div class="budget-launch-status" id="budgetLaunchStatus"></div>
+
+      <div class="budget-combined-bar" id="budgetCombinedBar">
+        <span class="budget-combined-label">🎛️ Combined Balance (A + B)</span>
+        <span class="budget-combined-value" id="budgetCombinedValue">$0.00</span>
+      </div>
     </div>
   </div>
 
@@ -11132,21 +11238,21 @@ enhanceBlocksWith3D();
    BUDGET NOTEPAD — a smaller green orb, a formula-capable grid,
    and a Launch button that pushes labeled rows into Bills
    ============================================================ */
-(function(){
-  const orb = document.getElementById('budgetOrb');
-  const overlay = document.getElementById('budgetModalOverlay');
-  const closeBtn = document.getElementById('budgetModalClose');
-  const tableEl = document.getElementById('budgetGridTable');
-  const launchBtn = document.getElementById('budgetLaunchBtn');
-  const launchStatus = document.getElementById('budgetLaunchStatus');
-  const balanceInput = document.getElementById('budgetBalanceInput');
-  const balanceStamp = document.getElementById('budgetBalanceStamp');
+function initBudgetBot(sfx, keyPrefix){
+  const orb = document.getElementById('budgetOrb' + sfx);
+  const overlay = document.getElementById('budgetModalOverlay' + sfx);
+  const closeBtn = document.getElementById('budgetModalClose' + sfx);
+  const tableEl = document.getElementById('budgetGridTable' + sfx);
+  const launchBtn = document.getElementById('budgetLaunchBtn' + sfx);
+  const launchStatus = document.getElementById('budgetLaunchStatus' + sfx);
+  const balanceInput = document.getElementById('budgetBalanceInput' + sfx);
+  const balanceStamp = document.getElementById('budgetBalanceStamp' + sfx);
 
-  const GRID_KEY = 'actionPlan3000_budgetGrid';
-  const SIZE_KEY = 'actionPlan3000_budgetGridSize';
-  const COLW_KEY = 'actionPlan3000_budgetColWidths';
-  const ROWCOLOR_KEY = 'actionPlan3000_budgetRowColors';
-  const BALANCE_KEY = 'actionPlan3000_budgetBalance';
+  const GRID_KEY = keyPrefix + 'Grid';
+  const SIZE_KEY = keyPrefix + 'GridSize';
+  const COLW_KEY = keyPrefix + 'ColWidths';
+  const ROWCOLOR_KEY = keyPrefix + 'RowColors';
+  const BALANCE_KEY = keyPrefix + 'Balance';
   const MIN_COLS = 2, MAX_COLS = 12, MIN_ROWS = 3, MAX_ROWS = 60;
   const DEFAULT_COL_WIDTH = 90, MIN_COL_WIDTH = 46, MAX_COL_WIDTH = 320;
   let GRID_COLS = 6, GRID_ROWS = 12;
@@ -11382,11 +11488,11 @@ enhanceBlocksWith3D();
     renderGrid();
     renderSummary();
   }
-  document.getElementById('budgetAddRow').addEventListener('click', function(){ resizeGrid(GRID_COLS, GRID_ROWS + 1); });
-  document.getElementById('budgetDelRow').addEventListener('click', function(){ resizeGrid(GRID_COLS, GRID_ROWS - 1); });
-  document.getElementById('budgetAddCol').addEventListener('click', function(){ resizeGrid(GRID_COLS + 1, GRID_ROWS); });
-  document.getElementById('budgetDelCol').addEventListener('click', function(){ resizeGrid(GRID_COLS - 1, GRID_ROWS); });
-  document.getElementById('budgetClear').addEventListener('click', function(){
+  document.getElementById('budgetAddRow' + sfx).addEventListener('click', function(){ resizeGrid(GRID_COLS, GRID_ROWS + 1); });
+  document.getElementById('budgetDelRow' + sfx).addEventListener('click', function(){ resizeGrid(GRID_COLS, GRID_ROWS - 1); });
+  document.getElementById('budgetAddCol' + sfx).addEventListener('click', function(){ resizeGrid(GRID_COLS + 1, GRID_ROWS); });
+  document.getElementById('budgetDelCol' + sfx).addEventListener('click', function(){ resizeGrid(GRID_COLS - 1, GRID_ROWS); });
+  document.getElementById('budgetClear' + sfx).addEventListener('click', function(){
     if(!window.confirm('Clear the whole budget grid?')) return;
     gridRaw = {};
     saveGridRaw();
@@ -11395,8 +11501,8 @@ enhanceBlocksWith3D();
   });
 
   /* ---------- CSV import: pull rows straight from a credit-union export ---------- */
-  const importStatus = document.getElementById('budgetImportStatus');
-  const csvInput = document.getElementById('budgetCsvInput');
+  const importStatus = document.getElementById('budgetImportStatus' + sfx);
+  const csvInput = document.getElementById('budgetCsvInput' + sfx);
 
   function parseCsvText(text){
     const rows = [];
@@ -11523,7 +11629,7 @@ enhanceBlocksWith3D();
      Renders the PDF with the browser's own PDF support inside a themed
      frame. You look at your statement and type the numbers in yourself —
      nothing here reads or extracts data from the file. */
-  const pdfInput = document.getElementById('budgetPdfInput');
+  const pdfInput = document.getElementById('budgetPdfInput' + sfx);
   const mirrorOverlay = document.getElementById('mirrorOverlay');
   const mirrorIframe = document.getElementById('mirrorIframe');
   const mirrorEmpty = document.getElementById('mirrorEmpty');
@@ -11760,19 +11866,20 @@ enhanceBlocksWith3D();
   function renderSummary(){
     const start = parseFloat(budgetBalance && budgetBalance.amount) || 0;
     const total = computeGridTotal();
-    document.getElementById('budgetSumStart').textContent = formatMoney(start);
-    document.getElementById('budgetSumTotal').textContent = formatMoney(total);
-    document.getElementById('budgetSumFinal').textContent = formatMoney(start + total);
+    document.getElementById('budgetSumStart' + sfx).textContent = formatMoney(start);
+    document.getElementById('budgetSumTotal' + sfx).textContent = formatMoney(total);
+    document.getElementById('budgetSumFinal' + sfx).textContent = formatMoney(start + total);
+    if(typeof window.__apBudgetSynthUpdate === 'function') window.__apBudgetSynthUpdate();
   }
 
   /* ---------- a rolling 4-week balance log, for a Mon–Sun rhythm ---------- */
-  const WEEKLOG_KEY = 'actionPlan3000_budgetWeekLog';
+  const WEEKLOG_KEY = keyPrefix + 'WeekLog';
   let weekLog = [];
   try{ weekLog = JSON.parse(localStorage.getItem(WEEKLOG_KEY) || '[]'); }catch(e){ weekLog = []; }
   function saveWeekLog(){ try{ localStorage.setItem(WEEKLOG_KEY, JSON.stringify(weekLog)); }catch(e){} }
   function renderWeekLog(){
-    const avgEl = document.getElementById('budgetWeekAvg');
-    const listEl = document.getElementById('budgetWeekLogList');
+    const avgEl = document.getElementById('budgetWeekAvg' + sfx);
+    const listEl = document.getElementById('budgetWeekLogList' + sfx);
     if(weekLog.length === 0){
       avgEl.textContent = '\u2014 (0/4 logged)';
     } else {
@@ -11788,7 +11895,7 @@ enhanceBlocksWith3D();
       listEl.appendChild(row);
     });
   }
-  document.getElementById('budgetLogWeekBtn').addEventListener('click', function(){
+  document.getElementById('budgetLogWeekBtn' + sfx).addEventListener('click', function(){
     weekLog.push({stamp:new Date().toISOString(), balance:computeFinalBalance()});
     if(weekLog.length > 4) weekLog = weekLog.slice(weekLog.length - 4);
     saveWeekLog();
@@ -11851,17 +11958,75 @@ enhanceBlocksWith3D();
 
   // expose this block's numbers to THE PULSE, and nudge it awake whenever
   // the balance, grid, or week log here changes
-  window.__apBudgetBot = {
-    getStart: function(){ return parseFloat(budgetBalance && budgetBalance.amount) || 0; },
-    getFinalBalance: computeFinalBalance,
-    getWeekLog: function(){ return weekLog.slice(); }
-  };
-  const _origSaveBalanceForPulse = saveBalance;
-  saveBalance = function(){ _origSaveBalanceForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
-  const _origSaveGridRawForPulse = saveGridRaw;
-  saveGridRaw = function(){ _origSaveGridRawForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
-  const _origSaveWeekLogForPulse = saveWeekLog;
-  saveWeekLog = function(){ _origSaveWeekLogForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
+  if(sfx === ''){
+    window.__apBudgetBot = {
+      getStart: function(){ return parseFloat(budgetBalance && budgetBalance.amount) || 0; },
+      getFinalBalance: computeFinalBalance,
+      getWeekLog: function(){ return weekLog.slice(); }
+    };
+    const _origSaveBalanceForPulse = saveBalance;
+    saveBalance = function(){ _origSaveBalanceForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
+    const _origSaveGridRawForPulse = saveGridRaw;
+    saveGridRaw = function(){ _origSaveGridRawForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
+    const _origSaveWeekLogForPulse = saveWeekLog;
+    saveWeekLog = function(){ _origSaveWeekLogForPulse(); if(window.__apPulseRefresh) window.__apPulseRefresh(); };
+  }
+
+  // keep this lane's table/summary built and current even when its own orb is
+  // hidden (Channel B lives inside the merged split-screen Budget-Bot modal)
+  buildGridTable();
+  renderGrid();
+  renderBalance();
+  renderSummary();
+  renderWeekLog();
+}
+
+initBudgetBot('', 'actionPlan3000_budget');
+initBudgetBot('Twin', 'actionPlan3000_budgetTwin');
+
+// Budget-Bot "synthesizer mode": one merged ledger with an optional split
+// screen so Channel A and Channel B can each carry their own starting
+// balance and transactions while feeding a single combined total below.
+(function(){
+  const box = document.getElementById('budgetModalBox');
+  const toggle = document.getElementById('budgetSplitToggle');
+  const combinedValueEl = document.getElementById('budgetCombinedValue');
+  const SPLIT_KEY = 'actionPlan3000_budgetSplitMode';
+  let splitOn = false;
+  try{ splitOn = localStorage.getItem(SPLIT_KEY) === '1'; }catch(e){}
+
+  function parseMoney(str){
+    if(!str) return 0;
+    const neg = str.trim().charAt(0) === '-';
+    const n = parseFloat(String(str).replace(/[^0-9.]/g, '')) || 0;
+    return neg ? -n : n;
+  }
+  function updateCombinedTotal(){
+    const aEl = document.getElementById('budgetSumFinal');
+    const bEl = document.getElementById('budgetSumFinalTwin');
+    const a = aEl ? parseMoney(aEl.textContent) : 0;
+    const b = bEl ? parseMoney(bEl.textContent) : 0;
+    const sum = a + b;
+    if(combinedValueEl) combinedValueEl.textContent = (sum < 0 ? '-$' + Math.abs(sum).toFixed(2) : '$' + sum.toFixed(2));
+  }
+  function applySplit(){
+    if(box) box.classList.toggle('split-mode', splitOn);
+    if(toggle){
+      toggle.classList.toggle('active', splitOn);
+      toggle.textContent = splitOn ? '🎛️ Split View: ON' : '🎛️ Split View';
+    }
+    updateCombinedTotal();
+  }
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      splitOn = !splitOn;
+      try{ localStorage.setItem(SPLIT_KEY, splitOn ? '1' : '0'); }catch(e){}
+      applySplit();
+      try{ soundClick(); }catch(e){}
+    });
+  }
+  window.__apBudgetSynthUpdate = updateCombinedTotal;
+  applySplit();
 })();
 
 /* ============================================================
