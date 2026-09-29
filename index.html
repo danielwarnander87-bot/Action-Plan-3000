@@ -1661,6 +1661,7 @@
     color:var(--bp-ink); font-family:'Kalam',cursive; font-size:16px; line-height:1.5;
     white-space:pre-wrap; word-break:break-word; cursor:text;
     box-sizing:border-box; padding:2px 4px;
+    -webkit-touch-callout:none;
   }
   .blueprint-note:focus{ box-shadow:0 0 0 1px rgba(var(--bp-line-rgb),0.3); border-radius:4px; }
   .blueprint-note:empty{
@@ -1676,7 +1677,28 @@
     border-radius:5px; box-shadow:0 6px 18px rgba(0,0,0,0.22);
     transform:scale(1.04); transition:transform .08s ease;
   }
+  .blueprint-note.bp-note-done{
+    opacity:0.5; text-decoration:line-through;
+    text-decoration-color:rgba(var(--bp-line-rgb),0.65); text-decoration-thickness:1.5px;
+  }
+  .blueprint-note.bp-note-holding{
+    background:rgba(var(--bp-line-rgb),0.1); border-radius:4px;
+    transition:background .5s ease;
+  }
   .blueprint-notes-canvas.bp-drop-armed{ cursor:crosshair; }
+  .blueprint-trash{
+    position:absolute; bottom:18px; right:18px; z-index:6;
+    width:46px; height:46px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:21px;
+    background:rgba(var(--bp-line-rgb),0.1); border:1.5px dashed rgba(var(--bp-line-rgb),0.45);
+    opacity:0.45; pointer-events:none; user-select:none;
+    transition:opacity .18s ease, transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .blueprint-trash.bp-trash-active{ opacity:1; pointer-events:auto; }
+  .blueprint-trash.bp-trash-hover{
+    background:rgba(255,90,90,0.28); border-color:#ff6b6b; border-style:solid;
+    transform:scale(1.18) rotate(-6deg);
+  }
   .blueprint-titleblock{
     margin-top:10px; border-top:1px solid rgba(var(--bp-line-rgb),0.3); padding-top:7px;
     display:flex; gap:14px; flex-wrap:wrap;
@@ -12271,19 +12293,61 @@ function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
     }
     try{ soundClick(); }catch(e){}
   }
+  /* ---------- long-hold to check a note off, like crossing an item
+     out on a real sticky note ---------- */
+  const NOTE_LONG_PRESS_MS = 550;
+  function toggleNoteDone(el, note){
+    note.done = !note.done;
+    el.classList.toggle('bp-note-done', note.done);
+    saveNotesByDate();
+    try{ soundClick(); }catch(e){}
+  }
   function makeNoteEl(note, notesArr){
     const el = document.createElement('div');
-    el.className = 'blueprint-note';
+    el.className = 'blueprint-note' + (note.done ? ' bp-note-done' : '');
     el.contentEditable = 'true';
     el.spellcheck = false;
     el.style.left = note.xPct + '%';
     el.style.top = note.yPct + '%';
     el.textContent = note.text || '';
     el.dataset.id = note.id;
-    el.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
+
+    let pressTimer = null, pressStartX = 0, pressStartY = 0, pressFired = false;
+    function clearPress(){
+      if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; }
+      el.classList.remove('bp-note-holding');
+    }
+    el.addEventListener('pointerdown', function(e){
+      e.stopPropagation();
+      pressFired = false;
+      pressStartX = e.clientX;
+      pressStartY = e.clientY;
+      el.classList.add('bp-note-holding');
+      pressTimer = setTimeout(function(){
+        pressFired = true;
+        el.classList.remove('bp-note-holding');
+        toggleNoteDone(el, note);
+        try{ el.blur(); }catch(e2){}
+      }, NOTE_LONG_PRESS_MS);
+    });
+    el.addEventListener('pointermove', function(e){
+      if(!pressTimer) return;
+      const dx = e.clientX - pressStartX, dy = e.clientY - pressStartY;
+      if(Math.sqrt(dx * dx + dy * dy) > 10) clearPress();
+    });
+    el.addEventListener('pointerup', function(e){
+      clearPress();
+      if(pressFired){ e.preventDefault(); pressFired = false; }
+    });
+    el.addEventListener('pointerleave', clearPress);
+    el.addEventListener('pointercancel', clearPress);
+    el.addEventListener('contextmenu', function(e){
+      if(pressFired) e.preventDefault();
+    });
     el.addEventListener('dblclick', function(e){
       e.preventDefault();
       e.stopPropagation();
+      clearPress();
       startDragNote(el, note);
     });
     el.addEventListener('input', function(){
@@ -12310,10 +12374,55 @@ function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
   /* ---------- double-click to pick a note up, click to drop it —
      so notes filed on top of each other (by hand or by the pigeon)
      can be spread back out instead of just stacking ---------- */
-  let dragState = null; // {el, note, origX, origY}
+  let dragState = null; // {el, note, origX, origY, overTrash}
 
+  /* a little cartoon trash can, tucked in the corner — dims out until a
+     note's being dragged, then lights up as a place to drop one to bin it */
+  const trashEl = document.createElement('div');
+  trashEl.className = 'blueprint-trash';
+  trashEl.textContent = '🗑️';
+  trashEl.title = 'Drop a note here to delete it';
+  panel.appendChild(trashEl);
+
+  function playTrashSound(){
+    if(typeof sfxMuted !== 'undefined' && sfxMuted) return;
+    const ctxA = (typeof __sfxGetCtx === 'function') ? __sfxGetCtx() : null;
+    if(!ctxA) return;
+    const t0 = ctxA.currentTime;
+    const bufferSize = Math.floor(ctxA.sampleRate * 0.22);
+    const buffer = ctxA.createBuffer(1, bufferSize, ctxA.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i = 0; i < bufferSize; i++){ data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 1.6); }
+    const noise = ctxA.createBufferSource(); noise.buffer = buffer;
+    const filt = ctxA.createBiquadFilter();
+    filt.type = 'bandpass'; filt.frequency.setValueAtTime(2200, t0); filt.frequency.exponentialRampToValueAtTime(500, t0 + 0.2);
+    const g = ctxA.createGain();
+    g.gain.setValueAtTime(0.22, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
+    noise.connect(filt); filt.connect(g); g.connect(ctxA.destination);
+    noise.start(t0);
+    const o = ctxA.createOscillator(), og = ctxA.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(260, t0 + 0.05); o.frequency.exponentialRampToValueAtTime(90, t0 + 0.22);
+    og.gain.setValueAtTime(0.0001, t0 + 0.05);
+    og.gain.exponentialRampToValueAtTime(0.14, t0 + 0.08);
+    og.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.24);
+    o.connect(og); og.connect(ctxA.destination);
+    o.start(t0 + 0.05); o.stop(t0 + 0.25);
+  }
+
+  function isOverTrash(e){
+    const r = trashEl.getBoundingClientRect();
+    const pad = 10; // a little forgiveness around the icon
+    return e.clientX >= r.left - pad && e.clientX <= r.right + pad &&
+           e.clientY >= r.top - pad && e.clientY <= r.bottom + pad;
+  }
   function onDragMove(e){
     if(!dragState) return;
+    const over = isOverTrash(e);
+    if(over !== dragState.overTrash){
+      dragState.overTrash = over;
+      trashEl.classList.toggle('bp-trash-hover', over);
+    }
     const rect = notesCanvas.getBoundingClientRect();
     const xPct = Math.max(0, Math.min(92, ((e.clientX - rect.left) / rect.width) * 100));
     const yPct = Math.max(0, Math.min(90, ((e.clientY - rect.top) / rect.height) * 100));
@@ -12337,10 +12446,20 @@ function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
     st.el.classList.remove('bp-note-dragging');
     st.el.contentEditable = 'true';
     notesCanvas.classList.remove('bp-drop-armed');
+    trashEl.classList.remove('bp-trash-active', 'bp-trash-hover');
     document.removeEventListener('pointermove', onDragMove);
     document.removeEventListener('pointerdown', onDragCommitClick, true);
     document.removeEventListener('keydown', onDragKey);
     dragState = null;
+    if(commit && st.overTrash){
+      const arr = currentNotesArray();
+      const idx = arr.indexOf(st.note);
+      if(idx > -1) arr.splice(idx, 1);
+      saveNotesByDate();
+      st.el.remove();
+      try{ playTrashSound(); }catch(e){}
+      return;
+    }
     if(commit){
       saveNotesByDate();
       try{ soundClick(); }catch(e){}
@@ -12354,10 +12473,11 @@ function createIdeaBoard(boardId, storagePrefix, showGirlsSchedule){
   function startDragNote(el, note){
     if(dragState) endDrag(true); // drop whatever was already being moved
     el.blur();
-    dragState = { el: el, note: note, origX: note.xPct, origY: note.yPct };
+    dragState = { el: el, note: note, origX: note.xPct, origY: note.yPct, overTrash: false };
     el.contentEditable = 'false';
     el.classList.add('bp-note-dragging');
     notesCanvas.classList.add('bp-drop-armed');
+    trashEl.classList.add('bp-trash-active');
     document.addEventListener('pointermove', onDragMove);
     document.addEventListener('pointerdown', onDragCommitClick, true);
     document.addEventListener('keydown', onDragKey);
