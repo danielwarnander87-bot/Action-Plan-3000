@@ -2327,6 +2327,27 @@
     box-shadow:inset 0 0 60px rgba(255,120,30,0.14), 0 0 30px rgba(255,90,20,0.1);
   }
   .power-embers{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  /* the tide: a cool-water counterweight to the fire above — dated branches
+     bob up out of it the closer their ETA lands to the chain's original date */
+  .power-tide-band{
+    position:absolute; left:0; right:0; bottom:0; height:130px; z-index:0; pointer-events:none;
+    overflow:hidden;
+    background:
+      linear-gradient(180deg, rgba(20,60,90,0) 0%, rgba(15,55,85,0.4) 45%, rgba(8,38,66,0.72) 100%),
+      repeating-linear-gradient(100deg, rgba(100,190,235,0.07) 0px, rgba(100,190,235,0.07) 2px, transparent 2px, transparent 42px);
+    border-top:1.5px solid rgba(120,200,255,0.28);
+  }
+  .power-tide-band::before,.power-tide-band::after{
+    content:""; position:absolute; left:-10%; right:-10%; height:28px;
+    background:radial-gradient(ellipse at center, rgba(120,205,255,0.32), transparent 70%);
+    animation-name:powerTideWave; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+  }
+  .power-tide-band::before{ top:4px; animation-duration:6s; opacity:0.5; }
+  .power-tide-band::after{ top:24px; animation-duration:9s; animation-delay:-3s; opacity:0.3; }
+  @keyframes powerTideWave{
+    0%,100%{ transform:translateX(-4%) scaleY(1); }
+    50%{ transform:translateX(4%) scaleY(1.3); }
+  }
   .power-ember{
     position:absolute; border-radius:50%;
     background:radial-gradient(circle, #ffcf8a, #ff6a1f 60%, transparent 75%);
@@ -2389,7 +2410,7 @@
     pointer-events:none;
   }
   .power-note{
-    position:absolute; min-width:170px; max-width:320px; min-height:70px;
+    position:absolute; z-index:2; min-width:170px; max-width:320px; min-height:70px;
     background:rgba(30,12,6,0.92); border:2px solid #7a3a16; border-radius:12px;
     padding:10px 12px; box-shadow:0 0 16px rgba(255,110,20,0.25), inset 0 0 10px rgba(0,0,0,0.4);
     color:#e8433a; font-size:13.5px; line-height:1.45; cursor:text; outline:none;
@@ -2401,6 +2422,131 @@
     cursor:grabbing; box-shadow:0 0 28px rgba(255,140,40,0.55), 0 8px 24px rgba(0,0,0,0.5);
     z-index:50; transform:scale(1.03);
   }
+  .power-note.power-note-link-target{
+    box-shadow:0 0 0 3px #ffb066, 0 0 24px rgba(255,140,40,0.75); border-color:#ffb066;
+  }
+  .power-note-handle{
+    position:absolute; z-index:5; width:20px; height:20px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffe0ac, #ff7a1f 55%, #a3350a 92%);
+    border:1.5px solid #ffb066; box-shadow:0 0 8px rgba(255,140,40,0.75);
+    cursor:crosshair; touch-action:none; transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .power-note-handle:hover{ transform:scale(1.18); box-shadow:0 0 14px rgba(255,170,70,0.95); }
+  .power-note-delete{
+    position:absolute; z-index:7; width:19px; height:19px; border-radius:50%;
+    background:linear-gradient(160deg,#5a1810,#2c0a06); border:1.5px solid #ff6a4a; color:#ffcfc0;
+    font-size:13px; line-height:1; padding:0; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:0 0 8px rgba(255,90,60,0.5); font-family:'Nunito',sans-serif;
+  }
+  .power-note-delete:hover{ background:linear-gradient(160deg,#7a2216,#3a0e08); transform:scale(1.14); }
+  .power-note-mother{
+    border-color:#ffb066 !important;
+    box-shadow:0 0 0 2px rgba(255,178,102,0.35), 0 0 18px rgba(255,150,60,0.3), inset 0 0 10px rgba(0,0,0,0.4);
+  }
+  .power-mother-tag{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:9.5px; letter-spacing:0.06em;
+    color:#ffb066; text-transform:uppercase; margin-bottom:3px; opacity:0.9;
+  }
+  #powerEdgesSvg{ position:absolute; inset:0; width:100%; height:100%; z-index:1; overflow:visible; pointer-events:none; }
+  .power-edge{
+    fill:none; stroke:url(#powerEdgeGradient); stroke-width:3; cursor:pointer;
+    pointer-events:stroke; filter:drop-shadow(0 0 4px rgba(255,120,30,0.55));
+  }
+  .power-edge:hover{ stroke-width:5; filter:drop-shadow(0 0 9px rgba(255,160,60,0.9)); }
+  .power-temp-edge{ fill:none; stroke:#ff9248; stroke-width:2.5; stroke-dasharray:6 5; opacity:0.85; pointer-events:none; }
+  .power-note.power-note-math{ cursor:default; }
+  .power-note-math .power-math-title{
+    display:block; width:100%; box-sizing:border-box; background:transparent; border:none;
+    border-bottom:1.5px dashed rgba(255,140,40,0.4); color:#ffcfa3; font-family:'Fredoka',sans-serif;
+    font-weight:700; font-size:13px; padding:2px 2px 6px; margin-bottom:6px; outline:none;
+  }
+  .power-note-math .power-math-title::placeholder{ color:#8a4a34; }
+  .power-math-value-row{ display:flex; align-items:baseline; }
+  .power-note-math .power-math-value{
+    width:100%; box-sizing:border-box; background:transparent; border:none; outline:none;
+    color:#ff5a3c; font-family:'Nunito',sans-serif; font-weight:800; font-size:22px;
+    text-shadow:0 0 8px rgba(255,90,30,0.4);
+  }
+  .power-note-math .power-math-value::placeholder{ color:#5c2c18; }
+  .power-math-date{
+    margin-top:4px; font-family:'Nunito',sans-serif; font-size:11px; color:#c98a5e; opacity:0.85;
+  }
+  .power-math-delta{ font-family:'Nunito',sans-serif; font-weight:700; font-size:11px; margin-top:2px; }
+  .power-math-delta-gain{ color:#ffd25a; text-shadow:0 0 6px rgba(255,210,90,0.4); }
+  .power-math-delta-loss{ color:#7db3ff; text-shadow:0 0 6px rgba(125,180,255,0.4); }
+  .power-note-math.power-note-math-gain .power-math-value{ color:#ffd25a; text-shadow:0 0 10px rgba(255,210,90,0.55); }
+  .power-note-math.power-note-math-loss .power-math-value{ color:#7db3ff; text-shadow:0 0 10px rgba(125,180,255,0.5); }
+  .power-edge.power-edge-gain{ stroke:url(#powerEdgeGainGradient); filter:drop-shadow(0 0 5px rgba(255,210,90,0.6)); }
+  .power-edge.power-edge-loss{ stroke:url(#powerEdgeLossGradient); filter:drop-shadow(0 0 5px rgba(110,160,255,0.6)); }
+  /* Math Mode spotlight: everything but the "latest" branch softens back, so the
+     numbers you're actively chaining stay the one crisp thing on the field. */
+  .power-note.power-note-blurred{
+    filter:blur(3px) saturate(0.7); opacity:0.42;
+    transition:filter .25s ease, opacity .25s ease;
+  }
+  .power-note.power-note-blurred:hover{ filter:blur(0); opacity:0.85; }
+  .power-note.power-note-latest{
+    box-shadow:0 0 0 3px #ffd25a, 0 0 26px rgba(255,210,90,0.55);
+    transition:box-shadow .25s ease;
+  }
+  .power-quick-chip{
+    position:absolute; z-index:6; display:none; align-items:center; gap:6px;
+    background:linear-gradient(160deg,#2a1206,#180a04); border:1.5px solid #ffb066; border-radius:20px;
+    padding:4px 10px; box-shadow:0 0 12px rgba(255,160,60,0.4);
+  }
+  .power-quick-chip::before{ content:"⚡"; font-size:12px; }
+  .power-quick-chip-input{
+    width:92px; background:transparent; border:none; outline:none; color:#ffe3b8;
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:12.5px;
+  }
+  .power-quick-chip-input::placeholder{ color:#a86a3e; }
+  .power-quick-chip-date{
+    background:transparent; border:none; outline:none; color:#ffe3b8;
+    font-family:'Nunito',sans-serif; font-weight:700; font-size:11px; width:98px;
+    border-left:1px solid rgba(255,176,102,0.4); padding-left:6px;
+  }
+  .power-quick-chip-date::-webkit-calendar-picker-indicator{ filter:invert(0.8) sepia(1) saturate(3) hue-rotate(-10deg); cursor:pointer; }
+  /* dated branches drifting toward — or into — the tide */
+  .power-note-math.power-note-floating{
+    transform:translateY(calc(-1 * var(--tide-lift, 0) * 46px));
+    animation:powerTideBob 4s ease-in-out infinite;
+    transition:transform .6s ease, box-shadow .4s ease;
+  }
+  @keyframes powerTideBob{
+    0%,100%{ margin-top:0px; }
+    50%{ margin-top:-6px; }
+  }
+  .power-note-math.power-note-tide-active{
+    box-shadow:0 0 0 3px #5fd0ff, 0 0 30px rgba(95,208,255,0.65);
+    animation:powerTideBob 2.2s ease-in-out infinite, powerTidePulse 1.6s ease-in-out infinite;
+  }
+  @keyframes powerTidePulse{
+    0%,100%{ filter:brightness(1); }
+    50%{ filter:brightness(1.18); }
+  }
+  .power-math-modal-overlay{
+    position:fixed; inset:0; z-index:200; display:none; align-items:center; justify-content:center;
+    background:rgba(10,4,2,0.72); backdrop-filter:blur(2px);
+  }
+  .power-math-modal-overlay.open{ display:flex; }
+  .power-math-modal-box{
+    width:min(340px,88vw); border-radius:14px; padding:18px 20px;
+    background:linear-gradient(160deg,#241006,#140804); border:2px solid #7a3a16;
+    box-shadow:0 0 30px rgba(255,110,20,0.35), 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .power-math-modal-title{
+    font-family:'Fredoka',sans-serif; font-weight:700; font-size:16px; color:#ff9248;
+    margin-bottom:12px; text-shadow:0 0 8px rgba(255,120,30,0.6);
+  }
+  .power-math-modal-label{
+    display:block; font-family:'Nunito',sans-serif; font-size:12px; color:#c98a5e; margin-bottom:12px;
+  }
+  .power-math-modal-label input{
+    display:block; width:100%; margin-top:5px; box-sizing:border-box;
+    background:#1a0d06; border:1.5px solid #6b3416; border-radius:8px; color:#ffcfa3;
+    padding:8px 10px; font-size:13.5px; font-family:'Nunito',sans-serif;
+  }
+  .power-math-modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:4px; }
   .power-furnace{
     position:fixed; bottom:24px; right:24px; z-index:60;
     width:52px; height:52px; border-radius:50%;
@@ -2487,6 +2633,46 @@
   .study-card .card-del{position:absolute;top:8px;right:10px;background:none;border:none;font-size:16px;opacity:0.5;cursor:pointer;color:#EDEDF5;}
   .study-card .card-del:active{opacity:0.9;}
   .study-empty{grid-column:1/-1;text-align:center;padding:40px 20px;opacity:0.6;font-weight:700;color:#EDEDF5;}
+
+  /* ============ ACTION PLAN (weekly day breakdown + balance box) ============ */
+  .ap-week-meta{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:480px;margin:0 auto 6px;}
+  .ap-week-field{display:flex;flex-direction:column;gap:4px;}
+  .ap-week-field label{font-size:10px;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;opacity:0.6;}
+  .ap-week-field input{border:1.5px solid rgba(22,11,41,0.25);border-radius:8px;padding:7px 9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--ink);}
+  .ap-week-field input:focus{outline:2px solid var(--pink);}
+  .ap-week-field-wide{flex:1;min-width:160px;}
+  .ap-week-range{text-align:center;font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;opacity:0.75;margin-bottom:24px;}
+  .ap-days-cols{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;}
+  .ap-days-col{display:flex;flex-direction:column;gap:18px;flex:1;min-width:260px;max-width:360px;}
+  .ap-day-card{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:14px 16px;box-shadow:4px 4px 0 var(--pop-deep);}
+  .ap-day-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;}
+  .ap-day-line-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .ap-day-dash{font-weight:800;opacity:0.45;}
+  .ap-day-line{flex:1;border:none;border-bottom:1.5px solid rgba(22,11,41,0.2);padding:4px 2px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--ink);background:transparent;}
+  .ap-day-line:focus{outline:none;border-bottom-color:var(--pink);}
+  .ap-balance-box{max-width:360px;margin:0 auto;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:18px 20px;box-shadow:5px 5px 0 var(--indigo-deep);}
+  .ap-balance-title{font-size:11px;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;opacity:0.6;margin:12px 0 6px;}
+  .ap-balance-title:first-child{margin-top:0;}
+  .ap-balance-sub{text-transform:none;font-weight:600;opacity:0.8;}
+  .ap-balance-row{display:flex;align-items:center;gap:4px;}
+  .ap-balance-dollar{font-weight:700;opacity:0.6;}
+  .ap-balance-row input{flex:1;border:1.5px solid rgba(22,11,41,0.25);border-radius:8px;padding:7px 9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--ink);}
+  .ap-balance-row input:focus{outline:2px solid var(--pink);}
+  .ap-bills-list{display:flex;flex-direction:column;gap:6px;}
+  .ap-bill-row{display:flex;align-items:center;gap:6px;}
+  .ap-bill-label{flex:1.3;border:1.5px solid rgba(22,11,41,0.25);border-radius:8px;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;color:var(--ink);min-width:0;}
+  .ap-bill-amount{flex:1;border:1.5px solid rgba(22,11,41,0.25);border-radius:8px;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--ink);min-width:0;}
+  .ap-bill-label:focus,.ap-bill-amount:focus{outline:2px solid var(--pink);}
+  .ap-bill-del{background:none;border:none;font-size:16px;opacity:0.5;cursor:pointer;color:var(--ink);padding:0 2px;}
+  .ap-bill-del:active{opacity:0.9;}
+  .ap-bills-empty{font-size:12px;opacity:0.5;font-weight:600;padding:4px 0;}
+  .ap-balance-divider{height:2px;background:rgba(22,11,41,0.12);margin:16px 0;border-radius:2px;}
+  .ap-balance-computed{font-family:'Fredoka',sans-serif;font-weight:700;font-size:20px;color:var(--ink);}
+  .ap-balance-variance{font-size:12px;font-weight:700;margin-top:6px;min-height:16px;}
+  .ap-balance-match{color:var(--green-deep);}
+  .ap-balance-short{color:#C0133F;}
+  .ap-balance-over{color:var(--green-deep);}
+  @media (max-width:560px){ .ap-days-cols{gap:18px;} .ap-days-col{min-width:0;} }
 
   main{
     max-width:1040px;
@@ -3788,6 +3974,40 @@
     body.print-vendor-order [data-block-id="orders"].collapsed > *:not(.block-head),
     body.print-plcb-order [data-block-id="orders"].collapsed > *:not(.block-head){display:block!important;}
     body.print-plcb-order [data-block-id="orders"]{margin-top:0;}
+
+    /* ---------- Action Plan — single-page print/export ---------- */
+    body.print-actionplan-only header,
+    body.print-actionplan-only footer,
+    body.print-actionplan-only .stripe-band,
+    body.print-actionplan-only .cta-orb,
+    body.print-actionplan-only .blueprint-handle,
+    body.print-actionplan-only .blueprint-panel,
+    body.print-actionplan-only .omen-handle,
+    body.print-actionplan-only .omen-panel,
+    body.print-actionplan-only .ledger-handle,
+    body.print-actionplan-only .ledger-panel,
+    body.print-actionplan-only .backup-toast{display:none!important;}
+    .ap-print-btn{display:none!important;}
+    .study-wrap{max-width:100%;padding:0;}
+    .study-head{margin-bottom:8px;}
+    .study-head h1{font-size:22px;background:none!important;-webkit-text-fill-color:var(--ink)!important;color:var(--ink)!important;filter:none!important;-webkit-text-stroke:none!important;}
+    .study-head .sub{font-size:9px;margin-top:2px;}
+    .ap-week-meta{gap:18px;margin-bottom:4px;}
+    .ap-week-field label{font-size:8px;}
+    .ap-week-field input{border:none;border-bottom:1px solid rgba(22,11,41,0.3);border-radius:0;padding:2px 0;font-size:11px;background:transparent;}
+    .ap-week-range{font-size:11px;margin-bottom:10px;}
+    .ap-days-cols{gap:14px;margin-bottom:12px;}
+    .ap-day-card{box-shadow:none;border:1px solid rgba(22,11,41,0.3);border-radius:8px;padding:7px 10px;page-break-inside:avoid;break-inside:avoid;}
+    .ap-day-title{font-size:12px;margin-bottom:4px;}
+    .ap-day-line-row{margin-bottom:3px;}
+    .ap-day-line{font-size:10px;border-bottom:1px solid rgba(22,11,41,0.25);padding:2px 0;}
+    .ap-balance-box{box-shadow:none;border:1px solid rgba(22,11,41,0.3);border-radius:8px;padding:10px 14px;max-width:320px;margin-left:auto;margin-right:0;page-break-inside:avoid;break-inside:avoid;}
+    .ap-balance-title{font-size:9px;margin:6px 0 3px;}
+    .ap-balance-row input,.ap-bill-label,.ap-bill-amount{border:none;border-bottom:1px solid rgba(22,11,41,0.3);border-radius:0;padding:2px 0;font-size:10px;background:transparent;}
+    .ap-bill-del{display:none!important;}
+    .ap-balance-computed{font-size:15px;}
+    .ap-balance-divider{margin:8px 0;}
+    .ap-balance-variance{font-size:9px;}
     .block.filesblock h2{font-size:15px;}
     .file-actions,.files-storage-note{display:none!important;}
     .file-thumb,.file-icon{width:24px;height:24px;}
@@ -4617,7 +4837,7 @@
   <div class="sticky-nav-wrap no-print">
     <div class="tab-bar">
       <button class="tab-btn active" id="tabBtnPlanner" onclick="switchView('planner')">📅 Planner</button>
-      <button class="tab-btn" id="tabBtnStudy" onclick="switchView('study')">🧠 Study Session</button>
+      <button class="tab-btn" id="tabBtnStudy" onclick="switchView('study')">📋 Action Plan</button>
       <button class="tab-btn" id="tabBtnPower" onclick="switchView('power')">🔥 Power House</button>
       <button class="tab-btn" id="tabBtnZen" onclick="switchView('zen')">🧘 Zen</button>
       <button class="tab-btn" id="rearrangeBtn" onclick="toggleRearrangeMode()">🔀 Rearrange</button>
@@ -5164,60 +5384,58 @@
   <div id="viewStudy" class="view">
     <div class="study-wrap">
       <div class="study-head">
-        <h1>🧠 STUDY SESSION</h1>
-        <div class="sub">Flash cards for the insurance jargon that keeps tripping you up</div>
+        <h1>📋 ACTION PLAN</h1>
+        <div class="sub">Weekly breakdown — tasks by day, finances at a glance</div>
+        <button class="clear-btn print-btn no-print ap-print-btn" type="button" onclick="printActionPlanOnly()">🖨 Print / Export (1 page)</button>
       </div>
 
-      <div class="study-tools no-print">
-        <div class="study-tools-label">Practice Tools</div>
-        <div class="study-tools-row">
-          <a class="study-tool-link" href="https://danielwarnander87-bot.github.io/PSI-TEST-PREP/" target="_blank" rel="noopener">📘 PSI Test Prep</a>
-          <a class="study-tool-link" href="https://danielwarnander87-bot.github.io/Question-Drill-review/" target="_blank" rel="noopener">🎯 Question Drill Review</a>
-          <a class="study-tool-link" href="https://danielwarnander87-bot.github.io/Xcell-Drill-2/" target="_blank" rel="noopener">🧩 Xcel Drill 2</a>
-          <a class="study-tool-link" href="https://danielwarnander87-bot.github.io/Flash-Cards/" target="_blank" rel="noopener">🏠 Homeowners Drill</a>
-          <a class="study-tool-link" href="https://danielwarnander87-bot.github.io/Auto-Insurance-/" target="_blank" rel="noopener">🚗 Auto Insurance Drill</a>
-          <a class="study-tool-link" href="https://danielwarnander87-bot.github.io/Mini-Exam-Cram/" target="_blank" rel="noopener">🌿 Study Grove</a>
-          <a class="study-tool-link" href="https://danielwarnander87-bot.github.io/Story-mode/" target="_blank" rel="noopener">🐉 Story Mode</a>
+      <div class="ap-week-meta">
+        <div class="ap-week-field">
+          <label for="apSectionNum">Section</label>
+          <input type="number" id="apSectionNum" min="1" value="1" oninput="saveApMeta()">
+        </div>
+        <div class="ap-week-field ap-week-field-wide">
+          <label for="apWeekStart">Week starting (Monday)</label>
+          <input type="date" id="apWeekStart" onchange="saveApMeta();renderApWeekRange();">
         </div>
       </div>
+      <div class="ap-week-range" id="apWeekRangeDisplay">Monday&nbsp;&mdash;&nbsp;through&nbsp;&mdash;&nbsp;Sunday</div>
 
-      <div class="slideshow-wrap no-print">
-        <div class="study-tools-label">Test-Taking Strategy — Xcel Guide, Simplified</div>
-        <div class="slideshow-card">
-          <div class="slide-eyebrow" id="slideEyebrow">Slide 1 of 8</div>
-          <div class="slide-title" id="slideTitle"></div>
-          <div class="slide-body" id="slideBody"></div>
-          <div class="slide-dots" id="slideDots"></div>
-        </div>
-        <div class="slideshow-controls">
-          <button class="slide-nav-btn" type="button" onclick="slidePrev()" title="Previous">⏮</button>
-          <button class="slide-nav-btn play-btn" id="slidePlayBtn" type="button" onclick="slideToggleAudio()" title="Play/Pause narration">▶</button>
-          <button class="slide-nav-btn" type="button" onclick="slideNext()" title="Skip / Next">⏭</button>
-        </div>
-        <div class="slide-counter" id="slideCounter"></div>
+      <div class="ap-days-cols">
+        <div class="ap-days-col" id="apDaysColLeft"></div>
+        <div class="ap-days-col" id="apDaysColRight"></div>
       </div>
 
-      <div class="study-form no-print">
-        <input type="text" id="cardTermInput" placeholder="Term (e.g. Coinsurance Clause)" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('cardDefInput').focus();}">
-        <textarea id="cardDefInput" rows="2" placeholder="Definition / what it means..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addStudyCard();}"></textarea>
-        <button class="bullet-add-btn" type="button" onclick="addStudyCard()">+ Add Card</button>
-      </div>
-
-      <div class="study-toolbar no-print">
-        <div class="study-count" id="studyCount">0 cards</div>
-        <div style="display:flex;gap:8px;">
-          <button class="bullet-add-btn" type="button" onclick="shuffleStudyCards()">🔀 Shuffle</button>
-          <button class="bullet-add-btn" type="button" onclick="clearAllStudyCards()">🗑 Clear all cards</button>
+      <div class="ap-balance-box">
+        <div class="ap-balance-title">Starting Balance</div>
+        <div class="ap-balance-row">
+          <span class="ap-balance-dollar">$</span>
+          <input type="number" id="apStartBalance" placeholder="0.00" step="0.01" oninput="renderApBalance()">
         </div>
-      </div>
 
-      <div class="study-grid" id="studyGrid"></div>
+        <div class="ap-balance-title">Bills / Expenses</div>
+        <div id="apBillsList" class="ap-bills-list"></div>
+        <button class="bullet-add-btn" type="button" onclick="addApBill()">+ Add Bill</button>
+
+        <div class="ap-balance-divider"></div>
+
+        <div class="ap-balance-title">End Balance <span class="ap-balance-sub">(theoretical)</span></div>
+        <div class="ap-balance-computed" id="apEndBalanceTheo">$0.00</div>
+
+        <div class="ap-balance-title">Actual Ending</div>
+        <div class="ap-balance-row">
+          <span class="ap-balance-dollar">$</span>
+          <input type="number" id="apActualEnding" placeholder="0.00" step="0.01" oninput="renderApBalance()">
+        </div>
+        <div class="ap-balance-variance" id="apBalanceVariance"></div>
+      </div>
     </div>
   </div>
 
   <div id="viewPower" class="view">
     <div class="power-outer no-print">
       <div class="power-embers" id="powerEmbers"></div>
+      <div class="power-tide-band" id="powerTideBand"></div>
       <div class="power-topbar">
         <span class="power-title">🔥 POWER HOUSE</span>
         <button type="button" class="power-tool-btn" id="powerAddNoteBtn">+ Note</button>
@@ -5230,12 +5448,28 @@
         </select>
         <input type="color" class="power-bg-swatch" id="powerBgSwatch" title="Note background color" value="#1e0c06">
         <button type="button" class="power-tool-btn" id="powerMusicBtn" title="Toggle the calming ambient hum">🎵 Music</button>
+        <button type="button" class="power-tool-btn" id="powerMathBtn" title="New notes become title + number ledger blocks; branching one prompts for a deduction and a date">🧮 Math Mode</button>
         <button type="button" class="power-tool-btn power-clear-btn" id="powerClearBtn" title="Hold to clear every note"><span>Clear All</span></button>
       </div>
-      <div class="power-hint">Click anywhere below for a new note &middot; double-click a note to pick it up and drag it, drop it on the furnace to delete &middot; end a line with <strong>=</strong> to solve the math.</div>
+      <div class="power-hint">Click anywhere below for a new note &middot; double-click a note to pick it up and drag it, drop it on the furnace to delete &middot; end a line with <strong>=</strong> to solve the math &middot; drag the little glowing bud on a note's corner to another note to branch a connection &middot; click a branch line to snip it &middot; in <strong>Math Mode</strong>, branching a number prompts for a deduction + ETA and grows a new dated total &mdash; gold branches are gains, cool blue branches are losses &middot; everything but your latest branch softens so the &#9889; quick chip under it always shows where the next +/- amount lands &middot; give a branch a date and it bobs up out of the tide the closer that date lands to its chain's original balance date, glowing bright within 5 days.</div>
       <div class="power-canvas-wrap" id="powerCanvas"></div>
     </div>
     <div class="power-furnace" id="powerFurnace" title="Drop a note here to delete it">🔥</div>
+    <div class="power-math-modal-overlay" id="powerMathModalOverlay">
+      <div class="power-math-modal-box">
+        <div class="power-math-modal-title">🌿 New Branch</div>
+        <label class="power-math-modal-label">Deduction amount
+          <input type="text" inputmode="decimal" id="powerMathDeductionInput" placeholder="0.00">
+        </label>
+        <label class="power-math-modal-label">ETA / date
+          <input type="date" id="powerMathEtaInput">
+        </label>
+        <div class="power-math-modal-actions">
+          <button type="button" class="power-tool-btn" id="powerMathModalCancel">Cancel</button>
+          <button type="button" class="power-tool-btn active" id="powerMathModalConfirm">Branch it</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="viewZen" class="view zen-view">
@@ -7787,73 +8021,143 @@ function clearAllFiles(){
 }
 renderFilesList();
 
-// Study Session flashcards
-const STUDY_KEY='actionPlan3000_studyCards';
-let studyCards=[];
-try{const raw=localStorage.getItem(STUDY_KEY);if(raw)studyCards=JSON.parse(raw);}catch(e){}
+// ============ ACTION PLAN (weekly day breakdown + balance box) ============
+const AP_DAYS_KEY='actionPlan3000_apDays';
+const AP_BILLS_KEY='actionPlan3000_apBills';
+const AP_META_KEY='actionPlan3000_apMeta';
+const AP_DAY_NAMES=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const AP_LEFT_DAYS=['Monday','Tuesday','Wednesday','Thursday'];
+const AP_RIGHT_DAYS=['Friday','Saturday','Sunday'];
+const AP_LINES_PER_DAY=3;
 
-function saveStudyCards(){
-  try{localStorage.setItem(STUDY_KEY,JSON.stringify(studyCards));return true;}
-  catch(e){alert("Storage is full \u2014 couldn't save that card.");return false;}
+let apDays={};
+try{const raw=localStorage.getItem(AP_DAYS_KEY);if(raw)apDays=JSON.parse(raw)||{};}catch(e){}
+AP_DAY_NAMES.forEach(d=>{ if(!Array.isArray(apDays[d])) apDays[d]=new Array(AP_LINES_PER_DAY).fill(''); });
+
+let apBills=[];
+try{const raw=localStorage.getItem(AP_BILLS_KEY);if(raw)apBills=JSON.parse(raw)||[];}catch(e){}
+
+let apMeta={section:1,weekStart:''};
+try{const raw=localStorage.getItem(AP_META_KEY);if(raw)apMeta=Object.assign(apMeta,JSON.parse(raw)||{});}catch(e){}
+
+function saveApDays(){
+  try{localStorage.setItem(AP_DAYS_KEY,JSON.stringify(apDays));return true;}
+  catch(e){alert("Storage is full \u2014 couldn't save that.");return false;}
 }
-function renderStudyGrid(){
-  const grid=document.getElementById('studyGrid');
-  const count=document.getElementById('studyCount');
-  if(count)count.textContent=studyCards.length+' card'+(studyCards.length===1?'':'s');
-  if(!grid)return;
-  if(!studyCards.length){
-    grid.innerHTML='<div class="study-empty">No cards yet \u2014 add your first term above.</div>';
-    return;
+function saveApBills(){
+  try{localStorage.setItem(AP_BILLS_KEY,JSON.stringify(apBills));return true;}
+  catch(e){alert("Storage is full \u2014 couldn't save that bill.");return false;}
+}
+function saveApMeta(){
+  apMeta.section=document.getElementById('apSectionNum').value||1;
+  apMeta.weekStart=document.getElementById('apWeekStart').value||'';
+  try{localStorage.setItem(AP_META_KEY,JSON.stringify(apMeta));}catch(e){}
+}
+function renderApWeekRange(){
+  const el=document.getElementById('apWeekRangeDisplay');
+  if(!el)return;
+  if(!apMeta.weekStart){ el.innerHTML='Monday&nbsp;&mdash;&nbsp;through&nbsp;&mdash;&nbsp;Sunday'; return; }
+  const start=new Date(apMeta.weekStart+'T00:00:00');
+  const end=new Date(start.getTime()+6*86400000);
+  const fmt=d=>d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  el.textContent='Monday '+fmt(start)+'  through  Sunday '+fmt(end);
+}
+function apDayCard(day){
+  const lines=apDays[day];
+  const rows=lines.map((val,i)=>
+    '<div class="ap-day-line-row">'+
+      '<span class="ap-day-dash">\u2014</span>'+
+      '<input type="text" class="ap-day-line" value="'+escapeHtml(val)+'" placeholder="..." data-day="'+day+'" data-idx="'+i+'" oninput="updateApDayLine(this)">'+
+    '</div>'
+  ).join('');
+  return '<div class="ap-day-card"><div class="ap-day-title">'+day+'</div>'+rows+'</div>';
+}
+function renderApDays(){
+  const left=document.getElementById('apDaysColLeft');
+  const right=document.getElementById('apDaysColRight');
+  if(left) left.innerHTML=AP_LEFT_DAYS.map(apDayCard).join('');
+  if(right) right.innerHTML=AP_RIGHT_DAYS.map(apDayCard).join('');
+}
+function updateApDayLine(el){
+  const day=el.getAttribute('data-day');
+  const idx=parseInt(el.getAttribute('data-idx'),10);
+  if(!apDays[day])apDays[day]=new Array(AP_LINES_PER_DAY).fill('');
+  apDays[day][idx]=el.value;
+  saveApDays();
+}
+function apBillRow(bill){
+  return '<div class="ap-bill-row" data-id="'+bill.id+'">'+
+    '<input type="text" class="ap-bill-label" value="'+escapeHtml(bill.label)+'" placeholder="Bill name" oninput="updateApBill(\''+bill.id+'\',\'label\',this.value)">'+
+    '<span class="ap-balance-dollar">$</span>'+
+    '<input type="number" class="ap-bill-amount" value="'+(bill.amount===''?'':bill.amount)+'" placeholder="0.00" step="0.01" oninput="updateApBill(\''+bill.id+'\',\'amount\',this.value)">'+
+    '<button type="button" class="ap-bill-del" onclick="deleteApBill(\''+bill.id+'\')">\u00d7</button>'+
+  '</div>';
+}
+function renderApBills(){
+  const wrap=document.getElementById('apBillsList');
+  if(!wrap)return;
+  wrap.innerHTML=apBills.length?apBills.map(apBillRow).join(''):'<div class="ap-bills-empty">No bills added yet.</div>';
+}
+function addApBill(){
+  apBills.push({id:'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),label:'',amount:''});
+  saveApBills();
+  renderApBills();
+}
+function updateApBill(id,field,value){
+  const bill=apBills.find(b=>b.id===id);
+  if(!bill)return;
+  bill[field]=field==='amount'?(value===''?'':parseFloat(value)||0):value;
+  saveApBills();
+  renderApBalance();
+}
+function deleteApBill(id){
+  apBills=apBills.filter(b=>b.id!==id);
+  saveApBills();
+  renderApBills();
+  renderApBalance();
+}
+function apMoney(n){
+  const sign=n<0?'-':'';
+  return sign+'$'+Math.abs(n).toFixed(2);
+}
+function renderApBalance(){
+  const startEl=document.getElementById('apStartBalance');
+  const actualEl=document.getElementById('apActualEnding');
+  const theoEl=document.getElementById('apEndBalanceTheo');
+  const varEl=document.getElementById('apBalanceVariance');
+  const start=parseFloat(startEl&&startEl.value)||0;
+  const billsTotal=apBills.reduce((sum,b)=>sum+(parseFloat(b.amount)||0),0);
+  const theo=start-billsTotal;
+  if(theoEl) theoEl.textContent=apMoney(theo);
+  if(varEl){
+    if(actualEl&&actualEl.value!==''){
+      const actual=parseFloat(actualEl.value)||0;
+      const diff=actual-theo;
+      if(Math.abs(diff)<0.005){ varEl.textContent='\u2713 Matches theoretical end balance'; varEl.className='ap-balance-variance ap-balance-match'; }
+      else{
+        varEl.textContent=(diff>0?'+':'')+apMoney(diff)+' vs. theoretical';
+        varEl.className='ap-balance-variance '+(diff<0?'ap-balance-short':'ap-balance-over');
+      }
+    } else { varEl.textContent=''; varEl.className='ap-balance-variance'; }
   }
-  grid.innerHTML=studyCards.map(c=>{
-    return '<div class="study-card'+(c.flipped?' flipped':'')+'" data-id="'+c.id+'" onclick="flipStudyCard(\''+c.id+'\')">'+
-      '<button class="card-del" type="button" onclick="event.stopPropagation();deleteStudyCard(\''+c.id+'\')">\u00d7</button>'+
-      '<div class="card-label">'+(c.flipped?'Definition':'Term')+'</div>'+
-      '<div class="card-text">'+escapeHtml(c.flipped?c.definition:c.term)+'</div>'+
-    '</div>';
-  }).join('');
+  try{localStorage.setItem('actionPlan3000_apStartBalance',startEl?startEl.value:'');}catch(e){}
+  try{localStorage.setItem('actionPlan3000_apActualEnding',actualEl?actualEl.value:'');}catch(e){}
 }
-function addStudyCard(){
-  const termEl=document.getElementById('cardTermInput');
-  const defEl=document.getElementById('cardDefInput');
-  const term=termEl.value.trim();
-  const def=defEl.value.trim();
-  if(!term){alert('Give the card a term first.');termEl.focus();return;}
-  studyCards.push({id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),term:term,definition:def||'(no definition yet)',flipped:false});
-  if(!saveStudyCards()){studyCards.pop();return;}
-  termEl.value='';defEl.value='';
-  termEl.focus();
-  renderStudyGrid();
+function initActionPlan(){
+  document.getElementById('apSectionNum').value=apMeta.section||1;
+  document.getElementById('apWeekStart').value=apMeta.weekStart||'';
+  renderApWeekRange();
+  renderApDays();
+  renderApBills();
+  try{
+    const sb=localStorage.getItem('actionPlan3000_apStartBalance');
+    const ae=localStorage.getItem('actionPlan3000_apActualEnding');
+    if(sb!==null)document.getElementById('apStartBalance').value=sb;
+    if(ae!==null)document.getElementById('apActualEnding').value=ae;
+  }catch(e){}
+  renderApBalance();
 }
-function flipStudyCard(id){
-  const c=studyCards.find(x=>x.id===id);
-  if(!c)return;
-  c.flipped=!c.flipped;
-  saveStudyCards();
-  renderStudyGrid();
-}
-function deleteStudyCard(id){
-  if(!confirm('Delete this card?'))return;
-  studyCards=studyCards.filter(c=>c.id!==id);
-  saveStudyCards();
-  renderStudyGrid();
-}
-function shuffleStudyCards(){
-  for(let i=studyCards.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    const tmp=studyCards[i];studyCards[i]=studyCards[j];studyCards[j]=tmp;
-  }
-  saveStudyCards();
-  renderStudyGrid();
-}
-function clearAllStudyCards(){
-  if(!studyCards.length){alert('No cards to clear.');return;}
-  if(!confirm('Delete all '+studyCards.length+' card(s)? This can\'t be undone.'))return;
-  studyCards=[];
-  saveStudyCards();
-  renderStudyGrid();
-}
-renderStudyGrid();
+initActionPlan();
 
 function switchView(view){
   document.getElementById('viewPlanner').classList.toggle('active',view==='planner');
@@ -7871,76 +8175,7 @@ function switchView(view){
   if(view==='zen'){ enterZen(); } else { leaveZen(); }
 }
 
-/* ============================================================
-   TEST-TAKING STRATEGY SLIDESHOW — simplified from the Xcel
-   test-taking strategy guide screenshots (Aug 17 2026)
-   ============================================================ */
-const STRATEGY_SLIDES=[
-  { title:"Why Test-Taking Strategy Matters",
-    body:"Studying the material is essential, but <b>research shows up to 60% of your score</b> can come down to test-taking skill, not just knowledge. These strategies don't replace studying the content — they're what gives you the edge on the questions you're not 100% sure about." },
-  { title:"Know the Exam Software",
-    body:"The exam software lets you flag questions to come back to, take notes, highlight text, use a calculator, and see a timer. But if the exam is split into sections, <b>once you finish a section you can't go back</b> — double-check before moving on." },
-  { title:"Slow Down on the Wording",
-    body:"It's timed, but don't skim. One small word changes everything — <b>\"which is true\"</b> vs <b>\"which is NOT true\"</b> are completely different questions. Missing a word like that is the single most common way people lose points." },
-  { title:"Answer It Before You Peek",
-    body:"After reading a question, try to answer it in your head <b>before</b> looking at the options. If one of the choices matches what you guessed, that's a strong signal it's the right one — and it keeps the wrong answers from planting doubt." },
-  { title:"Process of Elimination",
-    body:"Even a total guess gets better once you eliminate the obviously wrong options. Cutting just one or two bad answers <b>takes your odds from 25% up to 50% or better</b> — sometimes you can eliminate three and there's only one option left." },
-  { title:"Watch for Negatives",
-    body:"Words like <b>\"not,\" \"least,\" \"false,\"</b> and questions ending in <b>\"EXCEPT\"</b> flip what's actually being asked. This is the most frequent mistake test-takers make — get comfortable spotting these on sight." },
-  { title:"Look for Answer \"Pairs\"",
-    body:"Two similar or opposite-sounding answers often mean the real answer is one of that pair. Example: two options both about \"actual cash value\" at different timing — that pairing alone is a clue the correct answer is one of those two." },
-  { title:"When Multiple Seem Right, Pick the BEST",
-    body:"Some questions have more than one answer that looks correct. Pick the one that <b>most fully and directly answers what's being asked</b> — the wrong one is usually only partly true, or true but doesn't actually answer the question." }
-];
-let slideIdx=0, slidePlaying=false;
-function renderSlide(){
-  const s=STRATEGY_SLIDES[slideIdx];
-  document.getElementById('slideEyebrow').textContent='Slide '+(slideIdx+1)+' of '+STRATEGY_SLIDES.length;
-  document.getElementById('slideTitle').textContent=s.title;
-  document.getElementById('slideBody').innerHTML=s.body;
-  document.getElementById('slideCounter').textContent=(slideIdx+1)+' / '+STRATEGY_SLIDES.length;
-  const dots=document.getElementById('slideDots');
-  dots.innerHTML=STRATEGY_SLIDES.map((_,i)=>'<span class="slide-dot'+(i===slideIdx?' active':'')+'" onclick="slideGoto('+i+')"></span>').join('');
-}
-function slideGoto(i){
-  slideIdx=Math.max(0,Math.min(STRATEGY_SLIDES.length-1,i));
-  renderSlide();
-  if(slidePlaying) slideSpeakCurrent();
-}
-function slideNext(){
-  if(slideIdx>=STRATEGY_SLIDES.length-1){
-    if(slidePlaying) slidePauseAudio();
-    slideIdx=0; renderSlide();
-    return;
-  }
-  slideGoto(slideIdx+1);
-}
-function slidePrev(){ slideGoto(slideIdx-1); }
-function slideSpeakCurrent(){
-  if(!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const s=STRATEGY_SLIDES[slideIdx];
-  const text=s.title+'. '+s.body.replace(/<\/?b>/g,'');
-  const utter=new SpeechSynthesisUtterance(text);
-  utter.rate=0.98;
-  utter.onend=()=>{ if(slidePlaying) slideNext(); };
-  window.speechSynthesis.speak(utter);
-}
-function slideToggleAudio(){
-  slidePlaying=!slidePlaying;
-  const btn=document.getElementById('slidePlayBtn');
-  btn.textContent=slidePlaying?'⏸':'▶';
-  if(slidePlaying) slideSpeakCurrent();
-  else if(window.speechSynthesis) window.speechSynthesis.cancel();
-}
-function slidePauseAudio(){
-  slidePlaying=false;
-  const btn=document.getElementById('slidePlayBtn');
-  if(btn) btn.textContent='▶';
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
-}
-renderSlide();
+function slidePauseAudio(){ /* no-op: Action Plan tab has no narrated slideshow */ }
 
 // ============ THE WALL ============
 function wallBlockLabel(key){
@@ -7953,20 +8188,32 @@ function wallBlockLabel(key){
    choice, inline math-solving (end a line with "="), and its own
    warm ambient hum + a few sound effects ============ */
 const POWER_NOTES_KEY='actionPlan3000_powerNotes';
+const POWER_EDGES_KEY='actionPlan3000_powerEdges';
 const POWER_MUSIC_KEY='actionPlan3000_powerMusicOn';
+const POWER_MATH_KEY='actionPlan3000_powerMathOn';
 let powerNotes=[];
 try{ const raw=localStorage.getItem(POWER_NOTES_KEY); if(raw) powerNotes=JSON.parse(raw)||[]; }catch(e){}
+let powerEdges=[]; // {id, from, to} — branches linking two notes into a tree/forest
+try{ const rawE=localStorage.getItem(POWER_EDGES_KEY); if(rawE) powerEdges=JSON.parse(rawE)||[]; }catch(e){}
 let powerMusicOn=true;
 try{ powerMusicOn=localStorage.getItem(POWER_MUSIC_KEY)!=='0'; }catch(e){}
+let powerMathOn=false;
+try{ powerMathOn=localStorage.getItem(POWER_MATH_KEY)==='1'; }catch(e){}
 let powerLastFont="'Nunito', sans-serif";
 let powerLastBg='#1e0c06';
 let powerActiveNoteId=null;
-let powerActiveNoteEl=null;
+let powerActiveNoteEl=null; // the contentEditable rich-text target (freeform notes only)
+let powerActiveNoteRootEl=null; // the outer .power-note element for the active note, any kind
 let powerActiveNoteRange=null;
 let powerDrag=null; // {id, el, origX, origY, overFurnace}
+let powerLinking=null; // {fromId, isMath} while dragging a branch handle
+let powerMathBranchPending=null; // {fromId, x, y} awaiting the deduction/ETA prompt
+let powerSuppressNextCanvasClick=false; // swallows the stray click a link-drag release leaves behind
+let powerLatestMathId=null; // id of the math note quick +/- deductions attach to
 let powerNoteIdSeq=1;
 
 function savePowerNotes(){ try{ localStorage.setItem(POWER_NOTES_KEY, JSON.stringify(powerNotes)); }catch(e){} }
+function savePowerEdges(){ try{ localStorage.setItem(POWER_EDGES_KEY, JSON.stringify(powerEdges)); }catch(e){} }
 function powerUid(){ return 'pn'+Date.now()+'_'+(powerNoteIdSeq++); }
 
 /* ---------- sound effects: ember pop, anvil clink, quench hiss ---------- */
@@ -7979,6 +8226,11 @@ function playPowerCalcSound(){
   if(sfxMuted) return;
   __playTone(1200,0,0.05,'square',0.05);
   __playTone(1600,0.04,0.08,'sine',0.045);
+}
+function playPowerLinkSound(){
+  if(sfxMuted) return;
+  __playTone(520,0,0.08,'triangle',0.08);
+  __playTone(780,0.06,0.12,'sine',0.06);
 }
 function playPowerDeleteSound(){
   if(sfxMuted) return;
@@ -8110,6 +8362,7 @@ function powerMakeNoteEl(note){
   const el=document.createElement('div');
   el.className='power-note';
   el.contentEditable='true';
+  el.setAttribute('data-id',note.id);
   el.setAttribute('data-placeholder','Jot it down…');
   el.style.left=note.x+'%';
   el.style.top=note.y+'px';
@@ -8135,6 +8388,7 @@ function powerMakeNoteEl(note){
   el.addEventListener('focus',function(){
     powerActiveNoteId=note.id;
     powerActiveNoteEl=el;
+    powerActiveNoteRootEl=el;
     powerLastFont=el.style.fontFamily||powerLastFont;
     const fontSelect=document.getElementById('powerFontSelect');
     if(fontSelect) fontSelect.value=powerLastFont;
@@ -8176,10 +8430,543 @@ function powerMakeNoteEl(note){
   return el;
 }
 
+/* ---------- date helpers for the tide: proximity to a chain's original balance date ---------- */
+function powerParseDateLoose(str){
+  if(!str) return null;
+  const iso=/^\d{4}-\d{2}-\d{2}$/.test(str);
+  const d=new Date(iso?(str+'T00:00:00'):str);
+  return isNaN(d.getTime())?null:d;
+}
+function powerDaysBetween(a,b){
+  return Math.round((a.getTime()-b.getTime())/86400000);
+}
+function powerFormatDateDisplay(isoStr){
+  const d=powerParseDateLoose(isoStr);
+  if(!d) return isoStr||'';
+  return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+}
+function powerFindChainRoot(noteId){
+  let currentId=noteId, guard=0;
+  while(guard++<200){
+    const incoming=powerEdges.find(function(ed){ return ed.to===currentId; });
+    if(!incoming) break;
+    currentId=incoming.from;
+  }
+  return powerNotes.find(function(n){ return n.id===currentId; })||null;
+}
+function powerApplyTideFloat(){
+  const canvas=document.getElementById('powerCanvas');
+  if(!canvas) return;
+  powerNotes.forEach(function(note){
+    if(note.kind!=='math') return;
+    const el=canvas.querySelector('.power-note[data-id="'+note.id+'"]');
+    if(!el) return;
+    el.classList.remove('power-note-floating','power-note-tide-active');
+    el.style.removeProperty('--tide-lift');
+    if(!note.date) return;
+    const root=powerFindChainRoot(note.id);
+    if(!root) return;
+    const rootDateStr=root.date||root.createdAt;
+    const etaDate=powerParseDateLoose(note.date);
+    const rootDate=powerParseDateLoose(rootDateStr);
+    if(!etaDate||!rootDate) return;
+    const daysDiff=Math.abs(powerDaysBetween(etaDate,rootDate));
+    if(daysDiff<=10){
+      const lift=Math.max(0,(10-daysDiff)/10);
+      el.style.setProperty('--tide-lift',lift.toFixed(2));
+      el.classList.add('power-note-floating');
+      if(daysDiff<=5) el.classList.add('power-note-tide-active');
+    }
+  });
+}
+
+/* ---------- mother blocks vs. transactions: a mother has no incoming branch and
+   always shows starting balance + everything branched off it, live; a transaction
+   is just its own branch amount, editable in place ---------- */
+function powerHasIncomingEdge(id){
+  return powerEdges.some(function(ed){ return ed.to===id; });
+}
+function powerIsMother(note){
+  return note.kind==='math' && !powerHasIncomingEdge(note.id);
+}
+function powerSumDescendantDeltas(rootId){
+  let total=0, queue=[rootId], guard=0;
+  while(queue.length&&guard++<500){
+    const cur=queue.shift();
+    powerEdges.forEach(function(ed){
+      if(ed.from===cur){
+        if(typeof ed.delta==='number') total+=ed.delta;
+        queue.push(ed.to);
+      }
+    });
+  }
+  return total;
+}
+function powerRecomputeAllMathValues(){
+  powerNotes.forEach(function(note){
+    if(note.kind!=='math') return;
+    const incoming=powerEdges.find(function(ed){ return ed.to===note.id; });
+    if(!incoming){
+      const base=(typeof note.baseValue==='number')?note.baseValue:(note.value||0);
+      note.baseValue=base;
+      note.value=base+powerSumDescendantDeltas(note.id);
+    } else if(typeof incoming.delta==='number'){
+      note.value=incoming.delta;
+    }
+  });
+  savePowerNotes();
+}
+function powerCollectSubtreeIds(id){
+  let ids=[id], queue=[id], guard=0;
+  while(queue.length&&guard++<500){
+    const cur=queue.shift();
+    powerEdges.forEach(function(ed){
+      if(ed.from===cur){ ids.push(ed.to); queue.push(ed.to); }
+    });
+  }
+  return ids;
+}
+function powerDeleteNote(id){
+  const idsToRemove=powerCollectSubtreeIds(id);
+  powerNotes=powerNotes.filter(function(n){ return idsToRemove.indexOf(n.id)===-1; });
+  powerEdges=powerEdges.filter(function(ed){ return idsToRemove.indexOf(ed.from)===-1 && idsToRemove.indexOf(ed.to)===-1; });
+  savePowerNotes();
+  savePowerEdges();
+  powerRecomputeAllMathValues();
+  if(idsToRemove.indexOf(powerLatestMathId)!==-1) powerLatestMathId=null;
+  powerRenderNotes();
+  try{ playPowerDeleteSound(); }catch(e){}
+}
+function powerMakeDeleteBtn(note){
+  const btn=document.createElement('button');
+  btn.type='button';
+  btn.className='power-note-delete';
+  btn.setAttribute('data-for',note.id);
+  btn.title='Delete this block'+(note.kind==='math'?' (and anything branched from it)':'');
+  btn.textContent='×';
+  btn.addEventListener('pointerdown',function(e){ e.stopPropagation(); });
+  btn.addEventListener('click',function(e){
+    e.preventDefault(); e.stopPropagation();
+    powerDeleteNote(note.id);
+  });
+  return btn;
+}
+
+/* ---------- math-mode notes: a title block over a strictly-numeric value ---------- */
+function powerMakeMathNoteEl(note){
+  const isMother=powerIsMother(note);
+  const el=document.createElement('div');
+  el.className='power-note power-note-math'+(isMother?' power-note-mother':'');
+  el.setAttribute('data-id',note.id);
+  el.style.left=note.x+'%';
+  el.style.top=note.y+'px';
+  el.style.fontFamily=note.font||powerLastFont;
+  el.style.background=note.bg||powerLastBg;
+
+  let motherTag=null;
+  if(isMother){
+    motherTag=document.createElement('div');
+    motherTag.className='power-mother-tag';
+    motherTag.textContent='👑 Balance';
+  }
+
+  const titleInput=document.createElement('input');
+  titleInput.type='text';
+  titleInput.className='power-math-title';
+  titleInput.placeholder='Title';
+  titleInput.value=note.title||'';
+  titleInput.spellcheck=false;
+
+  const valueRow=document.createElement('div');
+  valueRow.className='power-math-value-row';
+  const valueInput=document.createElement('input');
+  valueInput.type='text';
+  valueInput.inputMode='decimal';
+  valueInput.className='power-math-value';
+  valueInput.placeholder=isMother?'Starting balance':'Amount';
+  valueInput.value=(note.value||note.value===0)?String(note.value):'';
+  valueInput.spellcheck=false;
+  valueRow.appendChild(valueInput);
+
+  const dateEl=document.createElement('div');
+  dateEl.className='power-math-date';
+  dateEl.textContent=note.date?('ETA '+powerFormatDateDisplay(note.date)):'';
+  dateEl.style.display=note.date?'block':'none';
+
+  const incomingEdge=powerEdges.find(function(ed){ return ed.to===note.id; });
+  const deltaEl=document.createElement('div');
+  deltaEl.className='power-math-delta';
+  if(!isMother&&incomingEdge&&typeof incomingEdge.delta==='number'&&incomingEdge.delta!==0){
+    const isGain=incomingEdge.delta>0;
+    el.classList.add(isGain?'power-note-math-gain':'power-note-math-loss');
+    deltaEl.classList.add(isGain?'power-math-delta-gain':'power-math-delta-loss');
+    deltaEl.textContent=(isGain?'▲ +':'▼ -')+Math.abs(incomingEdge.delta).toFixed(2);
+  } else {
+    deltaEl.style.display='none';
+  }
+
+  if(motherTag) el.appendChild(motherTag);
+  el.appendChild(titleInput);
+  el.appendChild(valueRow);
+  el.appendChild(deltaEl);
+  el.appendChild(dateEl);
+
+  function markActive(){
+    powerActiveNoteId=note.id;
+    powerActiveNoteEl=null;
+    powerActiveNoteRootEl=el;
+    powerLastFont=el.style.fontFamily||powerLastFont;
+    const fontSelect=document.getElementById('powerFontSelect');
+    if(fontSelect) fontSelect.value=powerLastFont;
+    powerLatestMathId=note.id;
+    powerApplyMathFocus();
+  }
+  titleInput.addEventListener('focus',markActive);
+  valueInput.addEventListener('focus',markActive);
+  titleInput.addEventListener('input',function(){
+    note.title=titleInput.value;
+    savePowerNotes();
+  });
+  valueInput.addEventListener('input',function(){
+    let v=valueInput.value.replace(/[^0-9.\-]/g,'');
+    v=v.replace(/(?!^)-/g,'');
+    const firstDot=v.indexOf('.');
+    if(firstDot!==-1) v=v.slice(0,firstDot+1)+v.slice(firstDot+1).replace(/\./g,'');
+    if(v!==valueInput.value) valueInput.value=v;
+  });
+  valueInput.addEventListener('blur',function(){
+    const num=parseFloat(valueInput.value);
+    const clean=isNaN(num)?0:num;
+    if(isMother){
+      note.baseValue=clean;
+      note.value=clean;
+    } else {
+      const incoming=powerEdges.find(function(ed){ return ed.to===note.id; });
+      if(incoming){
+        incoming.delta=clean;
+        savePowerEdges();
+      }
+      note.value=clean;
+    }
+    savePowerNotes();
+    powerRecomputeAllMathValues();
+    powerRenderNotes();
+  });
+  el.addEventListener('dblclick',function(e){
+    if(e.target.tagName==='INPUT') return;
+    e.preventDefault();
+    powerStartDrag(el,note);
+  });
+
+  return el;
+}
+
+/* ---------- branches: link notes into a tree/forest via a corner handle ---------- */
+function powerMakeHandleEl(note){
+  const handle=document.createElement('div');
+  handle.className='power-note-handle';
+  handle.setAttribute('data-for',note.id);
+  handle.title=note.kind==='math'
+    ? "Drag out to branch a new dated total after a deduction"
+    : "Drag to another note to branch a connection";
+  handle.addEventListener('pointerdown',function(e){
+    e.preventDefault(); e.stopPropagation();
+    powerStartLink(note);
+  });
+  return handle;
+}
+function powerBuildEdgesSvg(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('id','powerEdgesSvg');
+  svg.innerHTML='<defs>'
+    +'<linearGradient id="powerEdgeGradient" x1="0" y1="0" x2="1" y2="0">'
+    +'<stop offset="0%" stop-color="#8a3a16"></stop><stop offset="100%" stop-color="#ff9248"></stop>'
+    +'</linearGradient>'
+    +'<linearGradient id="powerEdgeGainGradient" x1="0" y1="0" x2="1" y2="0">'
+    +'<stop offset="0%" stop-color="#a3350a"></stop><stop offset="100%" stop-color="#ffd25a"></stop>'
+    +'</linearGradient>'
+    +'<linearGradient id="powerEdgeLossGradient" x1="0" y1="0" x2="1" y2="0">'
+    +'<stop offset="0%" stop-color="#3a1c5a"></stop><stop offset="100%" stop-color="#7db3ff"></stop>'
+    +'</linearGradient>'
+    +'</defs><g id="powerEdgePaths"></g><g id="powerTempEdgeLayer"></g>';
+  return svg;
+}
+function powerNoteRect(el,canvasRect){
+  const r=el.getBoundingClientRect();
+  return {left:r.left-canvasRect.left, top:r.top-canvasRect.top, right:r.right-canvasRect.left, bottom:r.bottom-canvasRect.top, width:r.width, height:r.height};
+}
+function powerRefreshOverlay(){
+  const canvas=document.getElementById('powerCanvas');
+  if(!canvas) return;
+  const canvasRect=canvas.getBoundingClientRect();
+  let maxBottom=520;
+  powerNotes.forEach(function(note){
+    const el=canvas.querySelector('.power-note[data-id="'+note.id+'"]');
+    const handle=canvas.querySelector('.power-note-handle[data-for="'+note.id+'"]');
+    const delBtn=canvas.querySelector('.power-note-delete[data-for="'+note.id+'"]');
+    if(!el) return;
+    const r=powerNoteRect(el,canvasRect);
+    if(handle){
+      handle.style.left=(r.right-10)+'px';
+      handle.style.top=(r.bottom-10)+'px';
+    }
+    if(delBtn){
+      delBtn.style.left=(r.right-10)+'px';
+      delBtn.style.top=(r.top-10)+'px';
+    }
+    maxBottom=Math.max(maxBottom, r.bottom+40);
+  });
+  canvas.style.minHeight=maxBottom+'px';
+  const svg=document.getElementById('powerEdgesSvg');
+  const pathsLayer=svg?svg.querySelector('#powerEdgePaths'):null;
+  if(pathsLayer){
+    let html='';
+    powerEdges.forEach(function(ed){
+      const a=canvas.querySelector('.power-note[data-id="'+ed.from+'"]');
+      const b=canvas.querySelector('.power-note[data-id="'+ed.to+'"]');
+      if(!a||!b) return;
+      const ar=powerNoteRect(a,canvasRect), br=powerNoteRect(b,canvasRect);
+      const x1=ar.left+ar.width/2, y1=ar.top+ar.height/2;
+      const x2=br.left+br.width/2, y2=br.top+br.height/2;
+      const mx=(x1+x2)/2, my=(y1+y2)/2-28;
+      let cls='power-edge';
+      if(typeof ed.delta==='number'&&ed.delta!==0) cls+=(ed.delta>0?' power-edge-gain':' power-edge-loss');
+      html+='<path d="M'+x1+','+y1+' Q'+mx+','+my+' '+x2+','+y2+'" class="'+cls+'" data-edge-id="'+ed.id+'"></path>';
+    });
+    pathsLayer.innerHTML=html;
+    pathsLayer.querySelectorAll('.power-edge').forEach(function(path){
+      path.addEventListener('click',function(e){
+        e.stopPropagation();
+        const id=path.getAttribute('data-edge-id');
+        powerEdges=powerEdges.filter(function(ed){ return ed.id!==id; });
+        savePowerEdges();
+        powerRecomputeAllMathValues();
+        powerRenderNotes();
+        try{ playPowerDeleteSound(); }catch(e2){}
+      });
+    });
+  }
+  const chip=document.getElementById('powerQuickChip');
+  if(chip){
+    const latestEl=powerMathOn&&powerLatestMathId?canvas.querySelector('.power-note[data-id="'+powerLatestMathId+'"]'):null;
+    if(latestEl){
+      const r=powerNoteRect(latestEl,canvasRect);
+      chip.style.left=r.left+'px';
+      chip.style.top=(r.bottom+10)+'px';
+      chip.style.display='flex';
+    } else {
+      chip.style.display='none';
+    }
+  }
+}
+/* ---------- Math Mode spotlight: blur every note but the "latest" branch ---------- */
+function powerApplyMathFocus(){
+  const canvas=document.getElementById('powerCanvas');
+  if(!canvas) return;
+  canvas.classList.toggle('power-math-focus',powerMathOn);
+  canvas.querySelectorAll('.power-note').forEach(function(el){
+    const id=el.getAttribute('data-id');
+    const note=id?powerNotes.find(function(n){ return n.id===id; }):null;
+    const isMother=note&&powerIsMother(note);
+    const isLatest=powerMathOn&&id&&id===powerLatestMathId;
+    el.classList.toggle('power-note-blurred',powerMathOn&&!isLatest&&!isMother);
+    el.classList.toggle('power-note-latest',isLatest);
+  });
+  powerRefreshOverlay();
+}
+function powerRemoveEdgesForNote(id){
+  const before=powerEdges.length;
+  powerEdges=powerEdges.filter(function(ed){ return ed.from!==id&&ed.to!==id; });
+  if(powerEdges.length!==before) savePowerEdges();
+}
+function powerAddEdge(fromId,toId,delta){
+  if(!fromId||!toId||fromId===toId) return;
+  const exists=powerEdges.some(function(ed){
+    return (ed.from===fromId&&ed.to===toId)||(ed.from===toId&&ed.to===fromId);
+  });
+  if(exists) return;
+  const edge={id:powerUid(),from:fromId,to:toId};
+  if(typeof delta==='number') edge.delta=delta;
+  powerEdges.push(edge);
+  savePowerEdges();
+  powerRecomputeAllMathValues();
+  powerRefreshOverlay();
+  try{ playPowerLinkSound(); }catch(e){}
+}
+/* ---------- quick +/- chip: attaches a signed amount straight onto the latest branch ---------- */
+function powerMakeQuickChip(){
+  const chip=document.createElement('div');
+  chip.className='power-quick-chip';
+  chip.id='powerQuickChip';
+  const input=document.createElement('input');
+  input.type='text';
+  input.inputMode='text';
+  input.className='power-quick-chip-input';
+  input.placeholder='+/- amount or 60-30=';
+  input.title="Type a signed amount or a formula (e.g. 60-30=) and press Enter to branch it off the latest total";
+  const dateInput=document.createElement('input');
+  dateInput.type='date';
+  dateInput.className='power-quick-chip-date';
+  dateInput.title='Optional ETA — dated branches float on the tide the closer they land to the chain\'s original balance date';
+  chip.appendChild(input);
+  chip.appendChild(dateInput);
+  function commit(){
+    powerQuickDeduct(input.value,dateInput.value);
+    input.value='';
+    dateInput.value='';
+  }
+  input.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
+  dateInput.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
+  return chip;
+}
+function powerQuickDeduct(raw,dateStr){
+  if(!powerLatestMathId) return;
+  const latest=powerNotes.find(function(n){ return n.id===powerLatestMathId; });
+  if(!latest||latest.kind!=='math') return;
+  const expr=(raw||'').trim().replace(/=+\s*$/,'').trim();
+  if(!expr) return;
+  const delta=powerSafeEvalMath(expr);
+  if(delta===null||isNaN(delta)||delta===0) return;
+  const canvas=document.getElementById('powerCanvas');
+  const canvasRect=canvas?canvas.getBoundingClientRect():null;
+  const latestEl=canvas?canvas.querySelector('.power-note[data-id="'+latest.id+'"]'):null;
+  let nx=latest.x, ny=latest.y+150;
+  if(latestEl&&canvasRect){
+    const r=powerNoteRect(latestEl,canvasRect);
+    nx=((r.left+30)/canvasRect.width)*100;
+    ny=r.bottom+30;
+  }
+  const newNote={
+    id:powerUid(),
+    x:Math.max(0,Math.min(82,nx)),
+    y:Math.max(0,ny),
+    kind:'math',
+    title:latest.title||'',
+    value:delta,
+    date:dateStr||'',
+    createdAt:new Date().toISOString().slice(0,10),
+    font:latest.font||powerLastFont,
+    bg:latest.bg||powerLastBg
+  };
+  powerNotes.push(newNote);
+  savePowerNotes();
+  powerAddEdge(latest.id,newNote.id,delta);
+  powerLatestMathId=newNote.id;
+  powerRenderNotes();
+  try{ playPowerCreateSound(); }catch(e){}
+}
+function powerStartLink(note){
+  if(powerLinking||powerDrag) return;
+  powerLinking={fromId:note.id, isMath:note.kind==='math'};
+  document.addEventListener('pointermove',powerLinkMove);
+  document.addEventListener('pointerup',powerLinkEnd);
+}
+function powerLinkMove(e){
+  if(!powerLinking) return;
+  const canvas=document.getElementById('powerCanvas');
+  const svg=document.getElementById('powerEdgesSvg');
+  if(!canvas||!svg) return;
+  const canvasRect=canvas.getBoundingClientRect();
+  const fromEl=canvas.querySelector('.power-note[data-id="'+powerLinking.fromId+'"]');
+  if(!fromEl) return;
+  const fr=powerNoteRect(fromEl,canvasRect);
+  const x1=fr.left+fr.width/2, y1=fr.top+fr.height/2;
+  const x2=e.clientX-canvasRect.left, y2=e.clientY-canvasRect.top;
+  const tempLayer=svg.querySelector('#powerTempEdgeLayer');
+  if(tempLayer) tempLayer.innerHTML='<path d="M'+x1+','+y1+' L'+x2+','+y2+'" class="power-temp-edge"></path>';
+
+  if(powerLinking.isMath) return; // math branches always create a fresh node — no drop target to highlight
+  document.querySelectorAll('.power-note-link-target').forEach(function(n){ n.classList.remove('power-note-link-target'); });
+  const overEl=document.elementFromPoint(e.clientX,e.clientY);
+  const noteEl=overEl?overEl.closest('.power-note'):null;
+  if(noteEl&&noteEl.getAttribute('data-id')!==powerLinking.fromId){
+    noteEl.classList.add('power-note-link-target');
+  }
+}
+function powerLinkEnd(e){
+  document.removeEventListener('pointermove',powerLinkMove);
+  document.removeEventListener('pointerup',powerLinkEnd);
+  powerSuppressNextCanvasClick=true;
+  const svg=document.getElementById('powerEdgesSvg');
+  const tempLayer=svg?svg.querySelector('#powerTempEdgeLayer'):null;
+  if(tempLayer) tempLayer.innerHTML='';
+  document.querySelectorAll('.power-note-link-target').forEach(function(n){ n.classList.remove('power-note-link-target'); });
+  if(!powerLinking) return;
+  const fromId=powerLinking.fromId;
+  const isMath=powerLinking.isMath;
+  powerLinking=null;
+
+  if(isMath){
+    const canvas=document.getElementById('powerCanvas');
+    if(!canvas) return;
+    const rect=canvas.getBoundingClientRect();
+    const xPct=((e.clientX-rect.left)/rect.width)*100;
+    const yPx=(e.clientY-rect.top);
+    powerOpenMathBranchPrompt(fromId,xPct,yPx);
+    return;
+  }
+  const overEl=document.elementFromPoint(e.clientX,e.clientY);
+  const noteEl=overEl?overEl.closest('.power-note'):null;
+  const toId=noteEl?noteEl.getAttribute('data-id'):null;
+  if(toId) powerAddEdge(fromId,toId);
+}
+
+/* ---------- math branch prompt: deduction + ETA -> a new dated total ---------- */
+function powerOpenMathBranchPrompt(fromId,xPct,yPx){
+  const fromNote=powerNotes.find(function(n){ return n.id===fromId; });
+  if(!fromNote||fromNote.kind!=='math') return;
+  powerMathBranchPending={fromId:fromId, x:Math.max(0,Math.min(82,xPct)), y:Math.max(0,yPx)};
+  const overlay=document.getElementById('powerMathModalOverlay');
+  const dedInput=document.getElementById('powerMathDeductionInput');
+  const etaInput=document.getElementById('powerMathEtaInput');
+  if(dedInput) dedInput.value='';
+  if(etaInput) etaInput.value='';
+  if(overlay) overlay.classList.add('open');
+  setTimeout(function(){ if(dedInput) dedInput.focus(); },50);
+}
+function powerCloseMathBranchPrompt(){
+  powerMathBranchPending=null;
+  const overlay=document.getElementById('powerMathModalOverlay');
+  if(overlay) overlay.classList.remove('open');
+}
+function powerConfirmMathBranch(){
+  if(!powerMathBranchPending) return;
+  const fromNote=powerNotes.find(function(n){ return n.id===powerMathBranchPending.fromId; });
+  if(!fromNote){ powerCloseMathBranchPrompt(); return; }
+  const dedInput=document.getElementById('powerMathDeductionInput');
+  const etaInput=document.getElementById('powerMathEtaInput');
+  const dedRaw=dedInput?dedInput.value.replace(/[^0-9.\-]/g,''):'';
+  const deduction=parseFloat(dedRaw);
+  const dedNum=isNaN(deduction)?0:deduction;
+  const eta=etaInput?etaInput.value.trim():'';
+  const delta=-dedNum;
+  const newNote={
+    id:powerUid(),
+    x:powerMathBranchPending.x,
+    y:powerMathBranchPending.y,
+    kind:'math',
+    title:fromNote.title||'',
+    value:delta,
+    date:eta,
+    createdAt:new Date().toISOString().slice(0,10),
+    font:fromNote.font||powerLastFont,
+    bg:fromNote.bg||powerLastBg
+  };
+  powerNotes.push(newNote);
+  savePowerNotes();
+  powerAddEdge(fromNote.id,newNote.id,delta);
+  powerLatestMathId=newNote.id;
+  powerRenderNotes();
+  try{ playPowerCreateSound(); }catch(e){}
+  powerCloseMathBranchPrompt();
+}
+
 function powerRenderNotes(){
   const canvas=document.getElementById('powerCanvas');
   if(!canvas) return;
   canvas.innerHTML='';
+  canvas.appendChild(powerBuildEdgesSvg());
+  canvas.appendChild(powerMakeQuickChip());
   if(!powerNotes.length){
     const msg=document.createElement('div');
     msg.className='power-empty-msg';
@@ -8187,26 +8974,34 @@ function powerRenderNotes(){
     canvas.appendChild(msg);
   }
   powerNotes.forEach(function(note){
-    canvas.appendChild(powerMakeNoteEl(note));
+    const noteEl=note.kind==='math'?powerMakeMathNoteEl(note):powerMakeNoteEl(note);
+    canvas.appendChild(noteEl);
+    canvas.appendChild(powerMakeHandleEl(note));
+    canvas.appendChild(powerMakeDeleteBtn(note));
   });
+  powerApplyMathFocus();
+  powerApplyTideFloat();
 }
 
 function powerAddNote(xPct,yPx){
-  const note={
-    id:powerUid(),
-    x:Math.max(0,Math.min(82,xPct)),
-    y:Math.max(0,yPx),
-    html:'',
-    font:powerLastFont,
-    bg:powerLastBg
-  };
+  const baseX=Math.max(0,Math.min(82,xPct));
+  const baseY=Math.max(0,yPx);
+  const note=powerMathOn
+    ? { id:powerUid(), x:baseX, y:baseY, kind:'math', title:'', value:0, date:'', createdAt:new Date().toISOString().slice(0,10), font:powerLastFont, bg:powerLastBg }
+    : { id:powerUid(), x:baseX, y:baseY, html:'', font:powerLastFont, bg:powerLastBg };
   powerNotes.push(note);
   savePowerNotes();
+  if(note.kind==='math') powerLatestMathId=note.id;
   powerRenderNotes();
   const canvas=document.getElementById('powerCanvas');
-  const els=canvas?canvas.querySelectorAll('.power-note'):[];
-  const newEl=els[els.length-1];
-  if(newEl) newEl.focus();
+  if(note.kind==='math'){
+    const titleInput=canvas?canvas.querySelector('.power-note[data-id="'+note.id+'"] .power-math-title'):null;
+    if(titleInput) titleInput.focus();
+  } else {
+    const els=canvas?canvas.querySelectorAll('.power-note'):[];
+    const newEl=els[els.length-1];
+    if(newEl) newEl.focus();
+  }
   try{ playPowerCreateSound(); }catch(e){}
 }
 
@@ -8241,6 +9036,7 @@ function powerDragMove(e){
   powerDrag.overFurnace=over;
   const furnace=document.getElementById('powerFurnace');
   if(furnace) furnace.classList.toggle('power-furnace-hover',over);
+  powerRefreshOverlay();
 }
 function powerDragCommitClick(e){
   if(!powerDrag) return;
@@ -8266,10 +9062,7 @@ function powerEndDrag(commit){
   if(!note) return;
 
   if(commit&&st.overFurnace){
-    powerNotes=powerNotes.filter(function(n){ return n.id!==st.id; });
-    savePowerNotes();
-    powerRenderNotes();
-    try{ playPowerDeleteSound(); }catch(e2){}
+    powerDeleteNote(st.id);
     return;
   }
   if(commit){
@@ -8282,6 +9075,7 @@ function powerEndDrag(commit){
     st.el.style.left=st.origX+'%';
     st.el.style.top=st.origY+'px';
   }
+  powerRefreshOverlay();
 }
 
 (function(){
@@ -8323,8 +9117,8 @@ function powerEndDrag(commit){
   if(fontSelect) fontSelect.addEventListener('change',function(){
     powerLastFont=fontSelect.value;
     const note=powerNotes.find(function(n){ return n.id===powerActiveNoteId; });
-    if(powerActiveNoteEl&&note&&document.body.contains(powerActiveNoteEl)){
-      powerActiveNoteEl.style.fontFamily=fontSelect.value;
+    if(powerActiveNoteRootEl&&note&&document.body.contains(powerActiveNoteRootEl)){
+      powerActiveNoteRootEl.style.fontFamily=fontSelect.value;
       note.font=fontSelect.value;
       savePowerNotes();
     }
@@ -8332,8 +9126,8 @@ function powerEndDrag(commit){
   if(bgSwatch) bgSwatch.addEventListener('input',function(){
     powerLastBg=bgSwatch.value;
     const note=powerNotes.find(function(n){ return n.id===powerActiveNoteId; });
-    if(powerActiveNoteEl&&note&&document.body.contains(powerActiveNoteEl)){
-      powerActiveNoteEl.style.background=bgSwatch.value;
+    if(powerActiveNoteRootEl&&note&&document.body.contains(powerActiveNoteRootEl)){
+      powerActiveNoteRootEl.style.background=bgSwatch.value;
       note.bg=bgSwatch.value;
       savePowerNotes();
     }
@@ -8350,6 +9144,33 @@ function powerEndDrag(commit){
     if(powerMusicOn) powerStartAmbient(); else powerStopAmbient();
   });
   applyMusicBtn();
+
+  const mathBtn=document.getElementById('powerMathBtn');
+  function applyMathBtn(){
+    if(!mathBtn) return;
+    mathBtn.textContent=powerMathOn?'🧮 Math Mode: ON':'🧮 Math Mode';
+    mathBtn.classList.toggle('active',powerMathOn);
+  }
+  if(mathBtn) mathBtn.addEventListener('click',function(){
+    powerMathOn=!powerMathOn;
+    try{ localStorage.setItem(POWER_MATH_KEY,powerMathOn?'1':'0'); }catch(e){}
+    applyMathBtn();
+    powerApplyMathFocus();
+    try{ soundClick(); }catch(e){}
+  });
+  applyMathBtn();
+
+  const mathOverlay=document.getElementById('powerMathModalOverlay');
+  const mathCancelBtn=document.getElementById('powerMathModalCancel');
+  const mathConfirmBtn=document.getElementById('powerMathModalConfirm');
+  if(mathCancelBtn) mathCancelBtn.addEventListener('click',powerCloseMathBranchPrompt);
+  if(mathConfirmBtn) mathConfirmBtn.addEventListener('click',powerConfirmMathBranch);
+  if(mathOverlay) mathOverlay.addEventListener('click',function(e){ if(e.target===mathOverlay) powerCloseMathBranchPrompt(); });
+  const mathEtaInput=document.getElementById('powerMathEtaInput');
+  if(mathEtaInput) mathEtaInput.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); powerConfirmMathBranch(); } });
+  const mathDedInput=document.getElementById('powerMathDeductionInput');
+  if(mathDedInput) mathDedInput.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); if(mathEtaInput) mathEtaInput.focus(); } });
+
   if(clearBtn){
     const CLEAR_HOLD_MS=900;
     let clearTimer=null;
@@ -8361,7 +9182,9 @@ function powerEndDrag(commit){
       clearBtn.classList.add('power-clear-holding');
       clearTimer=setTimeout(function(){
         powerNotes=[];
+        powerEdges=[];
         savePowerNotes();
+        savePowerEdges();
         powerRenderNotes();
         clearBtn.classList.remove('power-clear-holding');
         clearBtn.classList.add('power-clear-done');
@@ -8384,6 +9207,7 @@ function powerEndDrag(commit){
   if(canvas){
     canvas.addEventListener('click',function(e){
       if(powerDrag) return;
+      if(powerSuppressNextCanvasClick){ powerSuppressNextCanvasClick=false; return; }
       if(e.target!==canvas) return;
       const rect=canvas.getBoundingClientRect();
       const xPct=((e.clientX-rect.left)/rect.width)*100;
@@ -8393,6 +9217,7 @@ function powerEndDrag(commit){
   }
 
   powerRenderNotes();
+  window.addEventListener('resize',function(){ powerRefreshOverlay(); });
 
   const embersWrap=document.getElementById('powerEmbers');
   if(embersWrap&&!embersWrap.childElementCount){
@@ -9921,6 +10746,12 @@ function printJournalOnly(){
   setTimeout(()=>{document.body.classList.remove('print-journal-only');},500);
 }
 buildJournalUI();
+
+function printActionPlanOnly(){
+  document.body.classList.add('print-actionplan-only');
+  window.print();
+  setTimeout(()=>{document.body.classList.remove('print-actionplan-only');},500);
+}
 
 function persist(){
   const data={};
