@@ -2311,7 +2311,38 @@
     color:var(--ink); opacity:0.55; text-align:center; padding:10px 0;
   }
 
-  .study-wrap{max-width:1040px;margin:0 auto;padding:30px 20px 40px;}
+  .study-wrap{max-width:1040px;margin:0 auto;padding:30px 20px 40px;position:relative;z-index:2;}
+  .ap-atmo-view{position:relative;overflow:hidden;}
+  .apz-bg{
+    position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+    background:linear-gradient(180deg, #030204 0%, #0A0812 22%, #1A1030 40%, #241440 54%, #2A1522 64%, #120A14 74%, #060308 100%);
+  }
+  .apz-bg svg{position:absolute;top:0;left:0;width:100%;height:min(58vh,560px);display:block;}
+  .apz-moon{animation:apzMoonGlow 6s ease-in-out infinite;}
+  @keyframes apzMoonGlow{
+    0%,100%{filter:drop-shadow(0 0 16px rgba(142,26,31,0.55));}
+    50%{filter:drop-shadow(0 0 30px rgba(178,36,42,0.85));}
+  }
+  .apz-fire-glow{animation:apzFireFlicker 2.6s ease-in-out infinite;}
+  @keyframes apzFireFlicker{
+    0%,100%{opacity:0.75;}
+    35%{opacity:0.95;}
+    50%{opacity:0.6;}
+    75%{opacity:0.9;}
+  }
+  .apz-embers{position:absolute;top:0;left:0;width:100%;height:min(58vh,560px);z-index:1;pointer-events:none;overflow:hidden;}
+  .apz-ember{
+    position:absolute;width:3px;height:3px;border-radius:50%;background:#D98B52;
+    box-shadow:0 0 6px 1px rgba(201,106,62,0.75);
+    animation:apzEmberRise var(--ed,3.2s) ease-in infinite;
+    animation-delay:var(--edd,0s);
+  }
+  @keyframes apzEmberRise{
+    0%{transform:translateY(0) translateX(0) scale(1);opacity:0;}
+    12%{opacity:0.95;}
+    70%{opacity:0.55;}
+    100%{transform:translateY(-130px) translateX(var(--ex,8px)) scale(0.25);opacity:0;}
+  }
 
   /* ============ POWER HOUSE — a glowing warm-orange scratch space,
      with blood-red text, freeform draggable notes, inline math, and
@@ -2567,12 +2598,14 @@
   .study-head{text-align:center;margin-bottom:20px;}
   .study-head h1{
     font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(30px,6vw,46px);margin:0;
-    background:linear-gradient(90deg,var(--pink-deep),var(--indigo),var(--green-deep));
+    background:linear-gradient(90deg,#1C5A32,#2F1E72,#8E1A1F);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 14px rgba(224,17,155,0.55)) drop-shadow(0 0 26px rgba(79,42,201,0.4));
+    filter:drop-shadow(0 0 10px rgba(142,26,31,0.4)) drop-shadow(0 0 20px rgba(47,30,114,0.35));
     -webkit-text-stroke:1px rgba(22,11,41,0.15);
   }
   .study-head .sub{margin-top:6px;font-size:13px;font-weight:700;opacity:0.6;}
+  .ap-head-btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+  .ap-head-btn-row .is-muted{opacity:0.55;}
   .study-form{display:flex;flex-direction:column;gap:8px;max-width:480px;margin:0 auto 20px;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:16px;box-shadow:5px 5px 0 var(--pop-deep);}
   .study-form input,.study-form textarea{border:1.5px solid rgba(22,11,41,0.25);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--ink);resize:vertical;}
   .study-form input:focus,.study-form textarea:focus{outline:2px solid var(--pink);}
@@ -2673,6 +2706,106 @@
   .ap-balance-short{color:#C0133F;}
   .ap-balance-over{color:var(--green-deep);}
   @media (max-width:560px){ .ap-days-cols{gap:18px;} .ap-days-col{min-width:0;} }
+
+  /* ============ BILLS VALLEY — a cozy Moomin-ish calendar ============ */
+  :root{
+    --moomin-sky:#CFE8EC; --moomin-sky-deep:#9DC9CF;
+    --moomin-moss:#92AE86; --moomin-moss-deep:#6E8A62;
+    --moomin-cream:#FBF3E0; --moomin-cream-deep:#EEE1BE;
+    --moomin-blush:#E9AFAE; --moomin-blush-deep:#D58C8A;
+    --moomin-ink:#4A3B2A; --moomin-sun:#F1C36B;
+  }
+  .moomin-frame{max-width:880px;margin:36px auto 0;position:relative;}
+  .moomin-frame::before{
+    content:"";position:absolute;inset:-40px;border-radius:50px;
+    background:linear-gradient(180deg,var(--moomin-sky) 0%,var(--moomin-cream) 55%,var(--moomin-cream) 100%);
+    filter:blur(34px);opacity:0.62;z-index:0;pointer-events:none;
+    animation:moominHaloBreathe 4.2s ease-in-out infinite;
+  }
+  @keyframes moominHaloBreathe{
+    0%,100%{opacity:0.5;filter:blur(30px);}
+    50%{opacity:0.72;filter:blur(40px);}
+  }
+  .moomin-fizz-ring{position:absolute;inset:-34px;z-index:3;pointer-events:none;overflow:visible;filter:blur(0.4px);}
+  .moomin-fizz-ring .zen-fizz{box-shadow:0 0 6px 1px currentColor;}
+  .moomin-wrap{
+    max-width:880px;margin:0 auto;padding:0 0 26px;
+    background:linear-gradient(180deg,var(--moomin-sky) 0%,var(--moomin-sky) 38%,var(--moomin-cream) 38%,var(--moomin-cream) 100%);
+    border:none;border-radius:28px;overflow:hidden;
+    box-shadow:0 10px 0 rgba(74,59,42,0.1),0 0 0 1px rgba(255,255,255,0.08);
+    -webkit-mask-image:radial-gradient(ellipse 120% 110% at 50% 50%, #000 92%, rgba(0,0,0,0.75) 97%, rgba(0,0,0,0.35) 100%);
+    mask-image:radial-gradient(ellipse 120% 110% at 50% 50%, #000 92%, rgba(0,0,0,0.75) 97%, rgba(0,0,0,0.35) 100%);
+    font-family:'Nunito',sans-serif;color:var(--moomin-ink);
+    position:relative;z-index:1;
+  }
+  .moomin-waves{display:block;width:100%;height:34px;margin-top:6px;}
+  .moomin-waves path{fill:var(--moomin-moss);opacity:0.55;}
+  .moomin-head{text-align:center;padding:4px 20px 10px;}
+  .moomin-head h2{font-family:'Fredoka',sans-serif;font-weight:700;font-size:26px;margin:0;color:var(--moomin-ink);}
+  .moomin-sub{font-size:12.5px;font-weight:700;opacity:0.65;margin-top:4px;}
+  .moomin-nav{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:6px auto 16px;padding:0 20px;}
+  .moomin-nav-btn{
+    width:34px;height:34px;border-radius:50%;border:2.5px solid var(--moomin-ink);background:var(--moomin-cream);
+    font-size:18px;font-weight:800;color:var(--moomin-ink);cursor:pointer;line-height:1;
+    box-shadow:2px 2px 0 rgba(74,59,42,0.25);
+  }
+  .moomin-nav-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(74,59,42,0.25);}
+  .moomin-month-label{font-family:'Fredoka',sans-serif;font-weight:700;font-size:17px;min-width:170px;text-align:center;}
+  .moomin-print-btn{
+    border:2px solid var(--moomin-ink);background:var(--moomin-sun);color:var(--moomin-ink);
+    border-radius:999px;padding:6px 14px;font-weight:800;font-size:11.5px;cursor:pointer;
+    box-shadow:2px 2px 0 rgba(74,59,42,0.25);
+  }
+  .moomin-print-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(74,59,42,0.25);}
+  .moomin-grid-wrap{padding:0 20px;}
+  .moomin-dow-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px;}
+  .moomin-dow-row span{text-align:center;font-size:10.5px;font-weight:800;letter-spacing:0.5px;opacity:0.6;text-transform:uppercase;}
+  .moomin-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(72px,auto);gap:6px;}
+  .moomin-day{
+    background:#fff;border:2px solid rgba(74,59,42,0.25);border-radius:14px;padding:6px 7px;cursor:pointer;
+    display:flex;flex-direction:column;gap:3px;transition:background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .moomin-day:hover{background:var(--moomin-cream-deep);box-shadow:2px 2px 0 rgba(74,59,42,0.2);}
+  .moomin-day.empty{background:transparent;border-color:transparent;cursor:default;box-shadow:none;}
+  .moomin-day.has-bills{
+    border-color:#D9731A;background:#FFF8EC;
+    box-shadow:0 0 0 1px rgba(217,115,26,0.35),0 0 10px 2px rgba(237,143,38,0.45),0 0 20px 4px rgba(237,143,38,0.22);
+    animation:moominMarmaladeGlow 3.1s ease-in-out infinite;
+  }
+  .moomin-day.has-bills:hover{background:#FFF2DC;}
+  @keyframes moominMarmaladeGlow{
+    0%,100%{box-shadow:0 0 0 1px rgba(217,115,26,0.32),0 0 8px 2px rgba(237,143,38,0.35),0 0 16px 3px rgba(237,143,38,0.16);}
+    50%{box-shadow:0 0 0 1px rgba(217,115,26,0.5),0 0 14px 4px rgba(237,143,38,0.65),0 0 26px 7px rgba(237,143,38,0.32);}
+  }
+  .moomin-day.selected{outline:3px solid var(--moomin-blush-deep);outline-offset:-3px;}
+  .moomin-day .mday-num{font-family:'Fredoka',sans-serif;font-weight:700;font-size:13px;}
+  .moomin-day .mday-chip{
+    background:var(--moomin-blush);border-radius:8px;padding:2px 5px;font-size:9px;font-weight:700;
+    line-height:1.25;color:var(--moomin-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .moomin-day .mday-more{font-size:8.5px;font-weight:800;opacity:0.55;}
+  .moomin-total-pill{
+    display:block;width:max-content;margin:16px auto 0;background:var(--moomin-moss);color:#fff;
+    border:2.5px solid var(--moomin-ink);border-radius:999px;padding:8px 18px;font-weight:800;font-size:13px;
+    box-shadow:2px 2px 0 rgba(74,59,42,0.25);
+  }
+  .moomin-editor{
+    max-width:420px;margin:18px auto 0;background:#fff;border:2.5px solid var(--moomin-ink);border-radius:16px;
+    padding:14px 16px;box-shadow:4px 4px 0 rgba(74,59,42,0.2);
+  }
+  .moomin-editor-head{display:flex;align-items:center;justify-content:space-between;font-family:'Fredoka',sans-serif;font-weight:700;font-size:14px;margin-bottom:8px;}
+  .moomin-editor-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--moomin-ink);opacity:0.6;}
+  .moomin-editor-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+  .moomin-editor-row input[type="text"]{flex:1.3;border:1.5px solid rgba(74,59,42,0.3);border-radius:8px;padding:6px 8px;font-size:12px;font-weight:600;color:var(--moomin-ink);min-width:0;}
+  .moomin-editor-row input[type="number"]{flex:1;border:1.5px solid rgba(74,59,42,0.3);border-radius:8px;padding:6px 8px;font-size:12px;font-weight:700;color:var(--moomin-ink);min-width:0;}
+  .moomin-editor-row input:focus{outline:2px solid var(--moomin-blush-deep);}
+  .moomin-editor-del{background:none;border:none;font-size:16px;opacity:0.5;cursor:pointer;color:var(--moomin-ink);}
+  .moomin-editor-del:active{opacity:0.9;}
+  .moomin-add-btn{
+    width:100%;border:2px dashed var(--moomin-moss-deep);background:var(--moomin-cream);color:var(--moomin-ink);
+    border-radius:10px;padding:8px;font-weight:800;font-size:12px;cursor:pointer;margin-top:4px;
+  }
+  @media (max-width:600px){ .moomin-grid{grid-auto-rows:minmax(56px,auto);} .moomin-day .mday-chip{display:none;} .moomin-day.has-bills::after{content:"\1F4B0";font-size:11px;} }
 
   main{
     max-width:1040px;
@@ -3821,6 +3954,8 @@
     @page{size:letter;margin:0.3in;}
     body{padding:0;background:#fff;}
     .scene-bg{display:none!important;}
+    .cta-modal-overlay,.mirror-overlay,.cta-screen-flash{display:none!important;}
+    #jrpgWizardCursor,#jrpgHud,#jrpgLevelUp,#jrpgKoBanner,#jrpgBossBanner,#jrpgUltimateCharge,#jrpgRadialFire,#jrpgSparkleField,#wizHut{display:none!important;}
     .no-print{display:none!important;}
     .block-grip,.rearrange-hint{display:none!important;}
     .board.reorder-mode .block{outline:none!important;}
@@ -4008,6 +4143,42 @@
     .ap-balance-computed{font-size:15px;}
     .ap-balance-divider{margin:8px 0;}
     .ap-balance-variance{font-size:9px;}
+    body.print-actionplan-only,
+    body.print-moomin-only{min-height:0!important;}
+    body.print-actionplan-only .moomin-frame{display:none!important;}
+    body.print-actionplan-only .apz-bg,
+    body.print-moomin-only .apz-bg{display:none!important;}
+
+    /* ---------- Bills Valley (Moomin) — single-page print/export ---------- */
+    body.print-moomin-only header,
+    body.print-moomin-only footer,
+    body.print-moomin-only .stripe-band,
+    body.print-moomin-only .cta-orb,
+    body.print-moomin-only .blueprint-handle,
+    body.print-moomin-only .blueprint-panel,
+    body.print-moomin-only .omen-handle,
+    body.print-moomin-only .omen-panel,
+    body.print-moomin-only .ledger-handle,
+    body.print-moomin-only .ledger-panel,
+    body.print-moomin-only .backup-toast{display:none!important;}
+    body.print-moomin-only .study-wrap > .study-head,
+    body.print-moomin-only .study-wrap > .ap-week-meta,
+    body.print-moomin-only .study-wrap > .ap-week-range,
+    body.print-moomin-only .study-wrap > .ap-days-cols,
+    body.print-moomin-only .study-wrap > .ap-balance-box{display:none!important;}
+    body.print-moomin-only .study-wrap{max-width:100%;padding:0;}
+    body.print-moomin-only .moomin-frame{max-width:100%;margin:0;}
+    body.print-moomin-only .moomin-frame::before,
+    body.print-moomin-only .moomin-fizz-ring{display:none!important;}
+    body.print-moomin-only .moomin-wrap{display:block!important;max-width:100%;margin:0;box-shadow:none;border:2px solid rgba(22,11,41,0.5)!important;-webkit-mask-image:none!important;mask-image:none!important;}
+    body.print-moomin-only .moomin-day.has-bills{animation:none!important;box-shadow:none!important;border-color:#D9731A!important;}
+    body.print-moomin-only .moomin-print-btn,
+    body.print-moomin-only .moomin-nav-btn{display:none!important;}
+    body.print-moomin-only .moomin-month-label{font-size:15px;}
+    body.print-moomin-only .moomin-head h2{font-size:20px;}
+    body.print-moomin-only .moomin-sub{font-size:10px;}
+    body.print-moomin-only .moomin-grid{grid-auto-rows:minmax(64px,auto);}
+    body.print-moomin-only .moomin-editor{display:none!important;}
     .block.filesblock h2{font-size:15px;}
     .file-actions,.files-storage-note{display:none!important;}
     .file-thumb,.file-icon{width:24px;height:24px;}
@@ -5381,12 +5552,37 @@
 
   </div><!-- /viewPlanner -->
 
-  <div id="viewStudy" class="view">
+  <div id="viewStudy" class="view ap-atmo-view">
+    <div class="apz-bg" id="apzBg">
+      <svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <circle class="apz-moon" cx="130" cy="120" r="34" fill="#8E1A1F"></circle>
+        <rect x="0" y="150" width="400" height="2" fill="#7A2430" opacity="0.32"></rect>
+        <defs>
+          <radialGradient id="apzFireGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C96A3E" stop-opacity="0.5"></stop>
+            <stop offset="55%" stop-color="#C96A3E" stop-opacity="0.16"></stop>
+            <stop offset="100%" stop-color="#C96A3E" stop-opacity="0"></stop>
+          </radialGradient>
+        </defs>
+        <ellipse id="apzFireGlow" class="apz-fire-glow" cx="230" cy="248" rx="70" ry="30" fill="url(#apzFireGrad)"></ellipse>
+        <g id="apzStars"></g>
+        <g id="apzShimmer"></g>
+        <g id="apzWaterLines"></g>
+        <g id="apzSkyline"></g>
+      </svg>
+      <div class="zen-clouds" id="apzClouds"></div>
+      <div class="zen-fizz-layer" id="apzFizzLayer"></div>
+      <div class="apz-embers" id="apzEmbers"></div>
+      <div class="zen-glow-layer" id="apzGlowLayer"></div>
+    </div>
     <div class="study-wrap">
       <div class="study-head">
         <h1>📋 ACTION PLAN</h1>
         <div class="sub">Weekly breakdown — tasks by day, finances at a glance</div>
-        <button class="clear-btn print-btn no-print ap-print-btn" type="button" onclick="printActionPlanOnly()">🖨 Print / Export (1 page)</button>
+        <div class="ap-head-btn-row no-print">
+          <button class="clear-btn print-btn ap-print-btn" type="button" onclick="printActionPlanOnly()">🖨 Print / Export (1 page)</button>
+          <button class="clear-btn print-btn" type="button" id="apCampSoundBtn" onclick="toggleApCampSound()">🔊 Sound</button>
+        </div>
       </div>
 
       <div class="ap-week-meta">
@@ -5429,6 +5625,42 @@
         </div>
         <div class="ap-balance-variance" id="apBalanceVariance"></div>
       </div>
+
+      <div class="moomin-frame">
+        <div class="moomin-fizz-ring" id="moominFizzRing"></div>
+      <div class="moomin-wrap">
+        <svg class="moomin-waves" viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,20 C50,35 100,5 150,20 C200,35 250,5 300,20 C350,35 400,5 450,20 C500,35 550,5 600,20 L600,40 L0,40 Z"></path>
+        </svg>
+        <div class="moomin-head">
+          <h2>🌊 Bills Valley</h2>
+          <div class="moomin-sub">a cozy little calendar for the money that comes and goes</div>
+        </div>
+
+        <div class="moomin-nav">
+          <button type="button" class="moomin-nav-btn" onclick="moominChangeMonth(-1)">&lsaquo;</button>
+          <div class="moomin-month-label" id="moominMonthLabel">Month</div>
+          <button type="button" class="moomin-nav-btn" onclick="moominChangeMonth(1)">&rsaquo;</button>
+          <button type="button" class="moomin-print-btn" onclick="printMoominOnly()">🖨 Print this month</button>
+        </div>
+
+        <div class="moomin-grid-wrap">
+          <div class="moomin-dow-row" id="moominDowRow"></div>
+          <div class="moomin-grid" id="moominGrid"></div>
+        </div>
+
+        <div class="moomin-total-pill" id="moominTotalPill">🧺 Total this month: $0.00</div>
+
+        <div class="moomin-editor" id="moominEditor" style="display:none;">
+          <div class="moomin-editor-head">
+            <span id="moominEditorTitle">Bills on &mdash;</span>
+            <button type="button" class="moomin-editor-close" onclick="moominCloseEditor()">&times;</button>
+          </div>
+          <div class="moomin-editor-list" id="moominEditorList"></div>
+          <button type="button" class="moomin-add-btn" onclick="moominAddBill()">+ Add a little bill</button>
+        </div>
+      </div>
+      </div><!-- /moomin-frame -->
     </div>
   </div>
 
@@ -8173,6 +8405,7 @@ function switchView(view){
   if(view==='power'){ enterPowerHouse(); } else { leavePowerHouse(); }
   if(view!=='study') slidePauseAudio();
   if(view==='zen'){ enterZen(); } else { leaveZen(); }
+  if(view==='study'){ apCampStartAmbient(); } else { apCampStopAmbient(); }
 }
 
 function slidePauseAudio(){ /* no-op: Action Plan tab has no narrated slideshow */ }
@@ -10752,6 +10985,661 @@ function printActionPlanOnly(){
   window.print();
   setTimeout(()=>{document.body.classList.remove('print-actionplan-only');},500);
 }
+
+/* ============ BILLS VALLEY — cozy Moomin-style bills calendar ============ */
+const MOOMIN_KEY='actionPlan3000_moominBills';
+const MOOMIN_DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let moominData={}; // { "2026-10": { "1": [{id,name,amt}, ...], "3": [...] } }
+let moominView={year:2026,month:10}; // month is 1-12
+let moominSelectedKey=null; // "YYYY-M-D" of the day currently open in the editor
+
+const MOOMIN_SEED_OCT_2026={
+  1:[["Rent",1850.00],["Gas - UGI Utilities",44.56],["Internet - Comcast/Xfinity",40.00],["American Heritage Pmt",321.00]],
+  3:[["Amazon Installment",57.00]],
+  6:[["Amazon Installment",42.61]],
+  9:[["Amazon Installment",51.15]],
+  17:[["American Heritage Pmt",77.48],["AT&T Payment",0.94]],
+  18:[["State Farm Insurance",121.28]],
+  19:[["Amazon Store Card Pmt",48.94]],
+  21:[["Student Loan - SoFi",179.58],["Amazon Installment",30.78]],
+  23:[["Amazon Installment",22.42]],
+  27:[["Credit Card Payment",200.00]],
+  28:[["Credit Card Payment",250.00]]
+};
+
+function moominLoad(){
+  try{
+    const raw=localStorage.getItem(MOOMIN_KEY);
+    if(raw){ moominData=JSON.parse(raw)||{}; }
+  }catch(e){ moominData={}; }
+  const seedMk='2026-10';
+  if(!moominData[seedMk]){
+    const month={};
+    Object.keys(MOOMIN_SEED_OCT_2026).forEach(day=>{
+      month[day]=MOOMIN_SEED_OCT_2026[day].map(([name,amt])=>({id:moominUid(),name,amt}));
+    });
+    moominData[seedMk]=month;
+    moominSave();
+  }
+}
+function moominSave(){
+  try{ localStorage.setItem(MOOMIN_KEY,JSON.stringify(moominData)); }catch(e){}
+}
+function moominUid(){ return 'mb_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8); }
+function moominMonthKey(y,m){ return y+'-'+m; }
+function moominMonthBills(){
+  const mk=moominMonthKey(moominView.year,moominView.month);
+  if(!moominData[mk]) moominData[mk]={};
+  return moominData[mk];
+}
+function moominMoney(n){
+  const v=Number(n)||0;
+  return '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function moominChangeMonth(delta){
+  let m=moominView.month+delta, y=moominView.year;
+  if(m>12){m=1;y++;} if(m<1){m=12;y--;}
+  moominView.month=m; moominView.year=y;
+  moominCloseEditor();
+  renderMoominCalendar();
+}
+const MOOMIN_MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function renderMoominCalendar(){
+  const {year,month}=moominView;
+  const label=document.getElementById('moominMonthLabel');
+  if(label) label.textContent=MOOMIN_MONTH_NAMES[month-1]+' '+year;
+
+  const dowRow=document.getElementById('moominDowRow');
+  if(dowRow) dowRow.innerHTML=MOOMIN_DOW.map(d=>'<span>'+d+'</span>').join('');
+
+  const firstOfMonth=new Date(year,month-1,1);
+  const startOffset=firstOfMonth.getDay(); // 0=Sun
+  const daysInMonth=new Date(year,month,0).getDate();
+  const bills=moominMonthBills();
+
+  let cells='';
+  for(let i=0;i<startOffset;i++){ cells+='<div class="moomin-day empty"></div>'; }
+  let monthTotal=0;
+  for(let day=1;day<=daysInMonth;day++){
+    const items=bills[day]||[];
+    let dayTotal=0;
+    items.forEach(it=>{ dayTotal+=Number(it.amt)||0; });
+    monthTotal+=dayTotal;
+    const hasBills=items.length>0;
+    const key=year+'-'+month+'-'+day;
+    const selected=moominSelectedKey===key?' selected':'';
+    let chips='';
+    if(hasBills){
+      const shown=items.slice(0,2);
+      chips=shown.map(it=>'<div class="mday-chip">'+escapeHtml(it.name)+'</div>').join('');
+      if(items.length>2){ chips+='<div class="mday-more">+'+(items.length-2)+' more</div>'; }
+      chips+='<div class="mday-more">🧺 '+moominMoney(dayTotal)+'</div>';
+    }
+    cells+='<div class="moomin-day'+(hasBills?' has-bills':'')+selected+'" onclick="moominSelectDay('+year+','+month+','+day+')">'+
+      '<div class="mday-num">'+day+'</div>'+chips+'</div>';
+  }
+  const grid=document.getElementById('moominGrid');
+  if(grid) grid.innerHTML=cells;
+
+  const pill=document.getElementById('moominTotalPill');
+  if(pill) pill.textContent='🧺 Total this month: '+moominMoney(monthTotal);
+}
+function moominSelectDay(y,m,day){
+  moominSelectedKey=y+'-'+m+'-'+day;
+  renderMoominCalendar();
+  renderMoominEditor();
+}
+function moominCloseEditor(){
+  moominSelectedKey=null;
+  const ed=document.getElementById('moominEditor');
+  if(ed) ed.style.display='none';
+  renderMoominCalendar();
+}
+function renderMoominEditor(){
+  const ed=document.getElementById('moominEditor');
+  if(!ed||!moominSelectedKey) return;
+  ed.style.display='block';
+  const [y,m,day]=moominSelectedKey.split('-').map(Number);
+  const title=document.getElementById('moominEditorTitle');
+  if(title) title.innerHTML='Bills on &mdash; '+MOOMIN_MONTH_NAMES[m-1]+' '+day+', '+y;
+  const bills=moominMonthBills();
+  const items=bills[day]||[];
+  const list=document.getElementById('moominEditorList');
+  if(list){
+    if(!items.length){
+      list.innerHTML='<div class="ap-bills-empty">No bills yet &mdash; add one below.</div>';
+    }else{
+      list.innerHTML=items.map(it=>(
+        '<div class="moomin-editor-row" data-id="'+it.id+'">'+
+          '<input type="text" value="'+escapeHtml(it.name)+'" placeholder="Bill name" onchange="moominUpdateBill('+day+',\''+it.id+'\',\'name\',this.value)">'+
+          '<input type="number" step="0.01" value="'+(it.amt!=null?it.amt:'')+'" placeholder="0.00" onchange="moominUpdateBill('+day+',\''+it.id+'\',\'amt\',this.value)">'+
+          '<button type="button" class="moomin-editor-del" onclick="moominDeleteBill('+day+',\''+it.id+'\')">&times;</button>'+
+        '</div>'
+      )).join('');
+    }
+  }
+}
+function moominAddBill(){
+  if(!moominSelectedKey) return;
+  const [,,day]=moominSelectedKey.split('-').map(Number);
+  const bills=moominMonthBills();
+  if(!bills[day]) bills[day]=[];
+  bills[day].push({id:moominUid(),name:'',amt:''});
+  moominSave();
+  renderMoominEditor();
+  renderMoominCalendar();
+}
+function moominUpdateBill(day,id,field,value){
+  const bills=moominMonthBills();
+  const items=bills[day]||[];
+  const it=items.find(x=>x.id===id);
+  if(!it) return;
+  if(field==='amt'){ it.amt=value===''?'':parseFloat(value); }
+  else{ it.name=value; }
+  moominSave();
+  renderMoominCalendar();
+}
+function moominDeleteBill(day,id){
+  const bills=moominMonthBills();
+  let items=bills[day]||[];
+  items=items.filter(x=>x.id!==id);
+  if(items.length) bills[day]=items; else delete bills[day];
+  moominSave();
+  renderMoominEditor();
+  renderMoominCalendar();
+}
+function printMoominOnly(){
+  document.body.classList.add('print-moomin-only');
+  window.print();
+  setTimeout(()=>{document.body.classList.remove('print-moomin-only');},500);
+}
+function generateMoominFizzRing(){
+  const ring=document.getElementById('moominFizzRing');
+  if(!ring || ring.childElementCount) return;
+  const rect=ring.getBoundingClientRect();
+  const rw=rect.width||960, rh=rect.height||760;
+  // the real card edge sits 34px in from the ring's own box on every side
+  // (ring is inset:-34px relative to .moomin-wrap), so convert that to %
+  const edgeXPct=34/rw*100, edgeYPct=34/rh*100;
+  const spreadXPct=Math.max(edgeXPct*1.1, 30/rw*100);
+  const spreadYPct=Math.max(edgeYPct*1.1, 30/rh*100);
+  const colors=['#EDE2C8','#C9A7C9','#B9D4CE','#E3B8D1','#F3D9A4','#FFFFFF'];
+  const COUNT=340;
+  for(let i=0;i<COUNT;i++){
+    const edge=Math.random();
+    let x,y;
+    if(edge<0.5){
+      x=zenRand(-2,102);
+      y=Math.random()<0.5 ? zenRand(edgeYPct-spreadYPct, edgeYPct+spreadYPct) : zenRand(100-edgeYPct-spreadYPct, 100-edgeYPct+spreadYPct);
+    }else{
+      y=zenRand(-2,102);
+      x=Math.random()<0.5 ? zenRand(edgeXPct-spreadXPct, edgeXPct+spreadXPct) : zenRand(100-edgeXPct-spreadXPct, 100-edgeXPct+spreadXPct);
+    }
+    const dot=document.createElement('div');
+    dot.className='zen-fizz';
+    const size=zenRand(2,5);
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    dot.style.width=size.toFixed(1)+'px';
+    dot.style.height=size.toFixed(1)+'px';
+    dot.style.background=c;
+    dot.style.color=c;
+    dot.style.left=x.toFixed(2)+'%';
+    dot.style.top=y.toFixed(2)+'%';
+    dot.style.setProperty('--fd',zenRand(0.22,1.1).toFixed(2)+'s');
+    dot.style.setProperty('--fdd',zenRand(0,2).toFixed(2)+'s');
+    dot.style.setProperty('--fop',zenRand(0.45,0.95).toFixed(2));
+    ring.appendChild(dot);
+  }
+}
+function initMoomin(){
+  moominLoad();
+  renderMoominCalendar();
+  generateMoominFizzRing();
+}
+initMoomin();
+
+/* ============ Action Plan atmosphere — same dusk scene as Zen, noise and all ============ */
+let apZenSceneBuilt=false;
+function generateApZenScene(){
+  if(apZenSceneBuilt) return;
+  apZenSceneBuilt=true;
+  const skyline=document.getElementById('apzSkyline');
+  const water=document.getElementById('apzWaterLines');
+  if(!skyline||!water) return;
+  const stars=document.getElementById('apzStars');
+  const shimmer=document.getElementById('apzShimmer');
+
+  // star field above the treeline — soft, dreamy, romantic twinkle
+  if(stars){
+    const starColors=['#F3DCE6','#E9D8F0','#F6ECD8','#DCE3F5'];
+    for(let i=0;i<58;i++){
+      const sx=zenRand(0,400), sy=zenRand(0,142);
+      const color=starColors[Math.floor(Math.random()*starColors.length)];
+      const star=document.createElementNS(ZEN_SVG_NS,'circle');
+      star.setAttribute('cx',sx); star.setAttribute('cy',sy);
+      star.setAttribute('r',zenRand(0.4,1.2).toFixed(2));
+      star.setAttribute('fill',color);
+      star.setAttribute('class','zen-light');
+      star.style.setProperty('--tw',zenRand(2.4,6.5).toFixed(2)+'s');
+      star.style.setProperty('--twd',zenRand(0,6).toFixed(2)+'s');
+      star.style.setProperty('--minop',zenRand(0.12,0.32).toFixed(2));
+      stars.appendChild(star);
+    }
+    // a handful of bigger, softly glowing feature stars for extra romance
+    for(let i=0;i<9;i++){
+      const sx=zenRand(10,390), sy=zenRand(5,130);
+      const color=starColors[Math.floor(Math.random()*starColors.length)];
+      const star=document.createElementNS(ZEN_SVG_NS,'circle');
+      star.setAttribute('cx',sx); star.setAttribute('cy',sy);
+      star.setAttribute('r',zenRand(1.4,2.2).toFixed(2));
+      star.setAttribute('fill',color);
+      star.setAttribute('class','zen-light');
+      star.style.filter='drop-shadow(0 0 3px '+color+')';
+      star.style.setProperty('--tw',zenRand(3.5,7).toFixed(2)+'s');
+      star.style.setProperty('--twd',zenRand(0,6).toFixed(2)+'s');
+      star.style.setProperty('--minop',zenRand(0.25,0.45).toFixed(2));
+      stars.appendChild(star);
+    }
+  }
+
+  // moonlit ripples on black water
+  for(let i=0;i<9;i++){
+    const y=154+i*8+zenRand(-2,2);
+    const w=zenRand(18,70);
+    const x=zenRand(60,320);
+    const line=document.createElementNS(ZEN_SVG_NS,'rect');
+    line.setAttribute('x',x); line.setAttribute('y',y);
+    line.setAttribute('width',w); line.setAttribute('height',1.2);
+    line.setAttribute('fill','#9C3A3E'); line.setAttribute('opacity',(0.14-i*0.012).toFixed(2));
+    water.appendChild(line);
+  }
+
+  // dense shimmering glints scattered across the water surface
+  if(shimmer){
+    for(let i=0;i<55;i++){
+      const sx=zenRand(15,385), sy=zenRand(152,258);
+      const roll=Math.random();
+      const color=roll>0.7?'#E8C9A8':(roll>0.35?'#C9A0C2':'#9C8CC2');
+      const glint=document.createElementNS(ZEN_SVG_NS,'circle');
+      glint.setAttribute('cx',sx); glint.setAttribute('cy',sy);
+      glint.setAttribute('r',zenRand(0.4,1.1).toFixed(2));
+      glint.setAttribute('fill',color);
+      glint.setAttribute('class','zen-light');
+      glint.style.setProperty('--tw',zenRand(0.9,2.6).toFixed(2)+'s');
+      glint.style.setProperty('--twd',zenRand(0,3).toFixed(2)+'s');
+      glint.style.setProperty('--minop',zenRand(0.06,0.2).toFixed(2));
+      shimmer.appendChild(glint);
+    }
+  }
+
+  // pine tree silhouettes along the shoreline, campfire-lit from below
+  const trees=[
+    {x:-4,  w:30, h:58},
+    {x:20,  w:22, h:44},
+    {x:38,  w:34, h:66},
+    {x:66,  w:20, h:38},
+    {x:82,  w:28, h:54},
+    {x:106, w:18, h:34},
+    {x:120, w:32, h:62},
+    {x:148, w:22, h:42},
+    {x:166, w:26, h:50},
+    {x:188, w:34, h:68},
+    {x:214, w:20, h:36},
+    {x:230, w:30, h:58},
+    {x:256, w:22, h:44},
+    {x:274, w:28, h:52},
+    {x:298, w:18, h:34},
+    {x:312, w:32, h:62},
+    {x:340, w:22, h:44},
+    {x:358, w:30, h:58},
+    {x:384, w:20, h:40}
+  ];
+  const treeGreens=['#0E2E1A','#154326','#1C5A32'];
+  const treeIndigos=['#190F3C','#241656','#2F1E72'];
+  trees.forEach(t=>{
+    const baseY=260, cx=t.x+t.w/2, topY=baseY-t.h;
+    const tiers=3;
+    const shades=Math.random()>0.5?treeGreens:treeIndigos;
+    const trunkColor=shades===treeGreens?'#0E2E1A':'#190F3C';
+    for(let tier=0;tier<tiers;tier++){
+      const tierH=t.h/tiers;
+      const tierTop=topY+tier*tierH*0.72;
+      const tierBot=tierTop+tierH*1.1;
+      const halfW=(t.w/2)*(1-tier*0.22);
+      const poly=document.createElementNS(ZEN_SVG_NS,'polygon');
+      poly.setAttribute('points',cx+','+tierTop+' '+(cx-halfW)+','+tierBot+' '+(cx+halfW)+','+tierBot);
+      poly.setAttribute('fill',shades[tier]);
+      poly.setAttribute('opacity',(0.92-Math.abs(cx-230)/520).toFixed(2));
+      skyline.appendChild(poly);
+    }
+    const trunk=document.createElementNS(ZEN_SVG_NS,'rect');
+    trunk.setAttribute('x',cx-1.5); trunk.setAttribute('y',baseY-6);
+    trunk.setAttribute('width',3); trunk.setAttribute('height',6);
+    trunk.setAttribute('fill',trunkColor);
+    skyline.appendChild(trunk);
+  });
+
+  // fireflies drifting over the water and tree line
+  for(let i=0;i<32;i++){
+    const fx=zenRand(10,390);
+    const fy=zenRand(120,250);
+    const roll=Math.random();
+    const color=roll>0.75?'#D9A95C':(roll>0.4?'#C26E8F':'#E6C98A');
+    const bug=document.createElementNS(ZEN_SVG_NS,'circle');
+    bug.setAttribute('cx',fx); bug.setAttribute('cy',fy);
+    bug.setAttribute('r',zenRand(0.9,1.6).toFixed(2));
+    bug.setAttribute('fill',color);
+    bug.setAttribute('class','zen-light');
+    bug.style.setProperty('--tw',zenRand(1.8,4.2).toFixed(2)+'s');
+    bug.style.setProperty('--twd',zenRand(0,5).toFixed(2)+'s');
+    bug.style.setProperty('--minop',zenRand(0.12,0.28).toFixed(2));
+    skyline.appendChild(bug);
+  }
+
+  // low lake mist, drifting pale and faint instead of pink clouds
+  const clouds=document.getElementById('apzClouds');
+  if(clouds){
+    const mistSpots=[
+      {x:10, y:58, s:200},
+      {x:45, y:62, s:260},
+      {x:72, y:55, s:220},
+      {x:90, y:64, s:180},
+      {x:28, y:66, s:170}
+    ];
+    mistSpots.forEach((c,i)=>{
+      const el=document.createElement('div');
+      el.className='zen-cloud';
+      el.style.background='radial-gradient(circle, rgba(167,122,140,0.3), rgba(167,122,140,0) 70%)';
+      el.style.filter='blur(18px)';
+      el.style.left='calc('+c.x+'% - '+(c.s/2)+'px)';
+      el.style.top='calc('+c.y+'% - '+(c.s/2)+'px)';
+      el.style.width=c.s+'px';
+      el.style.height=(c.s*0.45)+'px';
+      el.style.animationDuration=zenRand(6,9).toFixed(2)+'s';
+      el.style.animationDelay=(i*0.8).toFixed(2)+'s';
+      clouds.appendChild(el);
+    });
+  }
+
+  // grainy campfire-story static instead of magenta fizz
+  const fizz=document.getElementById('apzFizzLayer');
+  if(fizz){
+    for(let i=0;i<70;i++){
+      const dot=document.createElement('div');
+      dot.className='zen-fizz';
+      dot.style.background=Math.random()>0.5?'#B8947E':'#6E5A72';
+      dot.style.left=zenRand(0,100).toFixed(1)+'%';
+      dot.style.top=zenRand(0,100).toFixed(1)+'%';
+      dot.style.setProperty('--fd',zenRand(0.4,1.6).toFixed(2)+'s');
+      dot.style.setProperty('--fdd',zenRand(0,2).toFixed(2)+'s');
+      dot.style.setProperty('--fop',zenRand(0.15,0.4).toFixed(2));
+      fizz.appendChild(dot);
+    }
+  }
+
+  // campfire embers drifting up off the glow
+  const embers=document.getElementById('apzEmbers');
+  if(embers){
+    for(let i=0;i<12;i++){
+      const ember=document.createElement('div');
+      ember.className='apz-ember';
+      ember.style.left=zenRand(50,65).toFixed(1)+'%';
+      ember.style.top=zenRand(88,97).toFixed(1)+'%';
+      ember.style.setProperty('--ed',zenRand(2.4,4.4).toFixed(2)+'s');
+      ember.style.setProperty('--edd',zenRand(0,4).toFixed(2)+'s');
+      ember.style.setProperty('--ex',zenRand(-18,18).toFixed(1)+'px');
+      embers.appendChild(ember);
+    }
+  }
+}
+function apZenSpawnGlow(x,y){
+  const layer=document.getElementById('apzGlowLayer');
+  if(!layer) return;
+  const size=zenRand(90,170);
+  const burst=document.createElement('div');
+  burst.className='zen-glow-burst';
+  burst.style.background='radial-gradient(circle, rgba(201,139,113,0.75) 0%, rgba(140,47,94,0.38) 45%, rgba(140,47,94,0) 72%)';
+  burst.style.left=x+'px';
+  burst.style.top=y+'px';
+  burst.style.width=size+'px';
+  burst.style.height=size+'px';
+  layer.appendChild(burst);
+  setTimeout(()=>burst.remove(),980);
+}
+function initApZenClickGlow(){
+  const view=document.getElementById('viewStudy');
+  if(!view||view._apZenGlowWired) return;
+  view._apZenGlowWired=true;
+  view.addEventListener('pointerdown',(e)=>{
+    if(e.target.closest('input,textarea,button,select')) return;
+    const bg=document.getElementById('apzBg');
+    if(!bg) return;
+    const rect=bg.getBoundingClientRect();
+    apZenSpawnGlow(e.clientX-rect.left, e.clientY-rect.top);
+  });
+}
+generateApZenScene();
+initApZenClickGlow();
+
+/* ---------- Action Plan ambient soundscape — lapping black water, crickets, campfire crackle ---------- */
+let apCampSoundOn=true;
+try{ apCampSoundOn = localStorage.getItem('actionPlan3000_apCampSound')!=='0'; }catch(e){}
+let apCampWaterNodes=null, apCampCricketTimeoutId=null, apCampCrackleTimeoutId=null, apCampAmbientActive=false;
+
+function apCampStartWater(){
+  const ctx=__sfxGetCtx();
+  if(!ctx || apCampWaterNodes) return;
+  const buf=zenEnsureNoiseBuffer(ctx);
+  if(!buf) return;
+  try{
+    const src=ctx.createBufferSource();
+    src.buffer=buf; src.loop=true;
+    const filter=ctx.createBiquadFilter();
+    filter.type='lowpass'; filter.frequency.value=220;
+    const gain=ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.045, ctx.currentTime+2.5);
+    const lfo=ctx.createOscillator();
+    lfo.type='sine'; lfo.frequency.value=0.09;
+    const lfoGain=ctx.createGain(); lfoGain.gain.value=60;
+    lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    src.start(); lfo.start();
+    apCampWaterNodes={src,filter,gain,lfo};
+  }catch(e){}
+}
+/* a cavernous echo send every camp sound passes through, for that campfire-story vibe */
+let apCampEcho=null;
+function apCampGetEcho(ctx){
+  if(apCampEcho) return apCampEcho;
+  try{
+    const delay=ctx.createDelay(1.2);
+    delay.delayTime.value=0.34;
+    const feedback=ctx.createGain();
+    feedback.gain.value=0.46;
+    const damp=ctx.createBiquadFilter();
+    damp.type='lowpass'; damp.frequency.value=1800;
+    const wet=ctx.createGain();
+    wet.gain.value=0.6;
+    delay.connect(damp); damp.connect(feedback); feedback.connect(delay);
+    delay.connect(wet); wet.connect(ctx.destination);
+    apCampEcho={delay,feedback,damp,wet};
+  }catch(e){}
+  return apCampEcho;
+}
+function apCampSendEcho(node,ctx){
+  const echo=apCampGetEcho(ctx);
+  if(echo) try{ node.connect(echo.delay); }catch(e){}
+}
+function apCampPlayTone(freq,delay,dur,type,vol){
+  const ctx=__sfxGetCtx();
+  if(!ctx) return;
+  try{
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.type=type||'sine';
+    o.frequency.value=freq;
+    o.connect(g); g.connect(ctx.destination);
+    apCampSendEcho(g,ctx);
+    const t0=ctx.currentTime+(delay||0);
+    g.gain.setValueAtTime(0,t0);
+    g.gain.linearRampToValueAtTime(vol||0.12,t0+0.008);
+    g.gain.exponentialRampToValueAtTime(0.001,t0+(dur||0.09));
+    o.start(t0);
+    o.stop(t0+(dur||0.09)+0.02);
+  }catch(e){}
+}
+function apCampPlayCricketChirp(){
+  if(!apCampSoundOn) return;
+  const baseFreq=3600+Math.random()*900;
+  const pulses=2+Math.floor(Math.random()*3);
+  let t=0;
+  for(let i=0;i<pulses;i++){
+    apCampPlayTone(baseFreq+Math.random()*120, t, 0.05, 'sine', 0.018);
+    t+=0.09+Math.random()*0.03;
+  }
+}
+function apCampScheduleCrickets(){
+  if(!apCampAmbientActive) return;
+  apCampPlayCricketChirp();
+  const gap=0.6+Math.random()*2.2;
+  apCampCricketTimeoutId=setTimeout(apCampScheduleCrickets, gap*1000);
+}
+function apCampPlayCrackle(){
+  if(!apCampSoundOn) return;
+  const ctx=__sfxGetCtx();
+  if(!ctx) return;
+  const buf=zenEnsureNoiseBuffer(ctx);
+  if(!buf) return;
+  try{
+    const src=ctx.createBufferSource();
+    src.buffer=buf;
+    const filter=ctx.createBiquadFilter();
+    filter.type='bandpass'; filter.frequency.value=1200+Math.random()*2200; filter.Q.value=2.2;
+    const gain=ctx.createGain();
+    const t0=ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001,t0);
+    gain.gain.linearRampToValueAtTime(0.09+Math.random()*0.05, t0+0.006);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0+0.05+Math.random()*0.05);
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    apCampSendEcho(gain,ctx);
+    src.start(t0); src.stop(t0+0.15);
+  }catch(e){}
+}
+function apCampScheduleCrackles(){
+  if(!apCampAmbientActive) return;
+  apCampPlayCrackle();
+  if(Math.random()>0.7) setTimeout(apCampPlayCrackle, 70+Math.random()*120);
+  const gap=0.5+Math.random()*1.8;
+  apCampCrackleTimeoutId=setTimeout(apCampScheduleCrackles, gap*1000);
+}
+/* an occasional campy, far-off loon call — echoing out across the black water */
+let apCampLoonTimeoutId=null;
+function apCampPlayLoon(){
+  if(!apCampSoundOn) return;
+  const ctx=__sfxGetCtx();
+  if(!ctx) return;
+  const start=820+Math.random()*60;
+  const dip=560+Math.random()*40;
+  try{
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.type='sine';
+    const t0=ctx.currentTime;
+    o.frequency.setValueAtTime(start,t0);
+    o.frequency.exponentialRampToValueAtTime(dip, t0+0.55);
+    o.frequency.exponentialRampToValueAtTime(start*0.92, t0+1.1);
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.linearRampToValueAtTime(0.05, t0+0.15);
+    g.gain.linearRampToValueAtTime(0.03, t0+0.8);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+1.3);
+    o.connect(g); g.connect(ctx.destination);
+    apCampSendEcho(g,ctx);
+    o.start(t0); o.stop(t0+1.35);
+  }catch(e){}
+}
+/* a classic "hoo... hoo-hoo" owl call, soft and breathy, out in the pines */
+function apCampPlayOwl(){
+  if(!apCampSoundOn) return;
+  const ctx=__sfxGetCtx();
+  if(!ctx) return;
+  const base=330+Math.random()*25;
+  const hoots=[[0,0.42,1],[0.55,0.32,0.82],[1.3,0.44,1]];
+  try{
+    hoots.forEach(([t,dur,mul])=>{
+      const o=ctx.createOscillator();
+      const g=ctx.createGain();
+      o.type='sine';
+      const t0=ctx.currentTime+t;
+      o.frequency.setValueAtTime(base*mul,t0);
+      o.frequency.exponentialRampToValueAtTime(base*mul*0.86, t0+dur*0.8);
+      g.gain.setValueAtTime(0.0001,t0);
+      g.gain.linearRampToValueAtTime(0.055, t0+dur*0.3);
+      g.gain.linearRampToValueAtTime(0.035, t0+dur*0.6);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+      o.connect(g); g.connect(ctx.destination);
+      apCampSendEcho(g,ctx);
+      o.start(t0); o.stop(t0+dur+0.05);
+    });
+  }catch(e){}
+}
+function apCampScheduleLoon(){
+  if(!apCampAmbientActive) return;
+  const roll=Math.random();
+  if(roll>0.45) apCampPlayOwl();
+  else if(roll>0.2) apCampPlayLoon();
+  const gap=11+Math.random()*18;
+  apCampLoonTimeoutId=setTimeout(apCampScheduleLoon, gap*1000);
+}
+
+/* a gentle looping music-box melody, plucked softly with its own echo tail */
+let apCampMelodyTimeoutId=null;
+const APCAMP_MELODY=[
+  {n:587.33,d:0}, {n:698.46,d:0.5}, {n:880.00,d:1.0}, {n:698.46,d:1.55},
+  {n:783.99,d:2.1}, {n:659.25,d:2.75}, {n:587.33,d:3.4}, {n:440.00,d:4.1}
+];
+function apCampPlayMelody(){
+  if(!apCampSoundOn) return;
+  const ctx=__sfxGetCtx();
+  if(!ctx) return;
+  APCAMP_MELODY.forEach(note=>{
+    apCampPlayTone(note.n, note.d, 0.9, 'triangle', 0.028);
+  });
+}
+function apCampScheduleMelody(){
+  if(!apCampAmbientActive) return;
+  apCampPlayMelody();
+  const gap=28+Math.random()*14;
+  apCampMelodyTimeoutId=setTimeout(apCampScheduleMelody, gap*1000);
+}
+function apCampStartAmbient(){
+  if(apCampAmbientActive || !apCampSoundOn) return;
+  apCampAmbientActive=true;
+  apCampStartWater();
+  apCampCricketTimeoutId=setTimeout(apCampScheduleCrickets, 800);
+  apCampCrackleTimeoutId=setTimeout(apCampScheduleCrackles, 1200);
+  apCampLoonTimeoutId=setTimeout(apCampScheduleLoon, 6000);
+  apCampMelodyTimeoutId=setTimeout(apCampScheduleMelody, 4000);
+}
+function apCampStopAmbient(){
+  apCampAmbientActive=false;
+  if(apCampCricketTimeoutId){ clearTimeout(apCampCricketTimeoutId); apCampCricketTimeoutId=null; }
+  if(apCampCrackleTimeoutId){ clearTimeout(apCampCrackleTimeoutId); apCampCrackleTimeoutId=null; }
+  if(apCampLoonTimeoutId){ clearTimeout(apCampLoonTimeoutId); apCampLoonTimeoutId=null; }
+  if(apCampMelodyTimeoutId){ clearTimeout(apCampMelodyTimeoutId); apCampMelodyTimeoutId=null; }
+  zenStopLoopNodes(apCampWaterNodes); apCampWaterNodes=null;
+}
+function toggleApCampSound(){
+  apCampSoundOn=!apCampSoundOn;
+  try{ localStorage.setItem('actionPlan3000_apCampSound', apCampSoundOn?'1':'0'); }catch(e){}
+  const btn=document.getElementById('apCampSoundBtn');
+  if(btn){ btn.textContent=apCampSoundOn?'🔊 Sound':'🔇 Sound'; btn.classList.toggle('is-muted',!apCampSoundOn); }
+  if(apCampSoundOn){ apCampStartAmbient(); } else { apCampStopAmbient(); }
+}
+(function initApCampSoundBtn(){
+  const btn=document.getElementById('apCampSoundBtn');
+  if(btn){ btn.textContent=apCampSoundOn?'🔊 Sound':'🔇 Sound'; btn.classList.toggle('is-muted',!apCampSoundOn); }
+})();
 
 function persist(){
   const data={};
