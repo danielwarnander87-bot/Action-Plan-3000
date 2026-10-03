@@ -2523,6 +2523,13 @@
   }
   .quest-mirror-text::placeholder{color:#6E93BE;}
   .quest-mirror-text:focus{outline:none;border-color:var(--quest-gold);}
+  .quest-archive-stats{padding:12px 16px;margin-bottom:14px;}
+  .quest-stat-row{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:#EAF6FF;}
+  .quest-stat-row strong{color:var(--quest-gold);}
+  .quest-stat-breakdown{font-size:11.5px;opacity:0.8;margin-top:6px;}
+  .quest-archive-btns{display:flex;gap:10px;flex-wrap:wrap;}
+  .quest-archive-btns .quest-add-btn{flex:1;min-width:200px;margin-bottom:0;}
+  .quest-archive-hint{font-family:'Nunito',sans-serif;font-size:11.5px;font-weight:600;color:#D7EAFF;opacity:0.7;margin-top:10px;text-align:center;}
   @media (max-width:560px){ .quest-board{flex-direction:column;} .quest-entry-row{flex-direction:column;} }
 
   /* ============ POWER HOUSE — a glowing warm-orange scratch space,
@@ -5990,6 +5997,17 @@
           <label class="quest-mirror-label">What's one honest, brave step you can take tomorrow?</label>
           <textarea id="questMirrorQ3" class="quest-mirror-text" rows="2" placeholder="small is still forward..." oninput="saveQuestMirror(); autoGrowApLine(this);"></textarea>
         </div>
+      </div>
+
+      <div class="quest-section">
+        <div class="quest-section-title">📤 Archive &amp; Share</div>
+        <div class="quest-sub">A full record of the campaign so far — every quest, every note, the history archive, and the Mirror of Truth — ready to hand to an ally for honest evaluation.</div>
+        <div class="quest-archive-stats jrpg-box" id="questArchiveStats"></div>
+        <div class="quest-archive-btns">
+          <button class="quest-add-btn" type="button" onclick="exportQuestArchive()">💾 Download Archive (.txt)</button>
+          <button class="quest-add-btn" type="button" onclick="copyQuestArchive()">📋 Copy Archive to Clipboard</button>
+        </div>
+        <div class="quest-archive-hint">Paste the copied archive into a chat with Claude and ask it to evaluate your progress, your interest level, and the patterns it notices.</div>
       </div>
     </div>
   </div><!-- /viewQuest -->
@@ -12011,14 +12029,47 @@ const QUEST_BOARD_LINKS=[
 ];
 const QUEST_LOG_KEY='actionPlan3000_questLog';
 const QUEST_MIRROR_KEY='actionPlan3000_questMirror';
+const QUEST_HISTORY_KEY='actionPlan3000_questHistory';
+const QUEST_STREAK_KEY='actionPlan3000_questStreakDays';
 const QUEST_STATUSES=['Scouted','Applied','Summoned','Trial','Victory','Fallen'];
 let questLog=[];
 try{ const raw=localStorage.getItem(QUEST_LOG_KEY); if(raw) questLog=JSON.parse(raw)||[]; }catch(e){}
 let questMirror={q1:'',q2:'',q3:''};
 try{ const raw=localStorage.getItem(QUEST_MIRROR_KEY); if(raw) questMirror=Object.assign(questMirror,JSON.parse(raw)||{}); }catch(e){}
+let questHistory=[];
+try{ const raw=localStorage.getItem(QUEST_HISTORY_KEY); if(raw) questHistory=JSON.parse(raw)||[]; }catch(e){}
+let questStreakDays=[];
+try{ const raw=localStorage.getItem(QUEST_STREAK_KEY); if(raw) questStreakDays=JSON.parse(raw)||[]; }catch(e){}
 let questIdSeq=1;
 
 function saveQuestLog(){ try{ localStorage.setItem(QUEST_LOG_KEY, JSON.stringify(questLog)); }catch(e){} }
+function saveQuestHistory(){ try{ localStorage.setItem(QUEST_HISTORY_KEY, JSON.stringify(questHistory)); }catch(e){} }
+function saveQuestStreak(){ try{ localStorage.setItem(QUEST_STREAK_KEY, JSON.stringify(questStreakDays)); }catch(e){} }
+function logQuestHistoryEvent(id,action){
+  const q=questLog.find(x=>x.id===id);
+  const now=new Date();
+  questHistory.push({
+    ts:now.getTime(),
+    dateStr:questTodayStr(),
+    timeStr:now.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),
+    company:(q&&q.company)||'(unnamed realm)',
+    role:(q&&q.role)||'',
+    action:action
+  });
+  if(questHistory.length>400) questHistory=questHistory.slice(questHistory.length-400);
+  saveQuestHistory();
+}
+function computeQuestStreak(){
+  const set=new Set(questStreakDays);
+  const today=new Date();
+  let streak=0;
+  if(!set.has(questTodayStr())) today.setDate(today.getDate()-1);
+  while(true){
+    const ds=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+    if(set.has(ds)){ streak++; today.setDate(today.getDate()-1); } else break;
+  }
+  return streak;
+}
 function saveQuestMirror(){
   questMirror.q1=document.getElementById('questMirrorQ1')?.value||'';
   questMirror.q2=document.getElementById('questMirrorQ2')?.value||'';
@@ -12049,16 +12100,16 @@ function questEntryCard(q){
     '<div class="quest-entry-row">'+
       '<input type="text" placeholder="Realm / Company" value="'+escapeHtml(q.company||'')+'" oninput="updateQuestField(\''+q.id+'\',\'company\',this.value)">'+
       '<input type="text" placeholder="Role / Title" value="'+escapeHtml(q.role||'')+'" oninput="updateQuestField(\''+q.id+'\',\'role\',this.value)">'+
-      '<select class="quest-entry-status" data-status="'+q.status+'" onchange="updateQuestField(\''+q.id+'\',\'status\',this.value); this.setAttribute(\'data-status\',this.value);">'+statusOptions+'</select>'+
+      '<select class="quest-entry-status" data-status="'+q.status+'" onchange="updateQuestField(\''+q.id+'\',\'status\',this.value); this.setAttribute(\'data-status\',this.value); logQuestHistoryEvent(\''+q.id+'\',\'status changed to \'+this.value);">'+statusOptions+'</select>'+
       '<button class="quest-entry-del" type="button" title="Abandon this quest" onclick="deleteQuestEntry(\''+q.id+'\')">🗑</button>'+
     '</div>'+
     '<div class="quest-entry-row">'+
       '<input type="url" placeholder="Link to the posting (optional)" value="'+escapeHtml(q.link||'')+'" oninput="updateQuestField(\''+q.id+'\',\'link\',this.value)">'+
     '</div>'+
     '<div class="quest-entry-field-label">Notes from the field</div>'+
-    '<textarea rows="2" placeholder="what happened, what you noticed, what to remember..." oninput="updateQuestField(\''+q.id+'\',\'notes\',this.value); autoGrowApLine(this);">'+escapeHtml(q.notes||'')+'</textarea>'+
+    '<textarea rows="2" placeholder="what happened, what you noticed, what to remember..." oninput="updateQuestField(\''+q.id+'\',\'notes\',this.value); autoGrowApLine(this);" onchange="logQuestHistoryEvent(\''+q.id+'\',\'updated notes\');">'+escapeHtml(q.notes||'')+'</textarea>'+
     '<div class="quest-entry-field-label">Cover letter strategy</div>'+
-    '<textarea rows="2" placeholder="the angle, the story, what to lead with..." oninput="updateQuestField(\''+q.id+'\',\'coverLetter\',this.value); autoGrowApLine(this);">'+escapeHtml(q.coverLetter||'')+'</textarea>'+
+    '<textarea rows="2" placeholder="the angle, the story, what to lead with..." oninput="updateQuestField(\''+q.id+'\',\'coverLetter\',this.value); autoGrowApLine(this);" onchange="logQuestHistoryEvent(\''+q.id+'\',\'updated cover letter strategy\');">'+escapeHtml(q.coverLetter||'')+'</textarea>'+
   '</div>';
 }
 function renderQuestLog(){
@@ -12072,9 +12123,12 @@ function renderQuestLog(){
   list.querySelectorAll('textarea').forEach(autoGrowApLine);
 }
 function addQuestEntry(){
-  questLog.unshift({id:'q'+Date.now()+'_'+(questIdSeq++), company:'', role:'', link:'', status:'Scouted', notes:'', coverLetter:''});
+  const id='q'+Date.now()+'_'+(questIdSeq++);
+  questLog.unshift({id:id, company:'', role:'', link:'', status:'Scouted', notes:'', coverLetter:''});
   saveQuestLog();
   renderQuestLog();
+  logQuestHistoryEvent(id,'began a new quest');
+  renderQuestArchiveStats();
 }
 function updateQuestField(id,field,value){
   const q=questLog.find(x=>x.id===id);
@@ -12083,12 +12137,16 @@ function updateQuestField(id,field,value){
   if(field==='notes'||field==='status'||field==='coverLetter'){ q.lastActionDate=questTodayStr(); }
   saveQuestLog();
   checkQuestDailyChallenge();
+  renderQuestArchiveStats();
 }
 function deleteQuestEntry(id){
+  const q=questLog.find(x=>x.id===id);
+  if(q) logQuestHistoryEvent(id,'abandoned this quest');
   questLog=questLog.filter(x=>x.id!==id);
   saveQuestLog();
   renderQuestLog();
   checkQuestDailyChallenge();
+  renderQuestArchiveStats();
 }
 
 /* ---------- the catch: skip today's application + note and the sky turns to fire ---------- */
@@ -12103,7 +12161,12 @@ function questDidLogToday(){
 function checkQuestDailyChallenge(){
   const bg=document.getElementById('questBg');
   if(!bg) return;
-  bg.classList.toggle('crisis', !questDidLogToday());
+  const ok=questDidLogToday();
+  bg.classList.toggle('crisis', !ok);
+  if(ok){
+    const today=questTodayStr();
+    if(!questStreakDays.includes(today)){ questStreakDays.push(today); saveQuestStreak(); }
+  }
 }
 
 /* ---------- ocean-blue sky scene (calm) / fire & black smoke (crisis) ---------- */
@@ -12193,12 +12256,119 @@ function questVisualStop(){
   const view=document.getElementById('viewQuest');
   if(view) view.classList.remove('glitching');
 }
+/* ---------- Archive & Share: a full export of the quest log, history, and Mirror of Truth ---------- */
+function renderQuestArchiveStats(){
+  const el=document.getElementById('questArchiveStats');
+  if(!el) return;
+  const counts={};
+  QUEST_STATUSES.forEach(s=>counts[s]=0);
+  questLog.forEach(q=>{ if(counts[q.status]!==undefined) counts[q.status]++; });
+  const streak=computeQuestStreak();
+  const toldToday=questDidLogToday();
+  el.innerHTML=
+    '<div class="quest-stat-row"><strong>'+questLog.length+'</strong> quest'+(questLog.length===1?'':'s')+' logged &nbsp;&middot;&nbsp; '+
+    '<strong>'+streak+'</strong>-day streak &nbsp;&middot;&nbsp; today: <strong>'+(toldToday?'done':'not yet')+'</strong></div>'+
+    '<div class="quest-stat-row quest-stat-breakdown">'+QUEST_STATUSES.map(s=>s+': <strong>'+counts[s]+'</strong>').join(' &nbsp; ')+'</div>';
+}
+function buildQuestArchiveText(){
+  const now=new Date();
+  const counts={};
+  QUEST_STATUSES.forEach(s=>counts[s]=0);
+  questLog.forEach(q=>{ if(counts[q.status]!==undefined) counts[q.status]++; });
+  const streak=computeQuestStreak();
+  let text='ACTION PLAN 3000 — QUEST ARCHIVE\n';
+  text+='Exported: '+now.toLocaleString()+'\n';
+  text+='='.repeat(48)+'\n\n';
+
+  text+='DAILY CHALLENGE\n';
+  text+='Today’s deed logged: '+(questDidLogToday()?'YES':'NOT YET')+'\n';
+  text+='Current streak: '+streak+' day'+(streak===1?'':'s')+'\n\n';
+
+  text+='QUEST LOG SUMMARY\n';
+  text+='Total quests: '+questLog.length+'\n';
+  QUEST_STATUSES.forEach(s=>{ text+='  '+s+': '+counts[s]+'\n'; });
+  text+='\n'+'-'.repeat(48)+'\n';
+
+  text+='QUEST LOG — FULL DETAIL\n\n';
+  if(!questLog.length){
+    text+='(no quests begun yet)\n\n';
+  }else{
+    questLog.forEach((q,i)=>{
+      text+=(i+1)+'. '+(q.company||'(unnamed realm)')+' — '+(q.role||'(no role given)')+'  ['+q.status+']\n';
+      if(q.link) text+='   Link: '+q.link+'\n';
+      if(q.lastActionDate) text+='   Last activity: '+q.lastActionDate+'\n';
+      text+='   Notes: '+(q.notes&&q.notes.trim()?q.notes.trim():'(none)')+'\n';
+      text+='   Cover letter strategy: '+(q.coverLetter&&q.coverLetter.trim()?q.coverLetter.trim():'(none)')+'\n\n';
+    });
+  }
+
+  text+='-'.repeat(48)+'\n';
+  text+='HISTORY ARCHIVE (most recent first)\n\n';
+  if(!questHistory.length){
+    text+='(no history yet)\n\n';
+  }else{
+    questHistory.slice().reverse().forEach(h=>{
+      text+=h.dateStr+' '+h.timeStr+' — '+h.company+(h.role?' ('+h.role+')':'')+': '+h.action+'\n';
+    });
+    text+='\n';
+  }
+
+  text+='-'.repeat(48)+'\n';
+  text+='MIRROR OF TRUTH\n\n';
+  text+='Q: What do you actually want from this next chapter — not what you think you should want?\n';
+  text+='A: '+(questMirror.q1&&questMirror.q1.trim()?questMirror.q1.trim():'(not answered)')+'\n\n';
+  text+='Q: What truth about yourself have you been avoiding?\n';
+  text+='A: '+(questMirror.q2&&questMirror.q2.trim()?questMirror.q2.trim():'(not answered)')+'\n\n';
+  text+='Q: What’s one honest, brave step you can take tomorrow?\n';
+  text+='A: '+(questMirror.q3&&questMirror.q3.trim()?questMirror.q3.trim():'(not answered)')+'\n\n';
+
+  text+='='.repeat(48)+'\n';
+  text+='Paste this into a chat with Claude and ask it to evaluate your progress, your interest level, and the patterns it notices.\n';
+  return text;
+}
+function exportQuestArchive(){
+  const text=buildQuestArchiveText();
+  const blob=new Blob([text],{type:'text/plain'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='quest-archive_'+questTodayStr()+'.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function copyQuestArchive(){
+  const text=buildQuestArchiveText();
+  const done=()=>{
+    const btn=document.querySelector('.quest-archive-btns button:nth-child(2)');
+    if(btn){ const orig=btn.textContent; btn.textContent='✓ Copied!'; setTimeout(()=>{btn.textContent=orig;},1600); }
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>{ fallbackCopyQuestArchive(text,done); });
+  }else{
+    fallbackCopyQuestArchive(text,done);
+  }
+}
+function fallbackCopyQuestArchive(text,done){
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    done();
+  }catch(e){ alert('Could not copy automatically — use Download Archive instead.'); }
+}
 function initQuest(){
   renderQuestBoard();
   renderQuestLog();
   loadQuestMirror();
   generateQuestScene();
   checkQuestDailyChallenge();
+  renderQuestArchiveStats();
 }
 initQuest();
 function toggleApCampSound(){
