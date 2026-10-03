@@ -2530,6 +2530,27 @@
   .quest-archive-btns{display:flex;gap:10px;flex-wrap:wrap;}
   .quest-archive-btns .quest-add-btn{flex:1;min-width:200px;margin-bottom:0;}
   .quest-archive-hint{font-family:'Nunito',sans-serif;font-size:11.5px;font-weight:600;color:#D7EAFF;opacity:0.7;margin-top:10px;text-align:center;}
+  .quest-treasure-box{
+    padding:16px 18px;border-color:var(--quest-gold)!important;
+    box-shadow:0 0 0 3px var(--jrpg-navy-deep), 0 0 18px 2px rgba(255,210,63,0.35), 5px 5px 0 rgba(0,0,0,0.45);
+    animation:questTreasureGlow 3.4s ease-in-out infinite;
+  }
+  @keyframes questTreasureGlow{
+    0%,100%{box-shadow:0 0 0 3px var(--jrpg-navy-deep), 0 0 14px 2px rgba(255,210,63,0.28), 5px 5px 0 rgba(0,0,0,0.45);}
+    50%{box-shadow:0 0 0 3px var(--jrpg-navy-deep), 0 0 24px 5px rgba(255,210,63,0.55), 5px 5px 0 rgba(0,0,0,0.45);}
+  }
+  .quest-treasure-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .quest-treasure-row:last-child{margin-bottom:0;}
+  .quest-treasure-icon{color:var(--quest-gold);font-size:14px;flex-shrink:0;}
+  .quest-treasure-row input[type="text"]{
+    flex:1;border:1.5px solid #2F5C8F;border-radius:6px;padding:8px 10px;
+    font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#FFF6DA;background:var(--jrpg-panel);
+  }
+  .quest-treasure-row input[type="text"]::placeholder{color:#6E93BE;}
+  .quest-treasure-row input[type="text"]:focus{outline:none;border-color:var(--quest-gold);}
+  .quest-treasure-del{background:none;border:none;font-size:15px;opacity:0.5;cursor:pointer;color:#EAF6FF;padding:2px 4px;}
+  .quest-treasure-del:hover{opacity:0.9;}
+  .quest-treasure-empty{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:#D7EAFF;opacity:0.6;text-align:center;padding:6px 0;}
   @media (max-width:560px){ .quest-board{flex-direction:column;} .quest-entry-row{flex-direction:column;} }
 
   /* ============ POWER HOUSE — a glowing warm-orange scratch space,
@@ -5206,6 +5227,7 @@
       <button class="tab-btn" id="tabBtnPower" onclick="switchView('power')">🔥 Power House</button>
       <button class="tab-btn" id="tabBtnZen" onclick="switchView('zen')">🧘 Zen</button>
       <button class="tab-btn" id="tabBtnQuest" onclick="switchView('quest')">⚔️ Quest</button>
+      <button class="tab-btn" id="tabBtnEvents" onclick="switchView('events')">📌 Event Planner</button>
       <button class="tab-btn" id="rearrangeBtn" onclick="toggleRearrangeMode()">🔀 Rearrange</button>
     </div>
     <div class="block-nav" id="blockNav"></div>
@@ -5975,6 +5997,13 @@
       </div>
 
       <div class="quest-section">
+        <div class="quest-section-title">🌟 The True Treasure</div>
+        <div class="quest-sub">Not the gold — this is what the quest is actually for. Worth more than money. Keep it in view.</div>
+        <div class="quest-treasure-box jrpg-box" id="questTreasureBox"></div>
+        <button class="quest-add-btn" type="button" onclick="addQuestTreasure()">+ Add What Matters</button>
+      </div>
+
+      <div class="quest-section">
         <div class="quest-section-title">🗺️ Known Realms to Scout</div>
         <div class="quest-board" id="questBoard"></div>
       </div>
@@ -6011,6 +6040,81 @@
       </div>
     </div>
   </div><!-- /viewQuest -->
+
+  <div id="viewEvents" class="view">
+    <style>
+      .ep3k-wrap{
+        max-width:640px; margin:0 auto; padding:40px 16px 60px;
+        font-family:'Space Mono', 'Courier New', monospace;
+        text-align:center;
+      }
+      .ep3k-wrap{
+        --ep-cork:#b08a5c; --ep-cork-dark:#8f6d44; --ep-paper:#f3ead3;
+        --ep-ink:#352a1c; --ep-muted:#6e5d45; --ep-accent:#b5473a; --ep-pin:#8b2e2e;
+      }
+      @media (prefers-color-scheme: dark){
+        .ep3k-wrap{ --ep-cork:#4a3826; --ep-cork-dark:#352819; --ep-paper:#e9dcb8; --ep-ink:#2c2316; --ep-muted:#5d4e38; --ep-accent:#c75a4a; --ep-pin:#a33c3c; }
+      }
+      .ep3k-card{
+        position:relative;
+        display:inline-block;
+        background:var(--ep-paper);
+        color:var(--ep-ink);
+        border-radius:4px;
+        padding:30px 34px;
+        margin-top:18px;
+        box-shadow:
+          0 1px 0 rgba(255,255,255,0.4),
+          34px 44px 40px -8px rgba(0,0,0,0.5),
+          14px 18px 18px -6px rgba(0,0,0,0.35);
+        transform:rotate(-1.4deg);
+        max-width:460px;
+      }
+      .ep3k-pin{
+        position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+        width:16px; height:16px; border-radius:50%;
+        background:radial-gradient(circle at 32% 30%, #ff9d8f, var(--ep-pin) 65%, #5a1717 100%);
+        box-shadow:0 3px 4px rgba(0,0,0,0.5);
+      }
+      .ep3k-eyebrow{
+        font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase;
+        color:var(--ep-accent); font-weight:700; margin-bottom:6px;
+      }
+      .ep3k-title{
+        font-family:'Georgia', serif; font-size:1.5rem; font-weight:700; margin:0 0 10px;
+      }
+      .ep3k-desc{ font-size:0.9rem; color:var(--ep-muted); margin:0 0 20px; line-height:1.5; }
+      .ep3k-launch{
+        display:inline-block;
+        background:var(--ep-accent);
+        color:#fdf3ec;
+        text-decoration:none;
+        font-weight:700;
+        font-size:0.92rem;
+        padding:12px 22px;
+        border-radius:8px;
+      }
+      .ep3k-launch:hover{ filter:brightness(1.08); }
+      .ep3k-note{
+        font-size:0.76rem;
+        color:var(--ep-muted);
+        margin-top:16px;
+        opacity:0.8;
+      }
+      .ep3k-intro{ color:var(--ep-ink); opacity:0.85; font-size:0.9rem; margin-bottom:6px; }
+    </style>
+    <div class="ep3k-wrap">
+      <div class="ep3k-intro">The corkboard where every mission gets pinned.</div>
+      <div class="ep3k-card">
+        <div class="ep3k-pin"></div>
+        <div class="ep3k-eyebrow">Desk No. 1</div>
+        <div class="ep3k-title">📌 Event Planner 3000</div>
+        <div class="ep3k-desc">A drafting-table hub for everything outside the daily grind — birthdays, trips, whatever's next. Pin a new mission, pick one up, run with it.</div>
+        <a class="ep3k-launch" href="https://claude.ai/artifact/38T9wZKyNp2MTPfc21jJ89" target="_blank" rel="noopener">Open the Board &rarr;</a>
+        <div class="ep3k-note">Opens in a new tab &mdash; it's a separate live board, not a copy, so anything you pin there stays there.</div>
+      </div>
+    </div>
+  </div><!-- /viewEvents -->
 
 <script type="module">
   /* ============================================================
@@ -8676,11 +8780,13 @@ function switchView(view){
   document.getElementById('viewPower').classList.toggle('active',view==='power');
   document.getElementById('viewZen').classList.toggle('active',view==='zen');
   document.getElementById('viewQuest').classList.toggle('active',view==='quest');
+  document.getElementById('viewEvents').classList.toggle('active',view==='events');
   document.getElementById('tabBtnPlanner').classList.toggle('active',view==='planner');
   document.getElementById('tabBtnStudy').classList.toggle('active',view==='study');
   document.getElementById('tabBtnPower').classList.toggle('active',view==='power');
   document.getElementById('tabBtnZen').classList.toggle('active',view==='zen');
   document.getElementById('tabBtnQuest').classList.toggle('active',view==='quest');
+  document.getElementById('tabBtnEvents').classList.toggle('active',view==='events');
   const nav=document.getElementById('blockNav');
   if(nav)nav.style.display=view==='planner'?'flex':'none';
   if(view==='power'){ enterPowerHouse(); } else { leavePowerHouse(); }
@@ -12031,6 +12137,7 @@ const QUEST_LOG_KEY='actionPlan3000_questLog';
 const QUEST_MIRROR_KEY='actionPlan3000_questMirror';
 const QUEST_HISTORY_KEY='actionPlan3000_questHistory';
 const QUEST_STREAK_KEY='actionPlan3000_questStreakDays';
+const QUEST_TREASURE_KEY='actionPlan3000_questTreasures';
 const QUEST_STATUSES=['Scouted','Applied','Summoned','Trial','Victory','Fallen'];
 let questLog=[];
 try{ const raw=localStorage.getItem(QUEST_LOG_KEY); if(raw) questLog=JSON.parse(raw)||[]; }catch(e){}
@@ -12040,11 +12147,49 @@ let questHistory=[];
 try{ const raw=localStorage.getItem(QUEST_HISTORY_KEY); if(raw) questHistory=JSON.parse(raw)||[]; }catch(e){}
 let questStreakDays=[];
 try{ const raw=localStorage.getItem(QUEST_STREAK_KEY); if(raw) questStreakDays=JSON.parse(raw)||[]; }catch(e){}
+let questTreasures=null;
+try{ const raw=localStorage.getItem(QUEST_TREASURE_KEY); if(raw) questTreasures=JSON.parse(raw); }catch(e){}
+if(!Array.isArray(questTreasures)){
+  questTreasures=['See my kids more','Go to church','Make friends','A job that pays the bills without taking everything from me'];
+}
 let questIdSeq=1;
 
 function saveQuestLog(){ try{ localStorage.setItem(QUEST_LOG_KEY, JSON.stringify(questLog)); }catch(e){} }
 function saveQuestHistory(){ try{ localStorage.setItem(QUEST_HISTORY_KEY, JSON.stringify(questHistory)); }catch(e){} }
 function saveQuestStreak(){ try{ localStorage.setItem(QUEST_STREAK_KEY, JSON.stringify(questStreakDays)); }catch(e){} }
+function saveQuestTreasures(){ try{ localStorage.setItem(QUEST_TREASURE_KEY, JSON.stringify(questTreasures)); }catch(e){} }
+function renderQuestTreasures(){
+  const box=document.getElementById('questTreasureBox');
+  if(!box) return;
+  if(!questTreasures.length){
+    box.innerHTML='<div class="quest-treasure-empty">Nothing listed yet — add what this is really for.</div>';
+    return;
+  }
+  box.innerHTML=questTreasures.map((t,i)=>
+    '<div class="quest-treasure-row">'+
+      '<span class="quest-treasure-icon">✦</span>'+
+      '<input type="text" value="'+escapeHtml(t)+'" placeholder="what matters more than money..." oninput="updateQuestTreasure('+i+',this.value)">'+
+      '<button class="quest-treasure-del" type="button" title="Remove" onclick="deleteQuestTreasure('+i+')">🗑</button>'+
+    '</div>'
+  ).join('');
+}
+function addQuestTreasure(){
+  questTreasures.push('');
+  saveQuestTreasures();
+  renderQuestTreasures();
+  const box=document.getElementById('questTreasureBox');
+  const inputs=box?box.querySelectorAll('input'):null;
+  if(inputs&&inputs.length) inputs[inputs.length-1].focus();
+}
+function updateQuestTreasure(i,value){
+  questTreasures[i]=value;
+  saveQuestTreasures();
+}
+function deleteQuestTreasure(i){
+  questTreasures.splice(i,1);
+  saveQuestTreasures();
+  renderQuestTreasures();
+}
 function logQuestHistoryEvent(id,action){
   const q=questLog.find(x=>x.id===id);
   const now=new Date();
@@ -12280,6 +12425,12 @@ function buildQuestArchiveText(){
   text+='Exported: '+now.toLocaleString()+'\n';
   text+='='.repeat(48)+'\n\n';
 
+  text+='THE TRUE TREASURE (worth more than money)\n';
+  const treasureList=questTreasures.filter(t=>t&&t.trim());
+  if(!treasureList.length){ text+='(nothing listed yet)\n'; }
+  else{ treasureList.forEach(t=>{ text+='  ✦ '+t.trim()+'\n'; }); }
+  text+='\n'+'-'.repeat(48)+'\n\n';
+
   text+='DAILY CHALLENGE\n';
   text+='Today’s deed logged: '+(questDidLogToday()?'YES':'NOT YET')+'\n';
   text+='Current streak: '+streak+' day'+(streak===1?'':'s')+'\n\n';
@@ -12363,6 +12514,7 @@ function fallbackCopyQuestArchive(text,done){
   }catch(e){ alert('Could not copy automatically — use Download Archive instead.'); }
 }
 function initQuest(){
+  renderQuestTreasures();
   renderQuestBoard();
   renderQuestLog();
   loadQuestMirror();
