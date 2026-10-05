@@ -4480,6 +4480,269 @@
   }
   #apLockScreen.ap-lock-entering .ap-lock-tap-layer{display:none;}
   #apLockScreen:not(.ap-lock-entering) .ap-lock-glass{display:none;}
+
+  /* ============================================================
+     THE LOG BOOK — a left-side pull-out: the Weekly Journal as a
+     late-90s word-processor window on a teal desktop. Title bar,
+     menu bar, toolbar, ruler, a white page in Times New Roman,
+     sheet-style day tabs, a status bar and a taskbar with a clock.
+     A soft synthwave theme plays while it's open.
+     ============================================================ */
+  .jlog-handle{
+    position:fixed; top:24%; left:0; transform:translateY(-50%);
+    z-index:1053; width:34px; height:96px;
+    background:#c0c0c0;
+    border:2px solid; border-color:#fff #404040 #404040 #fff; border-left:none;
+    box-shadow:inset -1px -1px #808080, inset 1px 1px #dfdfdf, 3px 0 10px rgba(0,0,0,0.4);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    cursor:grab; touch-action:none; user-select:none;
+  }
+  .jlog-handle:active{ cursor:grabbing; }
+  .jlog-handle-icon{ font-size:15px; }
+  .jlog-handle-label{
+    writing-mode:vertical-rl; text-orientation:mixed;
+    font-family:'VT323', monospace; font-size:13px; letter-spacing:0.14em; color:#000080;
+  }
+  .jlog-handle.needs-entry::after{
+    content:""; position:absolute; top:5px; right:5px; width:8px; height:8px; border-radius:50%;
+    background:#ffe14a; border:1px solid #000; box-shadow:0 0 6px #ffe14a;
+    animation:jlogPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes jlogPulse{ 0%,100%{ transform:scale(0.75); opacity:0.7; } 50%{ transform:scale(1.15); opacity:1; } }
+
+  .jlog-panel{
+    position:fixed; top:0; left:0; height:100%; width:min(560px, 94vw);
+    z-index:1052; transform:translateX(-100%);
+    background:#008080;
+    box-shadow:20px 0 60px rgba(0,0,0,0.55);
+    overflow:hidden;
+    font-family:Tahoma, 'MS Sans Serif', Geneva, Arial, sans-serif; font-size:12px; color:#000;
+  }
+  .jlog-panel.dragging{ transition:none !important; }
+  .jlog-panel.open{ transition:transform 0.4s cubic-bezier(.2,.8,.3,1); }
+  .jlog-panel.closed{ transition:transform 0.35s ease; }
+
+  /* the application window */
+  .jw-win{
+    position:absolute; left:10px; right:10px; top:10px; bottom:46px;
+    display:flex; flex-direction:column; box-sizing:border-box; padding:3px;
+    background:#c0c0c0;
+    box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff, 4px 4px 0 rgba(0,0,0,0.35);
+  }
+  .jw-titlebar{
+    display:flex; align-items:center; gap:5px; flex:0 0 auto; height:20px; padding:2px 2px 2px 4px; box-sizing:border-box;
+    background:linear-gradient(90deg, #000080, #1084d0); color:#fff; font-weight:700; font-size:12px;
+  }
+  .jw-ticon{ font-size:12px; }
+  .jw-ttext{ flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .jw-tbtns{ display:flex; gap:2px; }
+  .jw-cap{
+    width:16px; height:14px; padding:0; line-height:10px; font-size:11px; font-weight:700; color:#000; cursor:pointer;
+    background:#c0c0c0; border:none;
+    box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  }
+  .jw-cap:active:not(:disabled){ box-shadow:inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px #808080, inset -2px -2px #dfdfdf; }
+  .jw-cap:disabled{ color:#808080; cursor:default; }
+  .jw-menubar{ display:flex; flex:0 0 auto; padding:2px 0; position:relative; }
+  .jw-menubar button{
+    font:inherit; color:#000; background:transparent; border:none; padding:3px 7px; cursor:default;
+  }
+  .jw-menubar button:hover, .jw-menubar button.open{ background:#000080; color:#fff; }
+  .jw-menu{
+    position:absolute; z-index:20; min-width:190px; padding:2px; background:#c0c0c0;
+    box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff, 3px 3px 0 rgba(0,0,0,0.3);
+  }
+  .jw-menu[hidden]{ display:none; }
+  .jw-menu button{
+    display:block; width:100%; text-align:left; font:inherit; color:#000; background:transparent; border:none;
+    padding:4px 22px 4px 24px; cursor:default; white-space:nowrap;
+  }
+  .jw-menu button:hover{ background:#000080; color:#fff; }
+  .jw-menu hr{ border:none; border-top:1px solid #808080; border-bottom:1px solid #fff; margin:3px 2px; }
+  .jw-toolbar{
+    display:flex; align-items:center; gap:4px; flex:0 0 auto; padding:3px 2px; flex-wrap:wrap;
+    border-top:1px solid #fff; border-bottom:1px solid #808080;
+  }
+  .jw-tbtn{
+    font:inherit; color:#000; background:#c0c0c0; border:none; padding:3px 8px; cursor:pointer; white-space:nowrap;
+    box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  }
+  .jw-tbtn:active{ box-shadow:inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px #808080, inset -2px -2px #dfdfdf; padding:4px 7px 2px 9px; }
+  .jw-tbtn.is-muted{ color:#808080; }
+  .jw-sep{ width:2px; align-self:stretch; margin:0 2px; border-left:1px solid #808080; border-right:1px solid #fff; }
+  .jw-combo{
+    background:#fff; padding:2px 6px; color:#000; white-space:nowrap;
+    box-shadow:inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #0a0a0a, inset -2px -2px #dfdfdf;
+  }
+  .jw-combo-font{ min-width:112px; } .jw-combo-size{ min-width:22px; text-align:center; }
+  .jw-fmt{
+    width:20px; text-align:center; padding:2px 0; font-family:'Times New Roman', serif; font-size:13px;
+    box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  }
+  .jw-ruler{
+    flex:0 0 auto; height:18px; margin:2px 0; background:#fff;
+    background-image:
+      repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 48px),
+      repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 12px);
+    background-size:100% 9px, 100% 5px; background-position:0 100%, 0 100%; background-repeat:no-repeat;
+    box-shadow:inset 1px 1px #808080, inset -1px -1px #fff;
+  }
+  .jw-work{
+    position:relative; overflow:hidden; flex:1; min-height:0; display:flex; padding:10px; background:#808080;
+    box-shadow:inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px #404040, inset -2px -2px #dfdfdf;
+  }
+  .jw-page{
+    flex:1; min-width:0; display:flex; position:relative; z-index:1;
+    background:radial-gradient(ellipse at 50% 38%, #fdf6e0 0%, #f3e6c2 62%, #e4d0a0 100%);
+    box-shadow:3px 3px 0 #000, 0 0 34px 6px rgba(245,225,170,0.45);
+    filter:sepia(0.22);
+    transition:box-shadow 0.9s ease, filter 0.9s ease;
+  }
+  /* typing makes the white bloom: the page flares and spills light onto the screen around it */
+  .jw-work.typing .jw-page{
+    box-shadow:3px 3px 0 #000, 0 0 90px 30px rgba(255,250,215,0.95), 0 0 26px 4px rgba(255,255,245,0.9);
+    filter:sepia(0.08) brightness(1.1);
+    transition:box-shadow 0.18s ease-out, filter 0.18s ease-out;
+  }
+  /* old, yellowed, diffused glass over the whole display */
+  .jw-glare{
+    position:absolute; inset:0; z-index:50; pointer-events:none;
+    background:
+      /* shadow glare: a dark room-reflection falling diagonally across the whole glass */
+      linear-gradient(104deg, rgba(34,26,14,0) 50%, rgba(34,26,14,0.40) 67%, rgba(34,26,14,0.12) 81%, rgba(34,26,14,0.48) 100%),
+      linear-gradient(200deg, rgba(34,26,14,0.5) 0%, rgba(34,26,14,0) 28%),
+      linear-gradient(0deg, rgba(34,26,14,0.5) 0%, rgba(34,26,14,0) 22%),
+      /* deep curved-glass vignette */
+      radial-gradient(ellipse at 50% 46%, rgba(0,0,0,0) 40%, rgba(24,16,6,0.62) 100%),
+      repeating-linear-gradient(180deg, rgba(30,20,6,0.09) 0 1px, transparent 1px 3px),
+      /* light aged-phosphor tint */
+      rgba(214,178,98,0.14);
+    mix-blend-mode:multiply;
+    animation:jwFlicker 5.5s steps(1, end) infinite;
+  }
+  /* glare highlights: soft warm light on the glass, screen-blended over the whole panel */
+  .jlog-panel::after{
+    content:""; position:absolute; inset:0; z-index:51; pointer-events:none; mix-blend-mode:screen;
+    background:
+      radial-gradient(ellipse at 2% 0%, rgba(255,240,200,0.22) 0%, rgba(255,240,200,0) 24%),
+      linear-gradient(112deg, rgba(255,238,198,0) 34%, rgba(255,238,198,0.13) 42%, rgba(255,238,198,0) 50%),
+      linear-gradient(112deg, rgba(255,238,198,0) 60%, rgba(255,238,198,0.1) 64%, rgba(255,238,198,0) 68%);
+    transition:opacity 1s ease;
+  }
+  .jlog-panel.typing::after{ opacity:0.5; transition:opacity 0.12s ease-out; }
+  .jlog-panel.fx-off::after{ display:none; }
+  .jw-glare::before{ /* a soft bright refresh band rolling down the glass */
+    content:""; position:absolute; left:0; right:0; top:0; height:16%;
+    background:linear-gradient(180deg, rgba(255,236,190,0), rgba(255,236,190,0.16), rgba(255,236,190,0));
+    mix-blend-mode:screen; animation:jwRoll 9s linear infinite;
+  }
+  @keyframes jwRoll{ from{ transform:translateY(-110%); } to{ transform:translateY(720%); } }
+  @keyframes jwFlicker{ 0%,100%{ opacity:1; } 47%{ opacity:0.93; } 49%{ opacity:1; } 83%{ opacity:0.95; } 85%{ opacity:1; } }
+
+  /* hot white core behind the text that flares while typing */
+  .jw-page::before{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:0; opacity:0;
+    background:radial-gradient(ellipse at 50% 40%, rgba(255,255,255,1) 0%, rgba(255,255,250,0.7) 40%, rgba(255,255,255,0) 78%);
+    transition:opacity 1s ease;
+  }
+  .jw-work.typing .jw-page::before{ opacity:1; transition:opacity 0.12s ease-out; }
+  .jw-glare{ transition:filter 1s ease; }
+  .jlog-panel.typing .jw-glare{ filter:brightness(1.36) saturate(0.85); transition:filter 0.12s ease-out; }
+  .jlog-text, .jlog-all{ position:relative; z-index:1; }
+  .jlog-panel.fx-off .jw-glare{ display:none; }
+  /* a splash of hot pink / orange that glides slowly across the glass */
+  .jw-wash{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:52; }
+  .jw-wash-tint{ mix-blend-mode:multiply; opacity:0.9; }
+  .jw-wash-glow{ mix-blend-mode:screen; opacity:0.5; }
+  .jw-wash i{
+    position:absolute; left:0; top:0; width:85%; height:78%; border-radius:50%;
+    background:radial-gradient(ellipse at center, rgba(255,0,140,1) 0%, rgba(255,70,40,0.85) 40%, rgba(255,120,0,0) 72%);
+    filter:blur(26px) hue-rotate(0deg);
+    transform:translate(-125%, -45%) rotate(-14deg);
+    animation:jwGlide 22s ease-in-out infinite;
+  }
+  @keyframes jwGlide{
+    0%, 6%{ transform:translate(-125%, -45%) rotate(-14deg); filter:blur(26px) hue-rotate(0deg); }
+    58%{ transform:translate(150%, 72%) rotate(-14deg); filter:blur(30px) hue-rotate(52deg); }
+    100%{ transform:translate(150%, 72%) rotate(-14deg); filter:blur(30px) hue-rotate(52deg); }
+  }
+  .jlog-panel.fx-off .jw-wash{ display:none; }
+
+  .jw-work.fx-off .jw-page{ background:#fff; box-shadow:3px 3px 0 #000; filter:none; }
+  .jw-work.fx-off .jw-page::before{ display:none; }
+  .jw-work.fx-off.typing .jw-page{ box-shadow:3px 3px 0 #000; filter:none; }
+  @media (prefers-reduced-motion: reduce){
+    .jw-glare, .jw-glare::before{ animation:none; }
+    .jw-wash{ display:none; }
+  }
+  .jlog-text{
+    flex:1; width:100%; min-height:0; box-sizing:border-box; resize:none; border:none; outline:none; margin:0;
+    padding:20px 24px; background:transparent; color:#1a0d00;
+    font-family:'Times New Roman', Times, serif; font-size:16px; line-height:1.35;
+    text-shadow:0 0 1.5px rgba(60,35,0,0.5);
+  }
+  .jlog-text::placeholder{ color:#808080; }
+  .jlog-all{
+    flex:1; overflow-y:auto; padding:20px 24px; box-sizing:border-box;
+    font-family:'Times New Roman', Times, serif; font-size:16px; line-height:1.35; color:#1a0d00;
+    text-shadow:0 0 1.5px rgba(60,35,0,0.5);
+  }
+  .jlog-all-day{ margin-bottom:14px; }
+  .jlog-all-label{ font-weight:700; text-decoration:underline; letter-spacing:0.04em; }
+  .jlog-all-text{ white-space:pre-wrap; }
+  .jlog-all-empty{ color:#808080; }
+
+  /* day tabs along the bottom, like sheet tabs */
+  .jw-tabs{ display:flex; flex:0 0 auto; gap:2px; padding:4px 2px 0; flex-wrap:wrap; }
+  .jlog-tab{
+    font:inherit; color:#000; background:#c0c0c0; border:none; padding:3px 11px 4px; cursor:pointer; position:relative;
+    box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  }
+  .jlog-tab.active{ background:#fff; font-weight:700; box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080; }
+  .jlog-tab.is-today{ text-decoration:underline; }
+  .jlog-tab .st{ color:#d08a00; margin-left:3px; text-shadow:0 0 1px #000; }
+  .jw-status{ display:flex; gap:2px; flex:0 0 auto; padding:4px 0 0; }
+  .jw-cell{ padding:2px 8px; white-space:nowrap; box-shadow:inset 1px 1px #808080, inset -1px -1px #fff; }
+  .jw-grow{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+
+  /* taskbar */
+  .jw-taskbar{
+    position:absolute; left:0; right:0; bottom:0; height:36px; box-sizing:border-box; padding:3px 4px;
+    display:flex; align-items:center; gap:6px; background:#c0c0c0;
+    box-shadow:inset 0 2px #fff, inset 0 3px #dfdfdf;
+    z-index:3;
+  }
+  .jw-start{
+    display:flex; align-items:center; gap:5px; padding:2px 8px; height:26px; box-sizing:border-box; font-weight:700;
+    box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  }
+  .jw-flag{
+    width:14px; height:14px;
+    background:
+      linear-gradient(#f25022 0 0) 0 0/6px 6px no-repeat,
+      linear-gradient(#7fba00 0 0) 8px 0/6px 6px no-repeat,
+      linear-gradient(#00a4ef 0 0) 0 8px/6px 6px no-repeat,
+      linear-gradient(#ffb900 0 0) 8px 8px/6px 6px no-repeat;
+  }
+  .jw-task{
+    flex:0 1 190px; height:26px; box-sizing:border-box; padding:4px 8px; font-weight:700; white-space:nowrap; overflow:hidden;
+    background:repeating-conic-gradient(#c0c0c0 0 25%, #fff 0 50%) 0 0/2px 2px;
+    box-shadow:inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px #808080, inset -2px -2px #dfdfdf;
+  }
+  .jw-tray{
+    margin-left:auto; display:flex; align-items:center; gap:8px; height:26px; box-sizing:border-box; padding:0 8px;
+    box-shadow:inset 1px 1px #808080, inset -1px -1px #fff;
+  }
+  .jw-trayvol{ font-size:14px; background:none; border:none; padding:0; cursor:pointer; line-height:1; }
+  .jw-trayvol.is-muted{ opacity:0.5; }
+  @media (max-width:640px){
+    .jw-win{ left:6px; right:6px; top:6px; }
+    .jw-combo-font{ display:none; }
+    .jlog-text, .jlog-all{ padding:14px 16px; }
+  }
+  @media print{
+    .jlog-handle, .jlog-panel{ display:none !important; }
+  }
 </style>
 </head>
 <body>
@@ -4924,6 +5187,61 @@
       </div>
       <div class="mirror-caption">peer into the glass, then write what you see below &mdash; <a href="#" id="mirrorOpenTab" class="mirror-open-link">open full-size in a new tab</a></div>
     </div>
+  </div>
+
+  <div class="jlog-handle" id="jlogHandle" title="Drag to open the Log Book">
+    <span class="jlog-handle-icon">&#128221;</span>
+    <span class="jlog-handle-label">JOURNAL</span>
+  </div>
+  <div class="jlog-panel" id="jlogPanel">
+    <div class="jw-win">
+      <div class="jw-titlebar">
+        <span class="jw-ticon">&#128221;</span>
+        <span class="jw-ttext" id="jlogWinTitle">Weekly Journal</span>
+        <span class="jw-tbtns">
+          <button type="button" class="jw-cap" id="jlogMin" title="Minimize">_</button>
+          <button type="button" class="jw-cap" disabled title="Maximize">&#9633;</button>
+          <button type="button" class="jw-cap" id="jlogClose" title="Close">&times;</button>
+        </span>
+      </div>
+      <div class="jw-menubar" id="jlogMenubar">
+        <button type="button" data-menu="File"><u>F</u>ile</button>
+        <button type="button" data-menu="Edit"><u>E</u>dit</button>
+        <button type="button" data-menu="View"><u>V</u>iew</button>
+        <button type="button" data-menu="Insert"><u>I</u>nsert</button>
+        <button type="button" data-menu="Format">F<u>o</u>rmat</button>
+        <button type="button" data-menu="Tools"><u>T</u>ools</button>
+        <button type="button" data-menu="Table">T<u>a</u>ble</button>
+        <button type="button" data-menu="Window"><u>W</u>indow</button>
+        <button type="button" data-menu="Help"><u>H</u>elp</button>
+      </div>
+      <div class="jw-menu" id="jlogMenu" hidden></div>
+      <div class="jw-toolbar">
+        <button type="button" class="jw-tbtn" id="jlogStamp" title="Insert date and time">&#9201; Stamp</button>
+        <button type="button" class="jw-tbtn" id="jlogExport" title="Export this week as a text file">&#128228; Export</button>
+        <button type="button" class="jw-tbtn" id="jlogMusic" title="Theme music on/off">&#9835; Music</button>
+        <span class="jw-sep"></span>
+        <span class="jw-combo jw-combo-font">Times New Roman</span>
+        <span class="jw-combo jw-combo-size">12</span>
+        <span class="jw-fmt"><b>B</b></span><span class="jw-fmt"><i>I</i></span><span class="jw-fmt"><u>U</u></span>
+      </div>
+      <div class="jw-ruler"></div>
+      <div class="jw-work" id="jlogWork"><div class="jw-page" id="jlogBody"></div></div>
+      <div class="jw-tabs" id="jlogTabs"></div>
+      <div class="jw-status">
+        <div class="jw-cell jw-grow" id="jlogSub"></div>
+        <div class="jw-cell" id="jlogWords"></div>
+        <div class="jw-cell" id="jlogStreak"></div>
+      </div>
+    </div>
+    <div class="jw-taskbar">
+      <span class="jw-start"><span class="jw-flag"></span>Start</span>
+      <span class="jw-task">&#128221; Weekly Journal</span>
+      <span class="jw-tray"><button type="button" class="jw-trayvol" id="jlogTray" title="Theme music on/off">&#128266;</button><span id="jlogClock"></span></span>
+    </div>
+    <div class="jw-glare"></div>
+    <div class="jw-wash jw-wash-tint"><i></i></div>
+    <div class="jw-wash jw-wash-glow"><i></i></div>
   </div>
 
   <div class="omen-handle" id="omenHandle" title="Drag to open the Omen">
@@ -5497,14 +5815,9 @@
 
     <div class="block journalblock full-width" id="journalBlock" data-block-id="journal">
       <div class="block-head">
-        <h2><span class="icon">📔</span>Weekly Journal</h2>
-        <div style="display:flex;gap:6px;">
-          <button class="journal-tool-btn" type="button" onclick="stampJournal()">⏱ Stamp</button>
-          <button class="journal-tool-btn" type="button" onclick="printJournalOnly()">🖨 Print</button>
-          <button class="journal-tool-btn" type="button" id="journalCollapseBtn" onclick="toggleJournalCollapse()">▼</button>
-        </div>
+        <h2><span class="icon">🎯</span>Weekly Focus &amp; Summary</h2>
       </div>
-      <div class="sub">Thoughts, wins, whatever's on your mind this week</div>
+      <div class="sub">Your daily entries now live in the JOURNAL tab on the left edge</div>
       <div class="weekly-focus-panel">
         <div class="weekly-focus-label">🎯 This Week's Focus</div>
         <textarea id="weeklyFocusText" class="weekly-focus-text" rows="1" placeholder="What's the pattern you're watching for this week?"></textarea>
@@ -5519,10 +5832,6 @@
           <button class="journal-tool-btn" type="button" onclick="saveWeeklySummaryToArchive()">💾 Save to Archive</button>
         </div>
         <div class="ws-archive-status" id="wsArchiveStatus"></div>
-      </div>
-      <div id="journalBody">
-        <div class="journal-day-tabs no-print" id="journalDayTabs"></div>
-        <div id="journalDayPanels"></div>
       </div>
     </div>
     </div><!-- /planBoard -->
@@ -15736,6 +16045,484 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   handle.addEventListener('pointercancel', finishDrag);
 })();
 
+
+/* ============================================================
+   THE LOG BOOK — left-side drawer: the Weekly Journal as a late-90s
+   word-processor window. Same data as the Weekly Journal block (it
+   reads and writes journalData), plus gold stars for each day logged
+   and a soft synthwave theme that plays while the window is open.
+   ============================================================ */
+(function(){
+  const handle = document.getElementById('jlogHandle');
+  const panel = document.getElementById('jlogPanel');
+  const closeBtn = document.getElementById('jlogClose');
+  const minBtn = document.getElementById('jlogMin');
+  const tabsEl = document.getElementById('jlogTabs');
+  const bodyEl = document.getElementById('jlogBody');
+  const subEl = document.getElementById('jlogSub');
+  const wordsEl = document.getElementById('jlogWords');
+  const streakEl = document.getElementById('jlogStreak');
+  const winTitleEl = document.getElementById('jlogWinTitle');
+  const stampBtn = document.getElementById('jlogStamp');
+  const exportBtn = document.getElementById('jlogExport');
+  const musicBtn = document.getElementById('jlogMusic');
+  const trayBtn = document.getElementById('jlogTray');
+  const clockEl = document.getElementById('jlogClock');
+  const workEl = document.getElementById('jlogWork');
+  const menubar = document.getElementById('jlogMenubar');
+  const menuEl = document.getElementById('jlogMenu');
+  if(!handle || !panel) return;
+
+  let activeDay = todayJournalKey();
+  let panelOpen = false;
+  let typingTimer = null;
+  const FX_KEY = 'actionPlan3000_jlogFx';
+  let fxOn = true;
+  try{ fxOn = localStorage.getItem(FX_KEY) !== '0'; }catch(e){}
+  workEl.classList.toggle('fx-off', !fxOn); panel.classList.toggle('fx-off', !fxOn);
+  function toggleFx(){
+    fxOn = !fxOn;
+    workEl.classList.toggle('fx-off', !fxOn); panel.classList.toggle('fx-off', !fxOn);
+    try{ localStorage.setItem(FX_KEY, fxOn ? '1' : '0'); }catch(e){}
+  }
+
+  function hasText(key){ return !!(journalData[key] && String(journalData[key]).trim()); }
+  function daysLogged(){ return JOURNAL_DAYS.filter(function(d){ return hasText(d.key); }).length; }
+  function wordCount(s){ const m = String(s || '').trim().match(/\S+/g); return m ? m.length : 0; }
+
+  /* ---------- a short two-note "ding" when the window opens ---------- */
+  function soundFlip(){
+    try{ __playTone(659, 0, 0.12, 'triangle', 0.08); __playTone(988, 0.09, 0.2, 'triangle', 0.08); }catch(e){}
+  }
+
+  /* ---------- clock in the taskbar tray ---------- */
+  function updateClock(){
+    clockEl.textContent = new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+  }
+  updateClock();
+  setInterval(updateClock, 15000);
+
+  /* ---------- rendering ---------- */
+  function renderTabs(){
+    tabsEl.innerHTML = JOURNAL_DAYS.map(function(d){
+      return '<button type="button" class="jlog-tab' + (d.key === activeDay ? ' active' : '') +
+        (d.key === todayJournalKey() ? ' is-today' : '') + '" data-day="' + d.key + '">' +
+        d.label.charAt(0) + d.label.slice(1).toLowerCase() +
+        (hasText(d.key) ? '<span class="st">★</span>' : '') + '</button>';
+    }).join('') +
+    '<button type="button" class="jlog-tab' + (activeDay === 'all' ? ' active' : '') + '" data-day="all">Whole Week</button>';
+    tabsEl.querySelectorAll('.jlog-tab').forEach(function(b){
+      b.addEventListener('click', function(){ switchDay(b.dataset.day); });
+    });
+  }
+  function renderStatus(){
+    const n = daysLogged();
+    subEl.textContent = fmtShort(monday) + ' – ' + fmtShort(sunday) + '   •   ' +
+      (activeDay === 'all' ? 'Whole Week' : activeDay.toUpperCase());
+    let words = 0;
+    if(activeDay === 'all'){ JOURNAL_DAYS.forEach(function(d){ words += wordCount(journalData[d.key]); }); }
+    else{ words = wordCount(journalData[activeDay]); }
+    wordsEl.textContent = 'Words: ' + words;
+    streakEl.textContent = n + '/7 days logged ' + (n ? '★' : '☆');
+  }
+  function renderBody(){
+    bodyEl.innerHTML = '';
+    if(activeDay === 'all'){
+      winTitleEl.textContent = 'Whole Week.doc - Weekly Journal';
+      const wrap = document.createElement('div');
+      wrap.className = 'jlog-all';
+      const entries = JOURNAL_DAYS.filter(function(d){ return hasText(d.key); });
+      if(!entries.length){
+        wrap.innerHTML = '<div class="jlog-all-empty">Nothing written yet this week. Pick a day tab below and start typing.</div>';
+      }else{
+        wrap.innerHTML = entries.map(function(d){
+          return '<div class="jlog-all-day"><div class="jlog-all-label">' + d.full + '</div>' +
+            '<div class="jlog-all-text">' + escapeHtml(journalData[d.key]) + '</div></div>';
+        }).join('');
+      }
+      bodyEl.appendChild(wrap);
+      return;
+    }
+    const d = JOURNAL_DAYS.filter(function(x){ return x.key === activeDay; })[0];
+    winTitleEl.textContent = d.full.charAt(0) + d.full.slice(1).toLowerCase() + '.doc - Weekly Journal';
+    const ta = document.createElement('textarea');
+    ta.className = 'jlog-text';
+    ta.dataset.day = d.key;
+    ta.placeholder = 'Dear log, ' + d.full.charAt(0) + d.full.slice(1).toLowerCase() + ' was...';
+    ta.value = journalData[d.key] || '';
+    ta.addEventListener('keydown', function(e){
+      if((e.key && e.key.length === 1) || e.key === 'Backspace' || e.key === 'Enter'){
+        try{ soundType(); }catch(err){}
+        workEl.classList.add('typing'); panel.classList.add('typing');
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(function(){ workEl.classList.remove('typing'); panel.classList.remove('typing'); }, 650);
+      }
+    });
+    ta.addEventListener('input', function(){
+      journalData[d.key] = ta.value;
+      // keep the main Weekly Journal block in step
+      const main = document.querySelector('.journal-text[data-day="' + d.key + '"]');
+      if(main){ main.value = ta.value; try{ autoGrow(main); }catch(err){} }
+      persist();
+      renderTabs(); renderStatus(); updateNudge();
+    });
+    bodyEl.appendChild(ta);
+  }
+  function renderAll(){ renderTabs(); renderStatus(); renderBody(); }
+  function switchDay(key){
+    activeDay = key;
+    renderAll();
+    try{ soundClick(); }catch(e){}
+    if(key !== 'all'){ const ta = bodyEl.querySelector('.jlog-text'); if(ta) ta.focus(); }
+  }
+  function updateNudge(){
+    handle.classList.toggle('needs-entry', !hasText(todayJournalKey()));
+  }
+  updateNudge();
+  setInterval(updateNudge, 3000);
+  // when the main journal is rebuilt (e.g. Clear Week), refresh the window too
+  (function(){
+    const orig = window.buildJournalUI;
+    if(typeof orig !== 'function') return;
+    window.buildJournalUI = function(){
+      const r = orig.apply(this, arguments);
+      try{ updateNudge(); if(panelOpen) renderAll(); }catch(e){}
+      return r;
+    };
+  })();
+
+  function doStamp(){
+    if(activeDay === 'all'){ switchDay(todayJournalKey()); }
+    const ta = bodyEl.querySelector('.jlog-text'); if(!ta) return;
+    ta.focus();
+    const pos = ta.selectionEnd != null ? ta.selectionEnd : ta.value.length;
+    const insert = '[' + nowStamp() + '] ';
+    ta.value = ta.value.slice(0, pos) + insert + ta.value.slice(pos);
+    ta.selectionStart = ta.selectionEnd = pos + insert.length;
+    ta.dispatchEvent(new Event('input'));
+  }
+  function printJournalWeek(){
+    const entries = JOURNAL_DAYS.filter(function(d){ return hasText(d.key); });
+    if(!entries.length){ alert('Nothing written yet this week to print.'); return; }
+    const rows = entries.map(function(d){
+      return '<h3>' + d.full + '</h3><p>' + escapeHtml(journalData[d.key]).replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+    const f = document.createElement('iframe');
+    f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+    document.body.appendChild(f);
+    const doc = f.contentWindow.document;
+    doc.open();
+    doc.write('<!doctype html><html><head><title>Weekly Journal</title><style>' +
+      'body{font-family:"Times New Roman",serif;font-size:12pt;color:#000;margin:0.75in}' +
+      'h1{font-size:18pt;margin:0 0 2pt}h2{font-size:11pt;font-weight:normal;margin:0 0 14pt;color:#444}' +
+      'h3{font-size:12pt;margin:14pt 0 3pt;text-decoration:underline}p{margin:0;line-height:1.4}' +
+      '</style></head><body><h1>Weekly Journal</h1><h2>' + fmtShort(monday) + ' \u2013 ' + fmtShort(sunday) + ', ' +
+      sunday.getFullYear() + '</h2>' + rows + '</body></html>');
+    doc.close();
+    setTimeout(function(){
+      try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){}
+      setTimeout(function(){ f.remove(); }, 1500);
+    }, 250);
+  }
+  stampBtn.addEventListener('click', doStamp);
+  exportBtn.addEventListener('click', function(){ exportJournalWeek(); });
+
+  /* ---------- the menu bar (File / View / Insert / Tools / Help do something) ---------- */
+  const MENUS = {
+    File: [
+      ['Export Week...', function(){ exportJournalWeek(); }],
+      ['Print Journal...', function(){ printJournalWeek(); }],
+      ['-'],
+      ['Close', function(){ closePanel(); }]
+    ],
+    View: [
+      ['Today', function(){ switchDay(todayJournalKey()); }],
+      ['Whole Week', function(){ switchDay('all'); }],
+      ['-'],
+      ['Screen Glare On/Off', function(){ toggleFx(); }]
+    ],
+    Insert: [ ['Date and Time', doStamp] ],
+    Tools: [ ['Theme Music On/Off', function(){ toggleMusic(); }] ],
+    Help: [ ['About Log Book', function(){
+      alert('Weekly Journal — Log Book\n\nThis is the same journal as the Weekly Journal block. Everything you type is saved automatically.');
+    }] ]
+  };
+  function closeMenu(){
+    menuEl.hidden = true;
+    menubar.querySelectorAll('button').forEach(function(b){ b.classList.remove('open'); });
+  }
+  menubar.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      const items = MENUS[b.dataset.menu];
+      if(!items || b.classList.contains('open')){ closeMenu(); return; }
+      closeMenu();
+      menuEl.innerHTML = '';
+      items.forEach(function(it){
+        if(it[0] === '-'){ menuEl.appendChild(document.createElement('hr')); return; }
+        const mi = document.createElement('button');
+        mi.type = 'button'; mi.textContent = it[0];
+        mi.addEventListener('click', function(ev){ ev.stopPropagation(); closeMenu(); it[1](); });
+        menuEl.appendChild(mi);
+      });
+      b.classList.add('open');
+      const wr = menuEl.parentElement.getBoundingClientRect(), br = b.getBoundingClientRect();
+      menuEl.style.left = (br.left - wr.left) + 'px';
+      menuEl.style.top = (br.bottom - wr.top) + 'px';
+      menuEl.hidden = false;
+    });
+  });
+  panel.addEventListener('click', function(){ closeMenu(); });
+  minBtn.addEventListener('click', function(){ closePanel(); });
+
+  /* ============================================================
+     THEME MUSIC — "Recess": soft synthwave in A minor.
+     Pad + dotted-delay arp + gentle bass + a slow lead melody and
+     very quiet drums. Built from WebAudio oscillators, looped by
+     a small look-ahead scheduler. Fades in on open, out on close.
+     ============================================================ */
+  const MUSIC_KEY = 'actionPlan3000_jlogMusic';
+  let musicOn = true;
+  try{ musicOn = localStorage.getItem(MUSIC_KEY) !== '0'; }catch(e){}
+  const BPM = 88, STEP = 60 / BPM / 4, LOOP = 128, LOOKAHEAD = 0.6;
+  // pad voicings (midi), bass roots, one chord per bar x 8
+  const CH = {
+    Am: { pad:[57,60,64], bass:45 }, F: { pad:[53,57,60], bass:41 },
+    C:  { pad:[60,64,67], bass:48 }, G: { pad:[55,59,62], bass:43 },
+    E:  { pad:[52,56,59], bass:40 }
+  };
+  const PROG = ['Am','F','C','G','Am','F','G','E'];
+  const ARP_PAT = [0,1,2,3,2,1,2,3, 0,1,2,3,2,1,2,1];
+  // lead melody: [step, midi, lengthInSteps]
+  const LEAD = {};
+  [
+    [0,76,6],[6,74,2],[8,72,4],[12,69,4],
+    [16,72,6],[22,69,2],[24,72,4],[28,74,4],
+    [32,76,6],[38,79,2],[40,76,4],[44,72,4],
+    [48,74,8],[56,71,4],[60,67,4],
+    [64,81,6],[70,79,2],[72,76,4],[76,72,4],
+    [80,77,6],[86,76,2],[88,72,4],[92,69,4],
+    [96,74,6],[102,76,2],[104,79,4],[108,76,4],
+    [112,71,8],[120,68,8]
+  ].forEach(function(n){ LEAD[n[0]] = n; });
+
+  let mCtx = null, bus = null, noiseBuf = null, mTimer = null, mStep = 0, mNext = 0, mPlaying = false;
+  const mf = function(m){ return 440 * Math.pow(2, (m - 69) / 12); };
+
+  function buildBus(ctx){
+    const master = ctx.createGain(); master.gain.value = 0;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -16; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.25;
+    master.connect(comp); comp.connect(ctx.destination);
+    // dotted-eighth echo (the classic synthwave arp wash)
+    const delay = ctx.createDelay(2); delay.delayTime.value = STEP * 3;
+    const fb = ctx.createGain(); fb.gain.value = 0.38;
+    const dlp = ctx.createBiquadFilter(); dlp.type = 'lowpass'; dlp.frequency.value = 2400;
+    const dWet = ctx.createGain(); dWet.gain.value = 0.55;
+    delay.connect(dlp); dlp.connect(fb); fb.connect(delay); dlp.connect(dWet); dWet.connect(master);
+    // soft hall reverb from a generated impulse response
+    const len = Math.floor(ctx.sampleRate * 2.2);
+    const ir = ctx.createBuffer(2, len, ctx.sampleRate);
+    for(let c = 0; c < 2; c++){
+      const d = ir.getChannelData(c);
+      for(let i = 0; i < len; i++){ d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    }
+    const verb = ctx.createConvolver(); verb.buffer = ir;
+    const vWet = ctx.createGain(); vWet.gain.value = 0.42;
+    verb.connect(vWet); vWet.connect(master);
+    // shared noise for drums
+    const nl = ctx.sampleRate;
+    noiseBuf = ctx.createBuffer(1, nl, ctx.sampleRate);
+    const nd = noiseBuf.getChannelData(0);
+    for(let i = 0; i < nl; i++){ nd[i] = Math.random() * 2 - 1; }
+    return { master: master, delay: delay, verb: verb };
+  }
+
+  function voice(ctx, o){ // generic filtered oscillator note
+    const t = o.t, end = t + o.dur;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(o.vol, t + o.a);
+    g.gain.setTargetAtTime(o.vol * (o.sus != null ? o.sus : 0.0001), t + o.a, o.dec);
+    g.gain.setTargetAtTime(0.0001, end, o.rel);
+    let tail = g;
+    let src = [];
+    (o.detune || [0]).forEach(function(c){
+      const osc = ctx.createOscillator();
+      osc.type = o.type; osc.frequency.value = o.freq; osc.detune.value = c;
+      if(o.vib){
+        const l = ctx.createOscillator(), lg = ctx.createGain();
+        l.frequency.value = 5; lg.gain.value = o.vib; l.connect(lg); lg.connect(osc.detune);
+        l.start(t); l.stop(end + o.rel * 6);
+      }
+      src.push(osc);
+    });
+    let head = g;
+    if(o.lp){
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = o.lp; f.Q.value = 0.5;
+      f.connect(g); head = f;
+    }
+    src.forEach(function(osc){ osc.connect(head); osc.start(t); osc.stop(end + o.rel * 6); });
+    g.connect(bus.master);
+    if(o.delay){ const s = ctx.createGain(); s.gain.value = o.delay; g.connect(s); s.connect(bus.delay); }
+    if(o.verb){ const s2 = ctx.createGain(); s2.gain.value = o.verb; g.connect(s2); s2.connect(bus.verb); }
+  }
+  function noiseHit(ctx, t, dur, vol, type, freq){
+    const src = ctx.createBufferSource(); src.buffer = noiseBuf;
+    const f = ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = 0.7;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(bus.master);
+    src.start(t, Math.random() * 0.5); src.stop(t + dur + 0.02);
+  }
+  function kick(ctx, t){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.16);
+    g.gain.setValueAtTime(0.32, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.connect(g); g.connect(bus.master); o.start(t); o.stop(t + 0.25);
+  }
+
+  function scheduleStep(ctx, s, t){
+    const bar = s >> 4, st = s & 15, ch = CH[PROG[bar]];
+    const barLen = STEP * 16;
+    if(st === 0){
+      // warm detuned pad, one chord per bar
+      ch.pad.forEach(function(m){
+        voice(ctx, { t:t, dur:barLen, freq:mf(m), type:'sawtooth', detune:[-8, 8], lp:1000,
+                     vol:0.028, a:0.5, dec:0.6, sus:0.8, rel:0.25, verb:0.6 });
+      });
+    }
+    // bass pluck pattern
+    if(st === 0 || st === 3 || st === 6 || st === 8 || st === 11 || st === 14){
+      voice(ctx, { t:t, dur:STEP * 2.2, freq:mf(ch.bass), type:'sawtooth', lp:420,
+                   vol:0.16, a:0.01, dec:0.12, sus:0.35, rel:0.05 });
+    }
+    // 16th-note arpeggio with dotted echo
+    const tone = ch.pad[ARP_PAT[st] % 3] + (ARP_PAT[st] === 3 ? 24 : 12);
+    voice(ctx, { t:t, dur:STEP * 0.9, freq:mf(tone), type:'sawtooth', lp:2300,
+                 vol:0.05, a:0.004, dec:0.06, sus:0.15, rel:0.04, delay:0.7, verb:0.25 });
+    // slow lead melody (sine + triangle, light vibrato)
+    const n = LEAD[s];
+    if(n){
+      const dur = n[2] * STEP;
+      voice(ctx, { t:t, dur:dur, freq:mf(n[1]), type:'sine', detune:[0], vib:6,
+                   vol:0.1, a:0.04, dec:0.5, sus:0.8, rel:0.18, delay:0.35, verb:0.5 });
+      voice(ctx, { t:t, dur:dur, freq:mf(n[1]), type:'triangle', detune:[3], vib:6,
+                   vol:0.04, a:0.04, dec:0.5, sus:0.8, rel:0.18, verb:0.5 });
+    }
+    // very soft drums
+    if(st === 0 || st === 8 || (st === 10 && (bar & 1))){ kick(ctx, t); }
+    if(st === 4 || st === 12){ noiseHit(ctx, t, 0.16, 0.07, 'bandpass', 1800); }
+    if(st % 2 === 0){ noiseHit(ctx, t, 0.04, st % 4 === 2 ? 0.035 : 0.02, 'highpass', 7000); }
+  }
+
+  function tick(){
+    if(!mCtx) return;
+    if(typeof sfxMuted !== 'undefined' && sfxMuted){ stopMusic(); updateMusicBtn(); return; }
+    while(mNext < mCtx.currentTime + LOOKAHEAD){
+      scheduleStep(mCtx, mStep % LOOP, mNext);
+      mNext += STEP; mStep++;
+    }
+  }
+  function startMusic(){
+    if(!musicOn || mPlaying) return;
+    if(typeof sfxMuted !== 'undefined' && sfxMuted) return;
+    const ctx = __sfxGetCtx(); if(!ctx) return;
+    if(!bus || mCtx !== ctx){ mCtx = ctx; bus = buildBus(ctx); }
+    const now = ctx.currentTime;
+    bus.master.gain.cancelScheduledValues(now);
+    bus.master.gain.setValueAtTime(bus.master.gain.value, now);
+    bus.master.gain.linearRampToValueAtTime(0.55, now + 1.6);
+    mStep = 0; mNext = now + 0.12; mPlaying = true;
+    tick();
+    mTimer = setInterval(tick, 80);
+  }
+  function stopMusic(){
+    if(!mPlaying) return;
+    mPlaying = false;
+    clearInterval(mTimer);
+    if(bus && mCtx){
+      const now = mCtx.currentTime;
+      bus.master.gain.cancelScheduledValues(now);
+      bus.master.gain.setValueAtTime(bus.master.gain.value, now);
+      bus.master.gain.linearRampToValueAtTime(0, now + 0.7);
+    }
+  }
+  function updateMusicBtn(){
+    const on = musicOn && mPlaying;
+    musicBtn.textContent = on ? '\u266B Music: ON' : '\u266B Music: OFF';
+    musicBtn.classList.toggle('is-muted', !on);
+    trayBtn.textContent = on ? '\uD83D\uDD0A' : '\uD83D\uDD07';
+    trayBtn.classList.toggle('is-muted', !on);
+  }
+  function toggleMusic(){
+    musicOn = !musicOn;
+    try{ localStorage.setItem(MUSIC_KEY, musicOn ? '1' : '0'); }catch(e){}
+    if(musicOn && panelOpen) startMusic(); else stopMusic();
+    updateMusicBtn();
+  }
+  musicBtn.addEventListener('click', toggleMusic);
+  trayBtn.addEventListener('click', toggleMusic);
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ stopMusic(); updateMusicBtn(); }
+    else if(panelOpen){ startMusic(); updateMusicBtn(); }
+  });
+
+
+  /* ---------- open / close / drag (opens to the right) ---------- */
+  function closeSiblings(){
+    [['omenPanel','omenClose'], ['ledgerPanel','ledgerClose']].forEach(function(p){
+      const el = document.getElementById(p[0]);
+      if(el && el.classList.contains('open')){ const b = document.getElementById(p[1]); if(b) b.click(); }
+    });
+  }
+  function openPanel(){
+    panelOpen = true;
+    closeSiblings();
+    renderAll();
+    panel.classList.remove('closed'); panel.classList.add('open');
+    panel.style.transform = 'translateX(0)';
+    soundFlip();
+    startMusic(); updateMusicBtn();
+  }
+  function closePanel(){
+    panelOpen = false;
+    panel.classList.remove('open'); panel.classList.add('closed');
+    panel.style.transform = 'translateX(-100%)';
+    stopMusic(); updateMusicBtn();
+  }
+  closeBtn.addEventListener('click', closePanel);
+  updateMusicBtn();
+
+  let dragStartX = 0, dragging = false, moved = false, panelWidth = 520;
+  handle.addEventListener('pointerdown', function(e){
+    dragging = true; moved = false; dragStartX = e.clientX;
+    panelWidth = panel.getBoundingClientRect().width || 520;
+    panel.classList.add('dragging'); panel.classList.remove('open', 'closed');
+    if(!panelOpen){ panel.style.transform = 'translateX(-100%)'; }
+    handle.setPointerCapture(e.pointerId);
+  });
+  handle.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    const delta = e.clientX - dragStartX;
+    if(Math.abs(delta) > 5) moved = true;
+    const base = panelOpen ? 0 : -panelWidth;
+    const pos = Math.max(-panelWidth, Math.min(0, base + delta));
+    panel.style.transform = 'translateX(' + pos + 'px)';
+  });
+  function finishDrag(e){
+    if(!dragging) return;
+    dragging = false;
+    panel.classList.remove('dragging');
+    if(!moved){ if(panelOpen) closePanel(); else openPanel(); return; }
+    const delta = e.clientX - dragStartX;
+    const base = panelOpen ? 0 : -panelWidth;
+    const pos = Math.max(-panelWidth, Math.min(0, base + delta));
+    if(pos > -panelWidth * 0.4) openPanel(); else closePanel();
+  }
+  handle.addEventListener('pointerup', finishDrag);
+  handle.addEventListener('pointercancel', finishDrag);
+})();
 </script>
   <div class="backup-toast" id="backupToast"></div>
 </body>
