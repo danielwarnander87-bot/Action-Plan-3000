@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -4743,6 +4744,64 @@
   @media print{
     .jlog-handle, .jlog-panel{ display:none !important; }
   }
+
+/* ============================================================
+   LAUNCH PAD — an orb with an idea stash and a 5-4-3-2-1 launcher
+   ============================================================ */
+.launch-orb{
+  position:fixed; z-index:599; top:68px; right:16px; bottom:auto; left:auto;
+  width:42px; height:42px; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 35% 30%, #fff1c2 0%, #ff9a1f 52%, #c4400a 100%);
+  box-shadow:0 0 10px 3px rgba(255,140,30,0.6), 0 0 22px 8px rgba(255,120,20,0.28);
+  animation:budgetOrbPulse 3.1s ease-in-out infinite; user-select:none;
+}
+.launch-orb-icon{font-family:'Fredoka',sans-serif; font-weight:700; font-size:20px; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.55); pointer-events:none;}
+.launch-orb-badge{
+  position:absolute; top:-4px; right:-4px; min-width:17px; height:17px; padding:0 4px; border-radius:9px;
+  background:#fff; color:#c4400a; font:700 11px/17px 'Fredoka',sans-serif; text-align:center; pointer-events:none;
+  box-shadow:0 1px 3px rgba(0,0,0,0.4);
+}
+.launch-orb-badge:empty{display:none;}
+.launch-box{max-width:420px;}
+.launch-add{display:flex; gap:8px; margin:10px 0 8px;}
+.launch-add input{
+  flex:1; min-width:0; font:600 16px 'Nunito',sans-serif; padding:10px 12px; border:2px solid #f3c9a0;
+  border-radius:12px; background:#fffaf2; color:var(--ink);
+}
+.launch-btn{
+  border:0; border-radius:12px; padding:10px 14px; font:700 14px 'Fredoka',sans-serif; cursor:pointer;
+  background:#ff8a1f; color:#fff; box-shadow:0 3px 0 #b8560a;
+}
+.launch-btn:active{transform:translateY(2px); box-shadow:0 1px 0 #b8560a;}
+.launch-btn.big{width:100%; font-size:17px; padding:13px; margin:2px 0 10px;}
+.launch-btn.ghost{background:#f1e6d8; color:#6a4a2a; box-shadow:0 3px 0 #d9c7ad;}
+.launch-list{display:flex; flex-direction:column; gap:6px; margin-bottom:6px;}
+.launch-row{display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; background:#fff3e2; border:1px solid #f3d4ad;}
+.launch-row .lt{flex:1; min-width:0; word-wrap:break-word; font:600 15px 'Nunito',sans-serif; color:var(--ink);}
+.launch-go{border:0; border-radius:10px; padding:7px 11px; font:700 13px 'Fredoka',sans-serif; background:#ff8a1f; color:#fff; cursor:pointer;}
+.launch-x{border:0; background:none; color:#a58a6e; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px;}
+.launch-empty{text-align:center; color:#a58a6e; font:600 13px 'Nunito',sans-serif; padding:14px 6px;}
+.launch-stat{text-align:center; color:#a58a6e; font:600 12px 'Nunito',sans-serif; margin-top:6px;}
+
+.launch-count{
+  position:fixed; inset:0; z-index:1100; display:none; flex-direction:column; align-items:center; justify-content:center;
+  background:#140a05; color:#fff; text-align:center; padding:24px; cursor:pointer;
+}
+.launch-count.on{display:flex;}
+.launch-count .lc-task{font:700 20px 'Fredoka',sans-serif; color:#ffd9a8; max-width:520px; margin-bottom:18px;}
+.launch-count .lc-num{
+  font:800 min(46vw,260px)/1 'Fredoka',sans-serif; color:#ff9a1f; text-shadow:0 0 40px rgba(255,140,30,0.7);
+}
+.launch-count .lc-num.pop{animation:lcPop .8s ease-out;}
+@keyframes lcPop{0%{transform:scale(1.5); opacity:.2;} 25%{transform:scale(1); opacity:1;} 100%{transform:scale(.92); opacity:.9;}}
+.launch-count .lc-hint{margin-top:20px; font:600 13px 'Nunito',sans-serif; color:#a58a6e;}
+.launch-count.go .lc-num{color:#7dffb0; text-shadow:0 0 40px rgba(60,255,140,0.7); font-size:min(30vw,150px);}
+.launch-count .lc-timer{font:700 34px 'Fredoka',sans-serif; color:#fff; margin:6px 0 18px; font-variant-numeric:tabular-nums;}
+.launch-count .lc-actions{display:none; gap:10px; flex-wrap:wrap; justify-content:center;}
+.launch-count.go .lc-actions{display:flex;}
+.launch-count.go .lc-hint,.launch-count:not(.go) .lc-timer{display:none;}
+@media (prefers-reduced-motion:reduce){ .launch-orb{animation:none;} .launch-count .lc-num.pop{animation:none;} }
 </style>
 </head>
 <body>
@@ -5242,6 +5301,30 @@
     <div class="jw-glare"></div>
     <div class="jw-wash jw-wash-tint"><i></i></div>
     <div class="jw-wash jw-wash-glow"><i></i></div>
+  </div>
+
+  <div class="cta-orb launch-orb" id="launchOrb" title="Launch Pad — stash an idea, then count down and DO it">
+    <span class="launch-orb-icon">5</span><span class="launch-orb-badge" id="launchBadge"></span>
+  </div>
+  <div class="cta-modal-overlay" id="launchOverlay">
+    <div class="cta-modal-box launch-box" id="launchBox">
+      <div class="cta-modal-head">
+        <span class="cta-modal-title">🚀 LAUNCH PAD</span>
+        <button class="cta-modal-close" id="launchClose" type="button">&times;</button>
+      </div>
+      <div class="launch-stat" style="margin:0;text-align:left">Stash it. Then 5-4-3-2-1 and move before your brain argues.</div>
+      <div class="launch-add"><input type="text" id="launchInput" maxlength="160" placeholder="Stash an idea or thing to do…"><button class="launch-btn" id="launchAdd" type="button">Stash</button></div>
+      <button class="launch-btn big" id="launchPick" type="button">🎲 Launch one for me</button>
+      <div class="launch-list" id="launchList"></div>
+      <div class="launch-stat" id="launchStat"></div>
+    </div>
+  </div>
+  <div class="launch-count" id="launchCount">
+    <div class="lc-task" id="lcTask"></div>
+    <div class="lc-num" id="lcNum">5</div>
+    <div class="lc-timer" id="lcTimer">0:00</div>
+    <div class="lc-actions"><button class="launch-btn" id="lcDone" type="button">✓ Done</button><button class="launch-btn ghost" id="lcBack" type="button">Back to stash</button></div>
+    <div class="lc-hint">tap anywhere to cancel</div>
   </div>
 
   <div class="omen-handle" id="omenHandle" title="Drag to open the Omen">
@@ -16523,7 +16606,243 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   handle.addEventListener('pointerup', finishDrag);
   handle.addEventListener('pointercancel', finishDrag);
 })();
+
+/* ============================================================
+   LAUNCH PAD — stash of ideas + the 5-4-3-2-1 countdown launcher.
+   Global (not weekly). Awards XP in JRPG mode when you finish one.
+   ============================================================ */
+(function(){
+  const KEY = 'actionPlan3000_launchPad';
+  const orb = document.getElementById('launchOrb');
+  const overlay = document.getElementById('launchOverlay');
+  const input = document.getElementById('launchInput');
+  const listEl = document.getElementById('launchList');
+  const statEl = document.getElementById('launchStat');
+  const badge = document.getElementById('launchBadge');
+  const cd = document.getElementById('launchCount');
+  const lcNum = document.getElementById('lcNum');
+  const lcTask = document.getElementById('lcTask');
+  const lcTimer = document.getElementById('lcTimer');
+  if(!orb || !overlay) return;
+
+  let st = { items:[], log:{} };
+  try{ const r = JSON.parse(localStorage.getItem(KEY) || 'null'); if(r && Array.isArray(r.items)) st = { items:r.items, log:r.log || {} }; }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+  function today(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function render(){
+    badge.textContent = st.items.length ? st.items.length : '';
+    listEl.innerHTML = st.items.length ? st.items.map(function(it){
+      return '<div class="launch-row"><div class="lt">' + esc(it.text) + '</div><button class="launch-go" data-go="' + it.id + '">▶ 5-4-3</button><button class="launch-x" data-del="' + it.id + '" title="Remove">×</button></div>';
+    }).join('') : '<div class="launch-empty">Nothing stashed. Drop an idea above.</div>';
+    const n = st.log[today()] || 0;
+    statEl.textContent = n ? ('🚀 Launched today: ' + n) : '';
+    document.getElementById('launchPick').style.display = st.items.length ? '' : 'none';
+  }
+  function open(){ overlay.classList.add('open'); render(); try{ soundClick(); }catch(e){} }
+  function close(){ overlay.classList.remove('open'); }
+  orb.addEventListener('click', open);
+  document.getElementById('launchClose').addEventListener('click', close);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) close(); });
+
+  function addItem(){
+    const t = input.value.trim(); if(!t) return;
+    st.items.unshift({ id:'l' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), text:t });
+    input.value = ''; save(); render(); input.focus();
+    try{ soundClick(); }catch(e){}
+  }
+  document.getElementById('launchAdd').addEventListener('click', addItem);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') addItem(); });
+  document.getElementById('launchPick').addEventListener('click', function(){
+    if(!st.items.length) return;
+    launch(st.items[Math.floor(Math.random() * st.items.length)].id);
+  });
+  listEl.addEventListener('click', function(e){
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.go) launch(b.dataset.go);
+    else if(b.dataset.del){ st.items = st.items.filter(function(x){ return x.id !== b.dataset.del; }); save(); render(); }
+  });
+
+  /* ---------- the countdown ---------- */
+  let timers = [], current = null, started = 0, tickInt = null;
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; if(tickInt){ clearInterval(tickInt); tickInt = null; } }
+  function beep(f, d, v){ try{ if(!sfxMuted) __playTone(f, 0, d || 0.12, 'square', v || 0.07); }catch(e){} }
+  function showNum(n){
+    lcNum.textContent = n; lcNum.classList.remove('pop'); void lcNum.offsetWidth; lcNum.classList.add('pop');
+    beep(330 + (5 - n) * 90, 0.12);
+  }
+  function launch(id){
+    const it = st.items.filter(function(x){ return x.id === id; })[0]; if(!it) return;
+    current = it; clearTimers();
+    close();
+    cd.classList.remove('go'); cd.classList.add('on');
+    lcTask.textContent = it.text;
+    for(let i = 0; i < 5; i++){
+      (function(n){ timers.push(setTimeout(function(){ showNum(n); }, i * 1000)); })(5 - i);
+    }
+    timers.push(setTimeout(go, 5000));
+  }
+  function go(){
+    cd.classList.add('go');
+    lcNum.textContent = 'GO!'; lcNum.classList.remove('pop'); void lcNum.offsetWidth; lcNum.classList.add('pop');
+    try{ if(!sfxMuted){ __playTone(523, 0, 0.18, 'triangle', 0.1); __playTone(659, 0.08, 0.18, 'triangle', 0.1); __playTone(784, 0.16, 0.3, 'triangle', 0.1); } }catch(e){}
+    started = Date.now();
+    lcTimer.textContent = '0:00';
+    tickInt = setInterval(function(){
+      const s = Math.floor((Date.now() - started) / 1000);
+      lcTimer.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }, 500);
+  }
+  function endCountdown(){ clearTimers(); cd.classList.remove('on', 'go'); }
+  cd.addEventListener('click', function(e){
+    if(e.target.closest('.lc-actions')) return;
+    if(!cd.classList.contains('go')){ endCountdown(); open(); }   // tapping during the countdown cancels it
+  });
+  document.getElementById('lcBack').addEventListener('click', function(){ endCountdown(); open(); });
+  document.getElementById('lcDone').addEventListener('click', function(){
+    if(current){
+      st.items = st.items.filter(function(x){ return x.id !== current.id; });
+      st.log[today()] = (st.log[today()] || 0) + 1;
+      save();
+      try{ if(typeof jrpgMode !== 'undefined' && jrpgMode && typeof awardXP === 'function') awardXP(10, window.innerWidth / 2, window.innerHeight / 2); }catch(e){}
+      try{ if(!sfxMuted){ __playTone(784, 0, 0.12, 'triangle', 0.1); __playTone(1047, 0.1, 0.25, 'triangle', 0.1); } }catch(e){}
+    }
+    current = null; endCountdown(); open();
+  });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && cd.classList.contains('on')){ endCountdown(); open(); } });
+
+  render();
+})();
+
+/* ============================================================
+   POCKET PLAN IMPORTER — pulls the phone companion's state file
+   (pp-state.json) from the Vault's Firestore every 15 minutes and
+   merges it in: notes -> boards, appointments -> Appointments,
+   orders -> Order Pads, girls/no-girls weeks -> Girls schedule.
+   Only items the phone created (ids ppn/ppa/ppo) are ever touched.
+   ============================================================ */
+const PP_META_KEY = 'actionPlan3000_pocketPlanMeta';
+let ppPollRunning = false;
+function ppLoadMeta(){
+  try{ const m = JSON.parse(localStorage.getItem(PP_META_KEY) || '{}') || {}; return { updated:m.updated||'', notes:m.notes||[], girls:m.girls||{} }; }
+  catch(e){ return { updated:'', notes:[], girls:{} }; }
+}
+function ppApplyState(st){
+  const meta = ppLoadMeta();
+  const out = { notes:0, appts:0, orders:0, girls:0 };
+
+  // notes (each phone note id is filed once)
+  const seen = new Set(meta.notes);
+  (st.notes || []).forEach(function(n){
+    if(!n || !n.id || seen.has(n.id)) return;
+    seen.add(n.id);
+    const board = PIGEON_ROUTES[n.category] || 'ideas';
+    pigeonAddNoteToBoard(board, n.ts ? new Date(n.ts) : new Date(), pigeonNoteBody({ category:n.category, text:n.text || '' }));
+    out.notes++;
+  });
+  meta.notes = Array.from(seen).slice(-500);
+
+  // appointments (add new, drop phone-made ones deleted on the phone)
+  const phoneAppts = st.appts || {};
+  const phoneIds = new Set();
+  Object.keys(phoneAppts).forEach(function(d){
+    (phoneAppts[d] || []).forEach(function(a){
+      phoneIds.add(a.id);
+      const arr = appointmentsData[d] || (appointmentsData[d] = []);
+      if(!arr.some(function(x){ return x.id === a.id; })){ arr.push({ id:a.id, time:a.time || '', text:a.text || '' }); out.appts++; }
+    });
+  });
+  Object.keys(appointmentsData).forEach(function(d){
+    const before = appointmentsData[d].length;
+    appointmentsData[d] = appointmentsData[d].filter(function(x){ return !(String(x.id).indexOf('ppa') === 0 && !phoneIds.has(x.id)); });
+    if(appointmentsData[d].length !== before) out.appts++;
+    if(!appointmentsData[d].length) delete appointmentsData[d];
+  });
+  if(out.appts){ saveAppointments(); try{ renderAppointments(); }catch(e){} }
+
+  // orders
+  const po = st.orders || {};
+  if(po.vendorTitle) workOrders.vendorTitle = po.vendorTitle;
+  if(po.vendorPhone) workOrders.vendorPhone = po.vendorPhone;
+  ['vendorItems','plcbLiquorItems','plcbWineItems'].forEach(function(key){
+    const mine = Array.isArray(po[key]) ? po[key] : [];
+    const ids = new Set(mine.map(function(x){ return x.id; }));
+    mine.forEach(function(it){
+      const cur = workOrders[key].find(function(x){ return x.id === it.id; });
+      if(cur){
+        if(cur.label !== it.label || String(cur.qty) !== String(it.qty) || cur.unit !== it.unit || (cur.code || '') !== (it.code || '')){
+          cur.label = it.label; cur.qty = it.qty; cur.unit = it.unit; if(key !== 'vendorItems') cur.code = it.code || ''; out.orders++;
+        }
+      }else{
+        const n = { id:it.id, label:it.label || '', qty:it.qty, unit:it.unit };
+        if(key !== 'vendorItems') n.code = it.code || '';
+        workOrders[key].push(n); out.orders++;
+      }
+    });
+    const keep = workOrders[key].filter(function(x){ return !(String(x.id).indexOf('ppo') === 0 && !ids.has(x.id)); });
+    if(keep.length !== workOrders[key].length){ workOrders[key] = keep; out.orders++; }
+  });
+  saveWorkOrders();
+  if(out.orders){ try{ renderOrderPads(); }catch(e){} }
+
+  // girls / no-girls weeks (a week is applied only when the phone changed it)
+  const pg = st.girls || {};
+  Object.keys(pg).forEach(function(w){
+    if(meta.girls[w] !== pg[w] && girlsSchedule[w] !== pg[w]){ girlsSchedule[w] = pg[w]; out.girls++; }
+  });
+  Object.keys(meta.girls).forEach(function(w){
+    if(!pg[w] && girlsSchedule[w] === meta.girls[w]){ delete girlsSchedule[w]; out.girls++; }
+  });
+  meta.girls = Object.assign({}, pg);
+  if(out.girls){ saveGirlsSchedule(); try{ updateGirlsBlockDisplay(); }catch(e){} }
+
+  meta.updated = st.updated || '';
+  try{ localStorage.setItem(PP_META_KEY, JSON.stringify(meta)); }catch(e){}
+  return out;
+}
+async function pollPocketPlan(showResultToast){
+  if(ppPollRunning) return;
+  ppPollRunning = true;
+  try{
+    await waitForFbVault();
+    const { db, collection, getDocs, query, where, orderBy } = window._fbVault;
+    const snap = await getDocs(query(collection(db, 'artifacts'), where('name', '>=', 'pp-'), where('name', '<', 'pp-'), orderBy('name')));
+    let total = null;
+    snap.forEach(function(d){
+      const data = d.data();
+      if(data.name !== 'pp-state.json') return;
+      try{
+        const st = JSON.parse(pigeonUtf8FromBase64(data.dataBase64 || ''));
+        if(st.kind !== 'pocketplan-state' || st.updated === ppLoadMeta().updated) return;
+        total = ppApplyState(st);
+      }catch(e){}
+    });
+    if(total){
+      const bits = [];
+      if(total.notes) bits.push(total.notes + ' note' + (total.notes === 1 ? '' : 's'));
+      if(total.appts) bits.push('appointments');
+      if(total.orders) bits.push('orders');
+      if(total.girls) bits.push('girls/no-girls');
+      if(bits.length) showBackupToast('📱 From your phone: ' + bits.join(', '));
+      else if(showResultToast) showBackupToast('📱 Phone is already in sync.');
+    }else if(showResultToast){ showBackupToast('📱 Nothing new from your phone.'); }
+  }catch(e){
+    if(showResultToast) showBackupToast('⚠️ Could not reach the Vault to check your phone.');
+  }finally{ ppPollRunning = false; }
+}
+window.pollPocketPlan = pollPocketPlan;
+setInterval(function(){ pollPocketPlan(false); }, PIGEON_POLL_MS);
+setTimeout(function(){ pollPocketPlan(false); }, 4500);
+// also fire when Check Pigeon Mail is pressed
+(function(){
+  const orig = window.checkPigeonMailNow;
+  if(typeof orig !== 'function') return;
+  window.checkPigeonMailNow = function(){ const r = orig.apply(this, arguments); setTimeout(function(){ pollPocketPlan(false); }, 800); return r; };
+})();
 </script>
   <div class="backup-toast" id="backupToast"></div>
 </body>
 </html>
+
+</body></html>
