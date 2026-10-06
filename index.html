@@ -4802,6 +4802,28 @@
 .launch-count.go .lc-actions{display:flex;}
 .launch-count.go .lc-hint,.launch-count:not(.go) .lc-timer{display:none;}
 @media (prefers-reduced-motion:reduce){ .launch-orb{animation:none;} .launch-count .lc-num.pop{animation:none;} }
+
+/* ---------- Action Plan tab: week switcher + dated days ---------- */
+.ap-weeknav{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; max-width:560px; margin:0 auto 12px;}
+.ap-weeknav button, .ap-weeknav select{
+  font-family:'Fredoka',sans-serif; font-weight:600; font-size:13px; color:var(--ink);
+  background:#fff; border:2px solid var(--ink); border-radius:10px; padding:6px 11px; cursor:pointer;
+  box-shadow:2px 2px 0 var(--pop-deep);
+}
+.ap-weeknav button:active{transform:translate(1px,1px); box-shadow:1px 1px 0 var(--pop-deep);}
+.ap-weeknav .apw-arrow{font-size:18px; line-height:1; padding:3px 12px;}
+.ap-weeknav .apw-mid{text-align:center; min-width:150px; font-family:'Fredoka',sans-serif; background:#fff; border:2px solid var(--ink); border-radius:12px; padding:3px 14px; box-shadow:2px 2px 0 var(--pop-deep);}
+.ap-weeknav .apw-mid b{display:block; font-size:16px; color:var(--ink);}
+.ap-weeknav .apw-mid small{display:block; font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; opacity:.6;}
+.ap-weeknav.apw-away .apw-mid{border-color:#9B2226;}
+.ap-weeknav.apw-away .apw-mid b{color:#9B2226;}
+.ap-weeknav.apw-away .apw-mid small{opacity:1; color:#9B2226;}
+.ap-weeknav .apw-hide{display:none;}
+.ap-day-title{display:flex; align-items:baseline; justify-content:space-between; gap:8px;}
+.ap-day-date{font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; opacity:.6;}
+.ap-day-card.is-today{border-color:var(--pink); box-shadow:4px 4px 0 var(--pink);}
+.ap-day-card.is-today .ap-day-date{opacity:1; color:var(--pink);}
+@media print{ .ap-weeknav{display:none;} }
 </style>
 </head>
 <body>
@@ -6195,6 +6217,7 @@
         </div>
       </div>
 
+      <div class="ap-weeknav no-print" id="apWeekNav"></div>
       <div class="ap-week-meta">
         <div class="ap-week-field">
           <label for="apSectionNum">Section</label>
@@ -9045,6 +9068,10 @@ function apDayRedShade(filledCount){
   const idx=Math.min(filledCount-1, AP_BLOOD_REDS.length-1);
   return AP_BLOOD_REDS[idx];
 }
+function apDayDate(day){
+  const base=apMeta.weekStart?mondayOf(new Date(apMeta.weekStart+'T12:00:00')):mondayOf(new Date());
+  const d=new Date(base); d.setDate(base.getDate()+AP_DAY_NAMES.indexOf(day)); return d;
+}
 function apDayCard(day){
   const lines=apDays[day];
   const filled=lines.filter(v=>v&&v.trim().length>0).length;
@@ -9058,7 +9085,8 @@ function apDayCard(day){
       '<textarea rows="1" class="'+cls+'" placeholder="..." data-day="'+day+'" data-idx="'+i+'" oninput="updateApDayLine(this)"'+styleAttr+'>'+escapeHtml(val)+'</textarea>'+
     '</div>';
   }).join('');
-  return '<div class="ap-day-card"><div class="ap-day-title">'+day+'</div>'+rows+'</div>';
+  const __dd=apDayDate(day); const __isT=(weekKey(__dd)===weekKey(new Date()));
+  return '<div class="ap-day-card'+(__isT?' is-today':'')+'"><div class="ap-day-title">'+day+'<span class="ap-day-date">'+fmtShort(__dd)+(__isT?' · today':'')+'</span></div>'+rows+'</div>';
 }
 function autoGrowApLine(el){
   if(!el) return;
@@ -16713,6 +16741,126 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && cd.classList.contains('on')){ endCountdown(); open(); } });
 
   render();
+})();
+
+/* ============================================================
+   ACTION PLAN TAB — one saved page per week. The day lines, bills
+   and balances you see always belong to the week shown at the top;
+   a new week starts as a clean template and older weeks stay
+   viewable (and editable) with the arrows or the jump list.
+   ============================================================ */
+(function(){
+  const nav = document.getElementById('apWeekNav');
+  if(!nav || typeof apDays === 'undefined') return;
+  const ARCH_KEY = 'actionPlan3000_apWeeks', LIVE_KEY = 'actionPlan3000_apLiveWk';
+  const REAL = weekKey(mondayOf(new Date()));
+  let arch = {};
+  try{ arch = JSON.parse(localStorage.getItem(ARCH_KEY) || '{}') || {}; }catch(e){}
+  let viewWk = REAL;
+
+  function val(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+  function wkDate(k){ return new Date(k + 'T12:00:00'); }
+  function addWeeks(k, n){ const d = wkDate(k); d.setDate(d.getDate() + 7 * n); return weekKey(mondayOf(d)); }
+  function rangeLabel(k){ const s = wkDate(k), e = new Date(s); e.setDate(s.getDate() + 6); return fmtShort(s) + ' – ' + fmtShort(e); }
+  function blankDays(){ const o = {}; AP_DAY_NAMES.forEach(function(d){ o[d] = new Array(AP_LINES_PER_DAY).fill(''); }); return o; }
+  function snapshot(){
+    return { days:JSON.parse(JSON.stringify(apDays)), bills:JSON.parse(JSON.stringify(apBills)),
+      section:apMeta.section, start:val('apStartBalance'), actual:val('apActualEnding') };
+  }
+  function hasContent(s){
+    if(!s) return false;
+    const d = s.days || {};
+    return Object.keys(d).some(function(k){ return (d[k] || []).some(function(v){ return v && String(v).trim(); }); }) ||
+      (s.bills || []).some(function(b){ return b && ((b.label && String(b.label).trim()) || b.amount !== ''); }) ||
+      (s.start !== '' && s.start != null) || (s.actual !== '' && s.actual != null);
+  }
+  function saveArch(){ try{ localStorage.setItem(ARCH_KEY, JSON.stringify(arch)); }catch(e){} }
+
+  function load(snap){
+    const days = blankDays();
+    if(snap && snap.days){ Object.keys(snap.days).forEach(function(k){ if(days[k]) days[k] = snap.days[k].slice(0, AP_LINES_PER_DAY); }); }
+    apDays = days; saveApDays();
+    apBills = snap && Array.isArray(snap.bills) ? snap.bills : []; saveApBills();
+    const s = document.getElementById('apStartBalance'), a = document.getElementById('apActualEnding');
+    if(s) s.value = snap ? (snap.start || '') : '';
+    if(a) a.value = snap ? (snap.actual || '') : '';
+    const ws = document.getElementById('apWeekStart'); if(ws) ws.value = viewWk;
+    saveApMeta();
+    renderApWeekRange(); renderApDays(); renderApBills(); renderApBalance();
+    try{ localStorage.setItem(LIVE_KEY, viewWk); }catch(e){}
+    renderNav();
+  }
+  function switchTo(target){
+    if(target === viewWk){ return; }
+    arch[viewWk] = snapshot();
+    viewWk = target;
+    load(arch[target] || null);
+    saveArch();
+  }
+
+  function weeksWithData(){
+    const set = {};
+    Object.keys(arch).forEach(function(k){ if(hasContent(arch[k])) set[k] = 1; });
+    if(hasContent(snapshot())) set[viewWk] = 1;
+    set[REAL] = 1;
+    return Object.keys(set).sort().reverse();
+  }
+  function renderNav(){
+    const away = viewWk !== REAL;
+    const rel = viewWk === REAL ? 'This week' : (viewWk < REAL ? 'Past week' : 'Upcoming week');
+    const prevBills = (arch[addWeeks(viewWk, -1)] || {}).bills || [];
+    const canCopy = !apBills.length && prevBills.some(function(b){ return b && b.label; });
+    nav.className = 'ap-weeknav no-print' + (away ? ' apw-away' : '');
+    nav.innerHTML =
+      '<button type="button" class="apw-arrow" id="apwPrev" title="Previous week">&lsaquo;</button>' +
+      '<div class="apw-mid"><b>' + rangeLabel(viewWk) + '</b><small>' + rel + '</small></div>' +
+      '<button type="button" class="apw-arrow" id="apwNext" title="Next week">&rsaquo;</button>' +
+      '<button type="button" id="apwNow" class="' + (away ? '' : 'apw-hide') + '">↩ This week</button>' +
+      '<select id="apwJump" title="Jump to a week"><option value="">Jump to…</option>' +
+        weeksWithData().map(function(k){ return '<option value="' + k + '">' + rangeLabel(k) + (k === REAL ? ' (this week)' : '') + '</option>'; }).join('') + '</select>' +
+      '<button type="button" id="apwCopy" class="' + (canCopy ? '' : 'apw-hide') + '">📋 Copy last week\'s bills</button>';
+  }
+  nav.addEventListener('click', function(e){
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.id === 'apwPrev') switchTo(addWeeks(viewWk, -1));
+    else if(b.id === 'apwNext') switchTo(addWeeks(viewWk, 1));
+    else if(b.id === 'apwNow') switchTo(REAL);
+    else if(b.id === 'apwCopy'){
+      const prev = (arch[addWeeks(viewWk, -1)] || {}).bills || [];
+      apBills = prev.filter(function(x){ return x && x.label; }).map(function(x){
+        return { id:'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), label:x.label, amount:x.amount };
+      });
+      saveApBills(); renderApBills(); renderApBalance(); renderNav();
+    }
+    try{ soundClick(); }catch(err){}
+  });
+  nav.addEventListener('change', function(e){
+    if(e.target.id === 'apwJump' && e.target.value){ switchTo(e.target.value); }
+  });
+  // typing a date into "Week starting" jumps to the week that date falls in
+  const ws = document.getElementById('apWeekStart');
+  if(ws) ws.addEventListener('change', function(){
+    if(!ws.value){ ws.value = viewWk; saveApMeta(); renderApWeekRange(); renderApDays(); return; }
+    const target = weekKey(mondayOf(wkDate(ws.value)));
+    if(target === viewWk){ ws.value = viewWk; saveApMeta(); renderApWeekRange(); renderApDays(); }
+    else switchTo(target);
+  });
+  // keep the archive current when the page is hidden or closed
+  function flush(){ arch[viewWk] = snapshot(); saveArch(); try{ localStorage.setItem(LIVE_KEY, viewWk); }catch(e){} }
+  document.addEventListener('visibilitychange', function(){ if(document.hidden) flush(); });
+  window.addEventListener('pagehide', flush);
+
+  /* ---------- startup: file whatever the live keys hold, then show THIS week ---------- */
+  let liveWk = null;
+  try{ liveWk = localStorage.getItem(LIVE_KEY); }catch(e){}
+  if(!liveWk){
+    liveWk = apMeta.weekStart && !isNaN(wkDate(apMeta.weekStart)) ? weekKey(mondayOf(wkDate(apMeta.weekStart))) : REAL;
+  }
+  const live = snapshot();
+  if(hasContent(live) || arch[liveWk]) arch[liveWk] = live;
+  viewWk = REAL;
+  load(liveWk === REAL ? live : (arch[REAL] || null));
+  saveArch();
 })();
 
 /* ============================================================
