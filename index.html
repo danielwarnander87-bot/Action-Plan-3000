@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6394,7 +6394,7 @@
           <input type="number" id="apStartBalance" placeholder="0.00" step="0.01" oninput="renderApBalance()">
         </div>
 
-        <div class="ap-balance-title">Bills / Expenses</div>
+        <div class="ap-balance-title">Bills / Expenses <span class="ap-balance-sub">(− out, + in)</span></div>
         <div id="apBillsList" class="ap-bills-list"></div>
         <button class="bullet-add-btn" type="button" onclick="addApBill()">+ Add Bill</button>
 
@@ -9277,7 +9277,7 @@ function apBillRow(bill){
   return '<div class="ap-bill-row" data-id="'+bill.id+'">'+
     '<input type="text" class="ap-bill-label" value="'+escapeHtml(bill.label)+'" placeholder="Bill name" oninput="updateApBill(\''+bill.id+'\',\'label\',this.value)">'+
     '<span class="ap-balance-dollar">$</span>'+
-    '<input type="number" class="ap-bill-amount" value="'+(bill.amount===''?'':bill.amount)+'" placeholder="0.00" step="0.01" oninput="updateApBill(\''+bill.id+'\',\'amount\',this.value)">'+
+    '<input type="number" class="ap-bill-amount" value="'+(bill.amount===''?'':bill.amount)+'" placeholder="-0.00" step="0.01" oninput="updateApBill(\''+bill.id+'\',\'amount\',this.value)">'+
     '<button type="button" class="ap-bill-del" onclick="deleteApBill(\''+bill.id+'\')">\u00d7</button>'+
   '</div>';
 }
@@ -9315,7 +9315,7 @@ function renderApBalance(){
   const varEl=document.getElementById('apBalanceVariance');
   const start=parseFloat(startEl&&startEl.value)||0;
   const billsTotal=apBills.reduce((sum,b)=>sum+(parseFloat(b.amount)||0),0);
-  const theo=start-billsTotal;
+  const theo=start+billsTotal; /* signed: -157.85 takes money out, +50 puts money in */
   if(theoEl) theoEl.textContent=apMoney(theo);
   if(varEl){
     if(actualEl&&actualEl.value!==''){
@@ -13348,6 +13348,7 @@ async function pollMessengerPigeon(showResultToast){
         const json = pigeonUtf8FromBase64(data.dataBase64 || '');
         const entry = JSON.parse(json);
         if(entry.kind !== 'messenger-pigeon-note') return;
+        if(entry.category === 'Journal'){ pigeonFileJournal(entry); filedCount++; return; }
         const boardId = PIGEON_ROUTES[entry.category] || 'ideas';
         const dateObj = entry.ts ? new Date(entry.ts) : new Date();
         pigeonAddNoteToBoard(boardId, dateObj, entry.text || '');
@@ -16434,6 +16435,7 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     bodyEl.appendChild(ta);
   }
   function renderAll(){ renderTabs(); renderStatus(); renderBody(); }
+  window.jlogRefresh = function(){ try{ renderAll(); }catch(e){} };
   function switchDay(key){
     activeDay = key;
     renderAll();
@@ -17392,6 +17394,38 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   }
   setInterval(checkCountdowns, 30000);
   setTimeout(checkCountdowns, 3000);
+})();
+
+/* ============================================================
+   MESSENGER PIGEON → JOURNAL. A pigeon note with the category
+   "Journal" is written into the Weekly Journal on the day it was
+   sent (appended, time-stamped, never overwriting), instead of a
+   sticky note. Works for the current week or any other week.
+   ============================================================ */
+(function(){
+  function t12(d){ return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); }
+  window.pigeonFileJournal = function(entry){
+    var d = entry.ts ? new Date(entry.ts) : new Date();
+    if(isNaN(d.getTime())) d = new Date();
+    var dayKey = JOURNAL_DAYS[(d.getDay() + 6) % 7].key;
+    var line = '🐦 ' + t12(d) + ' — ' + String(entry.text || '').trim();
+    var wkOfNote = weekKey(mondayOf(d));
+    function add(old){ old = old || ''; return old.trim() ? old.replace(/\s+$/, '') + '\n\n' + line : line; }
+    if(wkOfNote === wk){
+      journalData[dayKey] = add(journalData[dayKey]);
+      persist();
+      var main = document.querySelector('.journal-text[data-day="' + dayKey + '"]');
+      if(main){ main.value = journalData[dayKey]; try{ autoGrow(main); }catch(e){} }
+      try{ renderJournalSummary(); }catch(e){}
+      try{ window.jlogRefresh && window.jlogRefresh(); }catch(e){}
+    }else{
+      var key = 'actionPlan3000::' + wkOfNote, data = {};
+      try{ data = JSON.parse(localStorage.getItem(key) || '{}') || {}; }catch(e){ data = {}; }
+      if(!data.journal || typeof data.journal !== 'object') data.journal = {};
+      data.journal[dayKey] = add(data.journal[dayKey]);
+      try{ localStorage.setItem(key, JSON.stringify(data)); }catch(e){}
+    }
+  };
 })();
 
 /* ============================================================
