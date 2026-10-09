@@ -4803,6 +4803,95 @@
 .launch-count.go .lc-hint,.launch-count:not(.go) .lc-timer{display:none;}
 @media (prefers-reduced-motion:reduce){ .launch-orb{animation:none;} .launch-count .lc-num.pop{animation:none;} }
 
+.ap-bill-row{transition:opacity .45s ease, max-height .45s ease, margin .45s ease, filter .45s ease; max-height:60px;}
+.ap-bill-row.burning{opacity:0; max-height:0; margin:0; filter:blur(2px) brightness(1.6); overflow:hidden;}
+.ap-bill-row .bd-match{padding:0 2px;}
+#apMatchNote{margin:6px 0; font-size:12px;}
+
+/* ============================================================
+   GIZMO — a friendly green robot who reports your 4-week average balance
+   ============================================================ */
+#gizmoBot{
+  position:fixed; left:104px; bottom:12px; z-index:597; width:54px; height:64px; cursor:pointer;
+  user-select:none; -webkit-tap-highlight-color:transparent; filter:drop-shadow(0 3px 5px rgba(0,0,0,.4));
+}
+#gizmoBot svg{width:100%; height:100%; overflow:visible; transition:transform .2s ease;}
+#gizmoBot:hover svg{transform:translateY(-3px) rotate(-3deg);}
+#gizmoBot .gz-eye{transform-box:fill-box; transform-origin:center; animation:gzBlink 5s infinite;}
+@keyframes gzBlink{0%,92%,100%{transform:scaleY(1);}95%{transform:scaleY(.1);}}
+#gizmoBot .gz-ant{transform-box:fill-box; transform-origin:50% 100%;}
+#gizmoBot.talk .gz-ant{animation:gzWiggle .5s ease-in-out 3;}
+@keyframes gzWiggle{0%,100%{transform:rotate(0);}50%{transform:rotate(14deg);}}
+#gizmoPanel{
+  position:fixed; left:88px; bottom:84px; z-index:1150; width:min(300px,calc(100vw - 24px)); display:none;
+  background:#f2fff4; color:#0f3d1c; border:2px solid #2fae55; border-radius:18px; padding:14px 14px 12px;
+  box-shadow:0 12px 36px rgba(0,0,0,.45); font-family:'Nunito',sans-serif;
+}
+#gizmoPanel.on{display:block;}
+#gizmoPanel::after{content:''; position:absolute; left:34px; bottom:-10px; width:16px; height:16px; background:#f2fff4; border-right:2px solid #2fae55; border-bottom:2px solid #2fae55; transform:rotate(45deg);}
+.gz-head{display:flex; justify-content:space-between; align-items:center; font:700 15px 'Fredoka',sans-serif;}
+.gz-head button{background:none; border:0; font-size:22px; line-height:1; cursor:pointer; color:inherit;}
+.gz-say{margin:4px 0 8px; font-weight:700; font-size:14px; line-height:1.35;}
+.gz-big{font:700 32px 'Fredoka',sans-serif; color:#0c7a32; line-height:1.1;}
+.gz-trend{font-weight:800; font-size:13px; margin:2px 0 8px;}
+.gz-trend.up{color:#0c7a32;} .gz-trend.down{color:#b4541a;}
+.gz-bars{display:flex; gap:8px; align-items:flex-end; height:84px; margin:6px 0 4px;}
+.gz-bar{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; font-size:11px; font-weight:800;}
+.gz-bar i{display:block; width:100%; max-width:42px; border-radius:6px 6px 2px 2px; background:linear-gradient(#52d27a,#1f9a47); min-height:3px;}
+.gz-bar.none i{background:#cfe6d4; min-height:3px;}
+.gz-bar b{font-size:11px; margin-bottom:2px;}
+.gz-bar span{margin-top:3px; opacity:.75;}
+.gz-foot{font-size:11.5px; opacity:.75; line-height:1.35; margin-top:6px;}
+@media (max-width:640px){ #gizmoBot{left:84px; width:46px; height:56px; bottom:8px;} #gizmoPanel{left:8px;} #gizmoPanel::after{left:92px;} }
+@media (prefers-reduced-motion:reduce){ #gizmoBot .gz-eye,#gizmoBot.talk .gz-ant{animation:none;} }
+@media print{ #gizmoBot,#gizmoPanel{display:none!important;} }
+
+/* ============================================================
+   THE LOON — click for a haunting melody; her call erases Mon–Sun
+   on the Action Plan tab (never the calendar, bills or balance).
+   ============================================================ */
+#loonBird{
+  position:fixed; left:14px; bottom:14px; z-index:598; width:78px; height:58px; cursor:pointer;
+  display:none; user-select:none; -webkit-tap-highlight-color:transparent;
+  filter:drop-shadow(0 0 5px rgba(170,200,255,.55)) drop-shadow(0 3px 6px rgba(0,0,0,.45));
+}
+#loonBird.show{display:block;}
+#loonBird svg{width:100%; height:100%; overflow:visible; animation:loonBob 5s ease-in-out infinite;}
+#loonBird:hover svg{transform:scale(1.06);}
+#loonBird.calling svg{animation:loonCall 1.2s ease-in-out infinite;}
+@keyframes loonBob{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-2px) rotate(-1.2deg);}}
+@keyframes loonCall{0%,100%{transform:translateY(0) rotate(0);}40%{transform:translateY(-3px) rotate(-4deg);}}
+#loonBird .loon-ripple{position:absolute; left:6px; right:6px; bottom:-3px; height:6px; border-radius:50%; border:1px solid rgba(160,200,255,.5); opacity:.7;}
+#loonOv{
+  position:fixed; inset:0; z-index:1200; display:none; align-items:center; justify-content:center; padding:16px;
+  background:rgba(8,14,40,.62);
+}
+#loonOv.on{display:flex;}
+.loon-card{
+  width:min(380px,100%); border-radius:20px; padding:20px 20px 16px; text-align:center; color:#e9f0ff;
+  background:linear-gradient(180deg,#16254f 0%,#0b1230 100%); border:1px solid rgba(160,190,255,.35);
+  box-shadow:0 18px 50px rgba(0,0,0,.55);
+}
+.loon-card h3{margin:2px 0 6px; font:700 22px 'Fredoka',sans-serif; letter-spacing:.3px;}
+.loon-card p{margin:0 0 14px; font:600 14px/1.45 'Nunito',sans-serif; color:#c3d2f5;}
+.loon-card .loon-row{display:flex; gap:10px; justify-content:center;}
+.loon-card button{
+  border:0; border-radius:12px; padding:10px 16px; font:700 15px 'Fredoka',sans-serif; cursor:pointer;
+}
+.loon-card .loon-go{background:#c9d8ff; color:#0b1230; box-shadow:0 3px 0 #7c93d1;}
+.loon-card .loon-keep{background:transparent; color:#c3d2f5; border:1px solid rgba(160,190,255,.4);}
+#loonUndo{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:1201; display:none; align-items:center; gap:12px;
+  background:#0b1230; color:#e9f0ff; border:1px solid rgba(160,190,255,.45); border-radius:14px; padding:10px 14px;
+  font:700 14px 'Nunito',sans-serif; box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+#loonUndo.on{display:flex;}
+#loonUndo button{border:0; border-radius:9px; padding:6px 12px; font:700 13px 'Fredoka',sans-serif; background:#c9d8ff; color:#0b1230; cursor:pointer;}
+.ap-day-line.loon-fade{transition:opacity 1.1s ease, filter 1.1s ease; opacity:0; filter:blur(3px);}
+@media (max-width:640px){ #loonBird{width:64px; height:48px; bottom:10px; left:8px;} }
+@media (prefers-reduced-motion:reduce){ #loonBird svg,#loonBird.calling svg{animation:none;} }
+@media print{ #loonBird,#loonOv,#loonUndo{display:none!important;} }
+
 /* ============================================================
    ALERTS — loud pigeon coo/caw and the countdown final-day alarm,
    each with a brief blur + blue wash over the whole screen
@@ -4924,6 +5013,20 @@
 .bd-settings{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px; padding-top:10px; border-top:1px dashed rgba(22,11,41,.25); font:700 12px 'Nunito',sans-serif;}
 .bd-settings input[type=time]{font-size:13px; padding:4px 6px;}
 @media print{ .bd-overlay{display:none !important;} }
+
+.bd-bill-wrap{display:flex; align-items:center; gap:6px; margin-bottom:5px; max-height:60px; overflow:hidden;}
+.bd-bill-wrap .bd-bill{flex:1; margin-bottom:0;}
+.bd-match{background:none; border:0; padding:2px 4px; cursor:pointer; line-height:0; flex:none; transform:rotate(18deg); transition:transform .25s ease;}
+.bd-match:hover{transform:rotate(10deg) scale(1.1);}
+.bd-match .mf{opacity:0; transform-origin:10px 12px; transform:scale(.2);}
+.bd-match.lit .mh{fill:#ff7a1a; filter:drop-shadow(0 0 4px #ffb21f);}
+.bd-match.lit .mf{opacity:1; animation:bdFlame .5s ease-out forwards, bdFlick .12s ease-in-out .5s infinite alternate;}
+@keyframes bdFlame{from{transform:scale(.2);}to{transform:scale(1.25);}}
+@keyframes bdFlick{from{transform:scale(1.25) rotate(-4deg);}to{transform:scale(1.1) rotate(4deg);}}
+.bd-pend-row, .bd-bill-wrap{transition:opacity .45s ease, max-height .45s ease, margin .45s ease, filter .45s ease;}
+.bd-pend-row.burning, .bd-bill-wrap.burning{opacity:0; max-height:0; margin:0; filter:blur(2px) brightness(1.6); overflow:hidden;}
+.bd-burn-note{display:flex; align-items:center; justify-content:space-between; gap:8px; margin:8px 0; padding:8px 10px; border-radius:10px; background:#fff1d6; border:1px solid #f3c27a; font:700 13px/1.35 'Nunito',sans-serif; color:#5a2d00;}
+@media (prefers-reduced-motion:reduce){ .bd-match.lit .mf{animation:none; transform:scale(1.1);} }
 
 /* ---------- Action Plan tab: week switcher + dated days ---------- */
 .ap-weeknav{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; max-width:560px; margin:0 auto 12px;}
@@ -5471,6 +5574,47 @@
     <div class="lc-hint">tap anywhere to cancel</div>
   </div>
 
+  <div id="gizmoBot" title="Gizmo — click for your 4-week average balance">
+    <svg viewBox="0 0 60 72" aria-label="Gizmo, a friendly green robot">
+      <line x1="30" y1="10" x2="30" y2="2" stroke="#1d7a3a" stroke-width="2.4" stroke-linecap="round"/>
+      <circle class="gz-ant" cx="30" cy="3" r="3.6" fill="#ffd84a"/>
+      <rect x="12" y="10" width="36" height="30" rx="9" fill="#47c96f" stroke="#1d7a3a" stroke-width="2.4"/>
+      <rect x="6" y="20" width="6" height="11" rx="3" fill="#2fae55" stroke="#1d7a3a" stroke-width="2"/>
+      <rect x="48" y="20" width="6" height="11" rx="3" fill="#2fae55" stroke="#1d7a3a" stroke-width="2"/>
+      <rect x="17" y="17" width="26" height="15" rx="6" fill="#0f2b1a"/>
+      <ellipse class="gz-eye" cx="24" cy="24" rx="3.1" ry="3.9" fill="#9dffbd"/>
+      <ellipse class="gz-eye" cx="36" cy="24" rx="3.1" ry="3.9" fill="#9dffbd"/>
+      <path d="M25 29.5 Q30 33 35 29.5" fill="none" stroke="#9dffbd" stroke-width="1.8" stroke-linecap="round"/>
+      <rect x="17" y="42" width="26" height="20" rx="6" fill="#47c96f" stroke="#1d7a3a" stroke-width="2.4"/>
+      <text x="30" y="57" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="14" fill="#0f3d1c">$</text>
+      <rect x="20" y="62" width="7" height="7" rx="2.5" fill="#2fae55" stroke="#1d7a3a" stroke-width="2"/>
+      <rect x="33" y="62" width="7" height="7" rx="2.5" fill="#2fae55" stroke="#1d7a3a" stroke-width="2"/>
+    </svg>
+  </div>
+  <div id="gizmoPanel" role="dialog" aria-label="Gizmo's balance report">
+    <div class="gz-head"><span>🤖 Gizmo says…</span><button id="gizmoX" type="button" aria-label="Close">&times;</button></div>
+    <div id="gizmoBody"></div>
+  </div>
+  <div id="loonBird" title="The loon — click to hear her. Her call erases Mon–Sun on this tab.">
+    <svg viewBox="0 0 120 80" aria-label="A common loon on the water">
+      <ellipse cx="58" cy="62" rx="50" ry="9" fill="#0e1e46" opacity=".55"/>
+      <path d="M12 56 Q18 38 46 36 Q74 34 92 44 Q100 50 98 58 Q70 66 36 64 Q18 63 12 56Z" fill="#0d0f14"/>
+      <path d="M24 60 Q50 66 88 59 Q80 64 52 66 Q32 66 24 60Z" fill="#f4f6fa"/>
+      <g fill="#f4f6fa"><circle cx="38" cy="45" r="2.1"/><circle cx="48" cy="42" r="2.1"/><circle cx="58" cy="41" r="2.1"/><circle cx="68" cy="42" r="2.1"/><circle cx="78" cy="45" r="2.1"/><circle cx="43" cy="50" r="2"/><circle cx="53" cy="48" r="2"/><circle cx="63" cy="48" r="2"/><circle cx="73" cy="50" r="2"/><circle cx="48" cy="54" r="1.8"/><circle cx="58" cy="54" r="1.8"/><circle cx="68" cy="54" r="1.8"/></g>
+      <path d="M86 46 Q96 36 96 24 Q96 12 104 11 Q112 11 113 18 L124 21 L112 24 Q110 30 106 40 Q102 52 96 58Z" fill="#0d0f14"/>
+      <path d="M97 40 Q102 38 104 44" fill="none" stroke="#f4f6fa" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="107" cy="17" r="2.4" fill="#d6262e"/>
+    </svg>
+    <div class="loon-ripple"></div>
+  </div>
+  <div id="loonOv">
+    <div class="loon-card" role="dialog" aria-label="The loon's call">
+      <h3>🪶 The loon is calling…</h3>
+      <p id="loonMsg">Her call erases every entry Monday through Sunday on this Action Plan week. Your calendar, Bills Valley, bills and balance are not touched.</p>
+      <div class="loon-row"><button class="loon-keep" id="loonKeep" type="button">Let her pass</button><button class="loon-go" id="loonGo" type="button">Let her call</button></div>
+    </div>
+  </div>
+  <div id="loonUndo"><span id="loonUndoMsg">The week went quiet.</span><button id="loonUndoBtn" type="button">Undo</button></div>
   <div id="alertFx" aria-hidden="true"><div class="af-card"><div class="af-ico" id="afIco"></div><div class="af-t" id="afT"></div><div class="af-s" id="afS"></div></div></div>
   <div id="cdAlarmBar" role="alert"><span id="cdAlarmText"></span><button type="button" id="cdAlarmX">Dismiss</button></div>
   <div id="finSpot" aria-hidden="true"></div>
@@ -5486,6 +5630,7 @@
       <button class="bd-btn" id="bdAddPend" type="button">+ Add pending</button>
       <label class="bd-lab" id="bdDueLab">Bills due</label>
       <div id="bdBills"></div>
+      <div class="bd-burn-note" id="bdBurnNote" style="display:none"></div>
       <div class="bd-result" id="bdResult"></div>
       <div class="bd-actions">
         <button class="bd-btn primary" id="bdSave" type="button">✓ Save check-in</button>
@@ -9278,6 +9423,7 @@ function apBillRow(bill){
     '<input type="text" class="ap-bill-label" value="'+escapeHtml(bill.label)+'" placeholder="Bill name" oninput="updateApBill(\''+bill.id+'\',\'label\',this.value)">'+
     '<span class="ap-balance-dollar">$</span>'+
     '<input type="number" class="ap-bill-amount" value="'+(bill.amount===''?'':bill.amount)+'" placeholder="-0.00" step="0.01" oninput="updateApBill(\''+bill.id+'\',\'amount\',this.value)">'+
+    '<button type="button" class="bd-match" data-apburn="'+bill.id+'" title="Light it — clears this line and folds it into your starting balance" aria-label="Burn this line"><svg viewBox="0 0 20 34" width="20" height="34" aria-hidden="true"><path class="mf" d="M10 1 C14 6 15 9 12.5 12 C12 10 10.8 9.5 10 9.8 C9.2 9.5 8 10 7.5 12 C5 9 6 6 10 1Z" fill="#ffb21f"/><rect x="8.6" y="14" width="2.8" height="19" rx="1.2" fill="#d9a766"/><ellipse class="mh" cx="10" cy="13.4" rx="4.3" ry="4.8" fill="#c4281c"/></svg></button>'+
     '<button type="button" class="ap-bill-del" onclick="deleteApBill(\''+bill.id+'\')">\u00d7</button>'+
   '</div>';
 }
@@ -17049,35 +17195,38 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   }
 
   /* ---- form state for the date on screen ---- */
-  let cur = { date:ymd(new Date()), pending:[], off:{}, auto:false };
+  let cur = { date:ymd(new Date()), pending:[], off:{}, burn:{}, auto:false };
+  let burnUndo = null;
   function loadForDate(ds){
-    cur.date = ds; cur.off = {}; cur.pending = [];
+    cur.date = ds; cur.off = {}; cur.burn = {}; cur.pending = []; burnUndo = null;
     const c = st.checks[ds];
     $('bdStart').value = c ? c.start : '';
-    if(c){ cur.pending = (c.pending || []).map(function(p){ return Object.assign({}, p); }); (c.excluded || []).forEach(function(id){ cur.off[id] = true; }); }
+    if(c){ cur.pending = (c.pending || []).map(function(p){ return Object.assign({}, p); }); (c.excluded || []).forEach(function(id){ cur.off[id] = true; }); (c.burned || []).forEach(function(id){ cur.burn[id] = true; }); }
     $('bdDate').value = ds;
     renderAll();
   }
+  const MATCH = '<svg viewBox="0 0 20 34" width="20" height="34" aria-hidden="true"><path class="mf" d="M10 1 C14 6 15 9 12.5 12 C12 10 10.8 9.5 10 9.8 C9.2 9.5 8 10 7.5 12 C5 9 6 6 10 1Z" fill="#ffb21f"/><rect x="8.6" y="14" width="2.8" height="19" rx="1.2" fill="#d9a766"/><ellipse class="mh" cx="10" cy="13.4" rx="4.3" ry="4.8" fill="#c4281c"/></svg>';
+  function matchBtn(attr, tip){ return '<button type="button" class="bd-match" ' + attr + ' title="' + tip + '" aria-label="' + tip + '">' + MATCH + '</button>'; }
   function renderPending(){
     $('bdPending').innerHTML = cur.pending.length ? cur.pending.map(function(p, i){
       return '<div class="bd-pend-row"><input type="text" class="bd-p-label" data-i="' + i + '" value="' + esc(p.label) + '" placeholder="What is it?">' +
         '<input type="number" class="bd-p-amt" data-i="' + i + '" step="0.01" inputmode="decimal" value="' + esc(p.amt) + '" placeholder="0.00">' +
         '<select data-i="' + i + '"><option value="out"' + (p.dir !== 'in' ? ' selected' : '') + '>− Out</option><option value="in"' + (p.dir === 'in' ? ' selected' : '') + '>+ In</option></select>' +
-        '<button class="bd-x" data-del="' + i + '" type="button" style="font-size:20px">×</button></div>';
+        matchBtn('data-burn="' + i + '"', 'Light it — clears this and folds it into your starting balance') + '<button class="bd-x" data-del="' + i + '" type="button" style="font-size:20px">×</button></div>';
     }).join('') : '<div class="bd-none">None added.</div>';
   }
   function renderBills(){
-    const bills = billsFor(cur.date);
+    const bills = billsFor(cur.date).filter(function(b){ return !cur.burn[b.id]; });
     $('bdDueLab').textContent = 'Bills due ' + new Date(cur.date + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
     $('bdBills').innerHTML = bills.length ? bills.map(function(b){
-      return '<label class="bd-bill"><input type="checkbox" data-bill="' + esc(b.id) + '"' + (cur.off[b.id] ? '' : ' checked') + '><span class="n">' + esc(b.name) + '</span><span>' + money(b.amt) + '</span></label>';
+      return '<div class="bd-bill-wrap"><label class="bd-bill"><input type="checkbox" data-bill="' + esc(b.id) + '"' + (cur.off[b.id] ? '' : ' checked') + '><span class="n">' + esc(b.name) + '</span><span>' + money(b.amt) + '</span></label>' + matchBtn('data-burnbill="' + esc(b.id) + '"', 'Light it — this bill is paid; take it out of your starting balance') + '</div>';
     }).join('') : '<div class="bd-none">No bills due this day in Bills Valley.' + (function(){ const n = nextBillDate(cur.date); return n ? ' Next one: ' + new Date(n + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' }) + '.' : ''; })() + '</div>';
   }
   function calc(){
     const start = num($('bdStart').value);
     let out = 0, inn = 0;
     cur.pending.forEach(function(p){ const a = Math.abs(num(p.amt)); if(p.dir === 'in') inn += a; else out += a; });
-    const bills = billsFor(cur.date).filter(function(b){ return !cur.off[b.id]; });
+    const bills = billsFor(cur.date).filter(function(b){ return !cur.off[b.id] && !cur.burn[b.id]; });
     const due = bills.reduce(function(s, b){ return s + b.amt; }, 0);
     return { start:start, out:out, inn:inn, due:due, left:start - out + inn - due, haveStart:$('bdStart').value !== '' };
   }
@@ -17103,7 +17252,64 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     const isToday = cur.date === ymd(new Date());
     $('bdSub').textContent = (isToday ? 'Today — ' : '') + n + ' bill' + (n === 1 ? '' : 's') + ' due' + (n ? ' · ' + money(tot) + ' total' : '');
   }
-  function renderAll(){ renderSub(); renderPending(); renderBills(); renderResult(); }
+  function renderAll(){ renderSub(); renderPending(); renderBills(); renderResult(); renderBurnNote(); }
+
+  /* ---- the match: light it and the line burns away, folding into the starting balance ---- */
+  function scratch(){
+    try{
+      if(typeof sfxMuted !== 'undefined' && sfxMuted) return;
+      const ctx = (typeof __sfxGetCtx === 'function') ? __sfxGetCtx() : null; if(!ctx) return;
+      const n = Math.floor(ctx.sampleRate * 0.4), buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
+      for(let i = 0; i < n; i++){ const t = i / n; d[i] = (Math.random() * 2 - 1) * (t < 0.35 ? t / 0.35 : Math.pow(1 - (t - 0.35) / 0.65, 2)); }
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const hp = ctx.createBiquadFilter(); hp.type = 'bandpass'; hp.frequency.value = 2600; hp.Q.value = 0.7;
+      const g = ctx.createGain(); g.gain.value = 0.16; src.connect(hp); hp.connect(g); g.connect(ctx.destination); src.start();
+    }catch(e){}
+  }
+  function renderBurnNote(){
+    const el = $('bdBurnNote'); if(!el) return;
+    if(!burnUndo){ el.innerHTML = ''; el.style.display = 'none'; return; }
+    el.style.display = '';
+    el.innerHTML = '<span>🔥 ' + esc(burnUndo.text) + '</span><button type="button" class="bd-btn ghost" id="bdUndoBurn">Undo</button>';
+  }
+  function applyBurn(kind, key){
+    const prevStart = $('bdStart').value, s0 = num(prevStart);
+    let delta = 0, label = '', undo = {};
+    if(kind === 'pend'){
+      const p = cur.pending[key]; if(!p) return;
+      const a = Math.abs(num(p.amt)); delta = p.dir === 'in' ? a : -a; label = p.label || 'Pending item';
+      undo = { kind:'pend', idx:key, item:Object.assign({}, p) };
+      cur.pending.splice(key, 1);
+    }else{
+      const b = billsFor(cur.date).filter(function(x){ return x.id === key; })[0]; if(!b) return;
+      delta = -b.amt; label = b.name; undo = { kind:'bill', id:key, wasOff:!!cur.off[key] };
+      cur.burn[key] = true; delete cur.off[key];
+    }
+    const ns = Math.round((s0 + delta) * 100) / 100;
+    $('bdStart').value = ns;
+    undo.prevStart = prevStart;
+    undo.text = 'Burned ' + label + ' (' + (delta < 0 ? '−' : '+') + money(Math.abs(delta)) + ') — starting balance ' + money(s0) + ' → ' + money(ns);
+    burnUndo = undo;
+    renderAll();
+  }
+  function undoBurn(){
+    const u = burnUndo; if(!u) return;
+    if(u.kind === 'pend') cur.pending.splice(u.idx, 0, u.item);
+    else{ delete cur.burn[u.id]; if(u.wasOff) cur.off[u.id] = true; }
+    $('bdStart').value = u.prevStart;
+    burnUndo = null; renderAll();
+  }
+  overlay.addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('#bdUndoBurn')){ undoBurn(); return; }
+    const b = e.target.closest && e.target.closest('.bd-match'); if(!b || b.disabled) return;
+    b.disabled = true; b.classList.add('lit'); scratch();
+    const row = b.closest('.bd-pend-row, .bd-bill-wrap');
+    setTimeout(function(){ if(row) row.classList.add('burning'); }, 450);
+    setTimeout(function(){
+      if(b.dataset.burn != null) applyBurn('pend', +b.dataset.burn);
+      else if(b.dataset.burnbill != null) applyBurn('bill', b.dataset.burnbill);
+    }, 950);
+  });
 
   /* ---- events ---- */
   $('bdStart').addEventListener('input', renderResult);
@@ -17132,7 +17338,7 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   $('bdSave').addEventListener('click', function(){
     const c = calc();
     st.checks[cur.date] = { start:$('bdStart').value, pending:cur.pending.filter(function(p){ return p.label || p.amt !== ''; }),
-      excluded:Object.keys(cur.off), left:c.left, savedAt:Date.now() };
+      excluded:Object.keys(cur.off), burned:Object.keys(cur.burn), left:c.left, savedAt:Date.now() };
     st.done[cur.date] = true; save();
     cur.auto = false; overlay.classList.remove('open');
     try{ showBackupToast((c.left < 0 ? '⚠ Short by ' + money(-c.left) : '✅ ' + money(c.left) + ' left after everything') + ' — check-in saved.'); }catch(e){}
@@ -17426,6 +17632,244 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
       try{ localStorage.setItem(key, JSON.stringify(data)); }catch(e){}
     }
   };
+})();
+
+(function(){
+  const bird = document.getElementById('loonBird'), ov = document.getElementById('loonOv');
+  const undoBar = document.getElementById('loonUndo');
+  if(!bird || !ov || typeof apDays === 'undefined') return;
+
+  /* ---------- sound: a slow minor melody with long echoes, and the loon's wail ---------- */
+  function makeOut(ctx){
+    const master = ctx.createGain(); master.gain.value = 0.9;
+    const dry = ctx.createGain(); dry.gain.value = 0.7;
+    const d = ctx.createDelay(1.0); d.delayTime.value = 0.42;
+    const fb = ctx.createGain(); fb.gain.value = 0.5;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1800;
+    const wet = ctx.createGain(); wet.gain.value = 0.55;
+    master.connect(dry); dry.connect(ctx.destination);
+    master.connect(d); d.connect(lp); lp.connect(fb); fb.connect(d); lp.connect(wet); wet.connect(ctx.destination);
+    return master;
+  }
+  function tone(ctx, out, t0, f, dur, vol, glideTo){
+    const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    const lfo = ctx.createOscillator(), lg = ctx.createGain();
+    o.type = 'sine'; o2.type = 'triangle';
+    o.frequency.setValueAtTime(f, t0); o2.frequency.setValueAtTime(f * 2.005, t0);
+    if(glideTo){ o.frequency.linearRampToValueAtTime(glideTo, t0 + dur * 0.7); o2.frequency.linearRampToValueAtTime(glideTo * 2.005, t0 + dur * 0.7); }
+    lfo.frequency.value = 5.2; lg.gain.value = f * 0.012; lfo.connect(lg); lg.connect(o.frequency);
+    const g2 = ctx.createGain(); g2.gain.value = 0.18; o2.connect(g2); g2.connect(g); o.connect(g);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + Math.min(0.5, dur * 0.35));
+    g.gain.exponentialRampToValueAtTime(0.0008, t0 + dur);
+    g.connect(out);
+    [o, o2, lfo].forEach(function(n){ n.start(t0); n.stop(t0 + dur + 0.05); });
+  }
+  // D minor-ish phrase, long breathy notes
+  const MELODY = [[293.66,1.5],[349.23,1.3],[440.0,1.9],[392.0,1.2],[349.23,1.3],[293.66,2.2],[261.63,1.4],[293.66,2.8]];
+  function melody(ctx, out, t0){
+    let t = t0 + 0.05;
+    MELODY.forEach(function(n){ tone(ctx, out, t, n[0], n[1] + 0.9, 0.2); t += n[1] * 0.85; });
+    tone(ctx, out, t0, 146.83, 9, 0.12);               // low drone
+    tone(ctx, out, t0 + 0.2, 220.0, 9, 0.06);
+    return t - t0 + 2;
+  }
+  function wail(ctx, out, t0){
+    tone(ctx, out, t0, 520, 1.9, 0.5, 880);            // rising wail
+    tone(ctx, out, t0 + 1.2, 880, 1.8, 0.42, 620);     // falling answer
+    for(let i = 0; i < 4; i++) tone(ctx, out, t0 + 3.0 + i * 0.22, 700 + i * 40, 0.25, 0.3, 940); // the tremolo laugh
+    return 4.2;
+  }
+  window.__loonSounds = { makeOut: makeOut, melody: melody, wail: wail };
+  function play(kind){
+    try{
+      if(typeof sfxMuted !== 'undefined' && sfxMuted) return;
+      const ctx = (typeof __sfxGetCtx === 'function') ? __sfxGetCtx() : null; if(!ctx) return;
+      if(ctx.state === 'suspended') ctx.resume();
+      const out = makeOut(ctx); (kind === 'wail' ? wail : melody)(ctx, out, ctx.currentTime + 0.03);
+    }catch(e){}
+  }
+
+  /* ---------- show only on the Action Plan tab ---------- */
+  function onAP(){ const v = document.getElementById('viewStudy'); return !!(v && v.classList.contains('active')); }
+  function sync(){
+    const lock = document.getElementById('apLockScreen');
+    bird.classList.toggle('show', onAP() && !lock);
+  }
+  sync(); setInterval(sync, 1000);
+  if(typeof window.switchView === 'function'){
+    const prev = window.switchView;
+    window.switchView = function(){ const r = prev.apply(this, arguments); setTimeout(sync, 60); return r; };
+  }
+
+  /* ---------- click → melody + ask; "Let her call" → wail + erase, with undo ---------- */
+  let calling = false, undoSnap = null, undoTimer = null;
+  function hasEntries(){
+    return AP_DAY_NAMES.some(function(d){ return (apDays[d] || []).some(function(v){ return v && String(v).trim(); }); });
+  }
+  function weekLabel(){
+    const v = (document.getElementById('apWeekStart') || {}).value;
+    return v ? 'the week of ' + v : 'this week';
+  }
+  function closeAsk(){ ov.classList.remove('on'); bird.classList.remove('calling'); calling = false; }
+  bird.addEventListener('click', function(){
+    if(calling) return;
+    calling = true; bird.classList.add('calling'); play('melody');
+    const msg = document.getElementById('loonMsg'), go = document.getElementById('loonGo');
+    if(hasEntries()){
+      msg.textContent = 'Her call erases every entry Monday through Sunday on ' + weekLabel() + '. Your calendar, Bills Valley, bills and balance are not touched.';
+      go.style.display = '';
+    }else{
+      msg.textContent = 'Nothing is written on ' + weekLabel() + ' — the water is still.';
+      go.style.display = 'none';
+    }
+    ov.classList.add('on');
+  });
+  document.getElementById('loonKeep').addEventListener('click', closeAsk);
+  ov.addEventListener('click', function(e){ if(e.target === ov) closeAsk(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && ov.classList.contains('on')) closeAsk(); });
+
+  function hideUndo(){ undoBar.classList.remove('on'); undoSnap = null; clearTimeout(undoTimer); }
+  document.getElementById('loonGo').addEventListener('click', function(){
+    if(!hasEntries()){ closeAsk(); return; }
+    ov.classList.remove('on');
+    play('wail');
+    const snap = JSON.parse(JSON.stringify(apDays));
+    document.querySelectorAll('.ap-day-line').forEach(function(el){ el.classList.add('loon-fade'); });
+    setTimeout(function(){
+      const blank = {}; AP_DAY_NAMES.forEach(function(d){ blank[d] = new Array(AP_LINES_PER_DAY).fill(''); });
+      apDays = blank; saveApDays(); renderApDays();
+      bird.classList.remove('calling'); calling = false;
+      undoSnap = snap;
+      document.getElementById('loonUndoMsg').textContent = 'The week went quiet.';
+      undoBar.classList.add('on'); clearTimeout(undoTimer); undoTimer = setTimeout(hideUndo, 20000);
+    }, 1200);
+  });
+  document.getElementById('loonUndoBtn').addEventListener('click', function(){
+    if(!undoSnap) return;
+    apDays = undoSnap; saveApDays(); renderApDays(); hideUndo();
+  });
+})();
+
+(function(){
+  const bot = document.getElementById('gizmoBot'), panel = document.getElementById('gizmoPanel'), body = document.getElementById('gizmoBody');
+  if(!bot || !panel) return;
+  function num(v){ const n = parseFloat(v); return (v === '' || v == null || isNaN(n)) ? null : n; }
+  function fmt(n){ return (n < 0 ? '-' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+  function short(n){ return (n < 0 ? '-' : '') + '$' + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+  function ls(k, d){ try{ const r = localStorage.getItem(k); return r == null ? d : r; }catch(e){ return d; } }
+  function wkOf(ds){ return weekKey(mondayOf(new Date(ds + 'T12:00:00'))); }
+  function addWeeks(k, n){ const d = new Date(k + 'T12:00:00'); d.setDate(d.getDate() + 7 * n); return weekKey(mondayOf(d)); }
+
+  // every balance you've told Action Plan about, grouped by week
+  function gather(){
+    const pts = {}; function add(wk, v, src){ if(v == null) return; (pts[wk] = pts[wk] || []).push({ v:v, src:src }); }
+    let arch = {}; try{ arch = JSON.parse(ls('actionPlan3000_apWeeks', '{}')) || {}; }catch(e){}
+    Object.keys(arch).forEach(function(wk){ const s = arch[wk] || {}; add(wk, num(s.start), 'Action Plan start'); add(wk, num(s.actual), 'Action Plan actual'); });
+    // the week on screen right now may be newer than the archive
+    const liveWk = ls('actionPlan3000_apLiveWk', null);
+    if(liveWk){
+      pts[liveWk] = (pts[liveWk] || []).filter(function(p){ return p.src.indexOf('Action Plan') !== 0; });
+      add(liveWk, num(ls('actionPlan3000_apStartBalance', '')), 'Action Plan start');
+      add(liveWk, num(ls('actionPlan3000_apActualEnding', '')), 'Action Plan actual');
+    }
+    let bd = {}; try{ bd = (JSON.parse(ls('actionPlan3000_billDay', '{}')) || {}).checks || {}; }catch(e){}
+    Object.keys(bd).forEach(function(ds){ add(wkOf(ds), num(bd[ds] && bd[ds].start), 'Bill Day check-in'); });
+    return pts;
+  }
+  function report(){
+    const pts = gather(), cur = weekKey(mondayOf(new Date())), weeks = [];
+    for(let i = 3; i >= 0; i--){
+      const wk = addWeeks(cur, -i), p = pts[wk] || [];
+      weeks.push({ wk:wk, val: p.length ? p.reduce(function(s, x){ return s + x.v; }, 0) / p.length : null, n:p.length });
+    }
+    const have = weeks.filter(function(w){ return w.val != null; });
+    return { weeks:weeks, have:have, avg: have.length ? have.reduce(function(s, w){ return s + w.val; }, 0) / have.length : null };
+  }
+  function label(wk){ return new Date(wk + 'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' }); }
+  function render(){
+    const r = report();
+    if(!r.have.length){
+      body.innerHTML = '<div class="gz-say">Beep boop! I have nothing to average yet. Type a <b>starting balance</b> on the Action Plan tab, or save a <b>Bill Day check-in</b>, and I\'ll start counting. 🔋</div>';
+      return;
+    }
+    const max = Math.max.apply(null, r.have.map(function(w){ return Math.abs(w.val); })) || 1;
+    const last = r.have[r.have.length - 1], diff = last.val - r.avg;
+    const bars = r.weeks.map(function(w){
+      const h = w.val == null ? 4 : Math.max(4, Math.round(Math.abs(w.val) / max * 62));
+      return '<div class="gz-bar' + (w.val == null ? ' none' : '') + '"><b>' + (w.val == null ? '–' : short(w.val)) + '</b><i style="height:' + h + 'px"></i><span>' + label(w.wk) + '</span></div>';
+    }).join('');
+    const tr = Math.abs(diff) < 0.5 ? 'Holding steady with your average.' :
+      (diff > 0 ? '▲ This week is ' + fmt(diff) + ' above your average' : '▼ This week is ' + fmt(-diff) + ' below your average');
+    body.innerHTML =
+      '<div class="gz-say">Beep boop! Your 4-week average balance is…</div>' +
+      '<div class="gz-big">' + fmt(r.avg) + '</div>' +
+      '<div class="gz-trend ' + (diff >= 0 ? 'up' : 'down') + '">' + tr + '</div>' +
+      '<div class="gz-bars">' + bars + '</div>' +
+      '<div class="gz-foot">Based on ' + r.have.length + ' of the last 4 weeks. Each week averages the balances you entered: Action Plan starting / actual ending and Bill Day check-ins.' +
+      (r.have.length < 4 ? ' Empty weeks are skipped, not counted as $0.' : '') + '</div>';
+  }
+  window.__gizmoReport = report;
+  function blip(){ try{ if(typeof sfxMuted !== 'undefined' && sfxMuted) return; __playTone(523, 0, 0.09, 'square', 0.06); __playTone(784, 0.1, 0.14, 'square', 0.06); }catch(e){} }
+  function open(){ render(); panel.classList.add('on'); bot.classList.add('talk'); blip(); setTimeout(function(){ bot.classList.remove('talk'); }, 1600); }
+  function close(){ panel.classList.remove('on'); }
+  bot.addEventListener('click', function(){ if(panel.classList.contains('on')) close(); else open(); });
+  document.getElementById('gizmoX').addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+
+  // hide while the lock screen is up
+  function sync(){ const lock = document.getElementById('apLockScreen'); bot.style.display = lock ? 'none' : ''; if(lock) close(); }
+  sync(); setInterval(sync, 1000);
+})();
+
+/* Match buttons on the Action Plan tab's Bills / Expenses list: light one and the line burns
+   away, folding its amount into the Starting Balance (so the End Balance stays the same). */
+(function(){
+  const list = document.getElementById('apBillsList'); if(!list || typeof apBills === 'undefined') return;
+  let note = document.getElementById('apMatchNote');
+  if(!note){ note = document.createElement('div'); note.id = 'apMatchNote'; note.className = 'bd-burn-note'; note.style.display = 'none'; list.parentNode.insertBefore(note, list.nextSibling); }
+  let undo = null;
+  function money(n){ return (n < 0 ? '-' : '') + '$' + Math.abs(n).toFixed(2); }
+  function showNote(){
+    if(!undo){ note.style.display = 'none'; note.innerHTML = ''; return; }
+    note.style.display = '';
+    note.innerHTML = '<span>🔥 ' + undo.text.replace(/[<>&]/g, '') + '</span><button type="button" class="bd-btn ghost" id="apMatchUndo">Undo</button>';
+  }
+  function scratch(){
+    try{
+      if(typeof sfxMuted !== 'undefined' && sfxMuted) return;
+      const ctx = (typeof __sfxGetCtx === 'function') ? __sfxGetCtx() : null; if(!ctx) return;
+      const n = Math.floor(ctx.sampleRate * 0.4), buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
+      for(let i = 0; i < n; i++){ const t = i / n; d[i] = (Math.random() * 2 - 1) * (t < 0.35 ? t / 0.35 : Math.pow(1 - (t - 0.35) / 0.65, 2)); }
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2600; f.Q.value = 0.7;
+      const g = ctx.createGain(); g.gain.value = 0.16; src.connect(f); f.connect(g); g.connect(ctx.destination); src.start();
+    }catch(e){}
+  }
+  function burn(id){
+    const i = apBills.findIndex(function(b){ return b.id === id; }); if(i < 0) return;
+    const bill = apBills[i], amt = parseFloat(bill.amount) || 0;
+    const sEl = document.getElementById('apStartBalance'), prev = sEl.value, s0 = parseFloat(prev) || 0;
+    const ns = Math.round((s0 + amt) * 100) / 100;           // signed: -157.85 lowers the start, +50 raises it
+    undo = { idx:i, bill:Object.assign({}, bill), prevStart:prev,
+      text:'Burned ' + (bill.label || 'a line') + ' (' + money(amt) + ') — starting balance ' + money(s0) + ' → ' + money(ns) };
+    apBills.splice(i, 1); saveApBills();
+    sEl.value = ns;
+    renderApBills(); renderApBalance(); showNote();
+  }
+  list.addEventListener('click', function(e){
+    const b = e.target.closest('.bd-match'); if(!b || b.disabled) return;
+    b.disabled = true; b.classList.add('lit'); scratch();
+    const row = b.closest('.ap-bill-row');
+    setTimeout(function(){ if(row) row.classList.add('burning'); }, 450);
+    setTimeout(function(){ burn(b.dataset.apburn); }, 950);
+  });
+  note.addEventListener('click', function(e){
+    if(!e.target.closest('#apMatchUndo') || !undo) return;
+    apBills.splice(Math.min(undo.idx, apBills.length), 0, undo.bill); saveApBills();
+    document.getElementById('apStartBalance').value = undo.prevStart;
+    undo = null; renderApBills(); renderApBalance(); showNote();
+  });
 })();
 
 /* ============================================================
