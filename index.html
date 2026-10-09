@@ -4803,6 +4803,59 @@
 .launch-count.go .lc-hint,.launch-count:not(.go) .lc-timer{display:none;}
 @media (prefers-reduced-motion:reduce){ .launch-orb{animation:none;} .launch-count .lc-num.pop{animation:none;} }
 
+/* ===== Budget-Bot Scratch Pad: calendar tab + burn log ===== */
+.bsp-tabs{ display:flex; gap:6px; margin:6px 0 8px; }
+.bsp-tab{
+  font-family:'Press Start 2P', monospace; font-size:8px; padding:7px 10px; cursor:pointer; border-radius:6px 6px 0 0;
+  background:linear-gradient(180deg,#46525f,#2c333b); color:#d8dee4; border:2px solid #1e242b; border-bottom:0;
+}
+.bsp-tab.on{ background:linear-gradient(180deg,#b87333,#6e4319); color:#fff3cf; border-color:#6e4319; }
+.bsp-cal{ display:none; background:#fff8dc; color:#3a2a12; border-radius:8px; padding:10px; font-family:'Nunito',sans-serif; }
+.bsp-cal.on{ display:block; }
+.bsp-cal button{ font-family:inherit; cursor:pointer; }
+.bsp-aware{ background:#ffe9a8; border:1px solid #e0b84f; border-radius:8px; padding:7px 10px; font-weight:700; font-size:12.5px; line-height:1.45; margin-bottom:8px; }
+.bsp-aware b{ color:#8a3b00; }
+.bsp-nav{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-weight:800; }
+.bsp-nav button{ border:1px solid #c9a24a; background:#fff; border-radius:7px; padding:3px 10px; font-weight:800; color:#3a2a12; }
+.bsp-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.bsp-dow{ text-align:center; font-size:10px; font-weight:800; opacity:.65; padding-bottom:2px; }
+.bsp-day{ position:relative; min-height:44px; border:1px solid #e3cf93; background:#fffdf2; border-radius:6px; padding:3px 4px; text-align:left; font-weight:800; font-size:12px; color:#3a2a12; }
+.bsp-day.out{ opacity:.38; }
+.bsp-day.today{ outline:2px solid #e0457b; }
+.bsp-day.sel{ background:#ffe08a; border-color:#b87333; }
+.bsp-day .dots{ display:flex; flex-wrap:wrap; gap:2px; margin-top:2px; font-size:10px; line-height:1; }
+.bsp-day .dn{ width:7px; height:7px; border-radius:50%; background:#2f8f4a; display:inline-block; }
+.bsp-detail{ margin-top:10px; border-top:2px dashed #d9bf75; padding-top:8px; }
+.bsp-detail h4{ margin:0 0 6px; font:700 14px 'Fredoka',sans-serif; }
+.bsp-entry{ display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:7px; background:#fff; border:1px solid #ecd9a0; margin-bottom:4px; font-weight:700; font-size:13px; }
+.bsp-entry .tx{ flex:1; min-width:0; word-wrap:break-word; }
+.bsp-entry .am{ font-weight:800; color:#b3261e; white-space:nowrap; }
+.bsp-entry .am.pos{ color:#1d7a3a; }
+.bsp-entry.burn{ background:#fff0dc; border-color:#f0b878; }
+.bsp-entry button{ border:0; background:none; font-size:18px; line-height:1; color:#8a6a2a; }
+.bsp-add{ display:flex; gap:6px; margin-top:6px; }
+.bsp-add input{ flex:1; min-width:0; font:600 14px 'Nunito',sans-serif; padding:7px 9px; border:1px solid #c9a24a; border-radius:7px; background:#fff; color:#3a2a12; }
+.bsp-add button{ border:0; border-radius:8px; padding:7px 12px; font-weight:800; background:#b87333; color:#fff; }
+.bsp-spend{ margin-top:10px; border-top:2px dashed #d9bf75; padding-top:8px; font-size:12.5px; font-weight:700; }
+.bsp-spend .row{ display:flex; gap:6px; margin-top:5px; }
+.bsp-spend .wk{ flex:1; text-align:center; background:#fff0dc; border:1px solid #f0b878; border-radius:7px; padding:4px 2px; font-size:11.5px; }
+.bsp-spend .wk b{ display:block; font-size:13px; color:#8a3b00; }
+.bsp-badge{ position:absolute; top:-7px; right:-7px; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:#e0457b; color:#fff; font:800 10px/16px 'Nunito',sans-serif; text-align:center; pointer-events:none; }
+.budget-scratch-toggle{ position:relative; }
+
+.bsp-xbtn{ flex:1; border:0; border-radius:8px; padding:8px 6px; font-weight:800; font-size:12.5px; background:#2f8f4a; color:#fff; }
+.bsp-xbtn:nth-child(2){ background:#6e4319; }
+
+.budget-target-bar{ margin-top:8px!important; flex-wrap:wrap; gap:6px 12px; }
+.budget-target-bar .budget-combined-label{ line-height:1.5; }
+.budget-target-bar input.bt-in{
+  width:104px; font:20px 'VT323', monospace; color:#ffd23f; background:#1a1f26; border:1px solid #5a6572;
+  border-radius:5px; padding:1px 5px; text-align:right;
+}
+.budget-target-bar .bt-note{ flex-basis:100%; font:600 12px 'Nunito',sans-serif; color:#9aa0a8; margin-top:-2px; }
+.budget-target-bar .budget-combined-value.bad{ color:#ff6b6b; }
+.budget-target-bar .budget-combined-value.good{ color:#7fff9e; }
+
 .ap-bill-row{transition:opacity .45s ease, max-height .45s ease, margin .45s ease, filter .45s ease; max-height:60px;}
 .ap-bill-row.burning{opacity:0; max-height:0; margin:0; filter:blur(2px) brightness(1.6); overflow:hidden;}
 .ap-bill-row .bd-match{padding:0 2px;}
@@ -15330,6 +15383,17 @@ function initBudgetBot(sfx, keyPrefix){
   renderBalance();
   renderSummary();
   renderWeekLog();
+  window.__budgetLanes = window.__budgetLanes || {};
+  window.__budgetLanes[sfx] = {
+    snapshot: function(){ return { grid:JSON.parse(JSON.stringify(gridRaw)), colors:JSON.parse(JSON.stringify(rowColors)), balance:budgetBalance ? JSON.parse(JSON.stringify(budgetBalance)) : null, rows:GRID_ROWS }; },
+    restore: function(s){ gridRaw = s.grid || {}; rowColors = s.colors || {}; budgetBalance = s.balance || null;
+      if(s.rows && s.rows !== GRID_ROWS) resizeGrid(GRID_COLS, s.rows);
+      saveGridRaw(); saveRowColors(); saveBalance(); renderGrid(); renderBalance(); renderSummary(); },
+    clearAll: function(){ gridRaw = {}; rowColors = {}; saveGridRaw(); saveRowColors(); renderGrid(); renderSummary(); },
+    setStart: function(v){ budgetBalance = (v === null || v === undefined || v === '') ? null : { amount:String(Math.round(v * 100) / 100), stamp:new Date().toISOString() }; saveBalance(); renderBalance(); renderSummary(); },
+    addRows: function(rows){ appendTransactions(rows, { verb:'Loaded', emptyMsg:'Nothing to load.' }); },
+    final: function(){ return computeFinalBalance(); }
+  };
 }
 
 initBudgetBot('', 'actionPlan3000_budget');
@@ -17287,6 +17351,7 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     }
     const ns = Math.round((s0 + delta) * 100) / 100;
     $('bdStart').value = ns;
+    try{ undo.logId = window.budgetCal && window.budgetCal.add({ t:'burn', text:label, amt:delta, src:'Bill Day' }); }catch(e){}
     undo.prevStart = prevStart;
     undo.text = 'Burned ' + label + ' (' + (delta < 0 ? '−' : '+') + money(Math.abs(delta)) + ') — starting balance ' + money(s0) + ' → ' + money(ns);
     burnUndo = undo;
@@ -17294,6 +17359,7 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   }
   function undoBurn(){
     const u = burnUndo; if(!u) return;
+    try{ if(u.logId && window.budgetCal) window.budgetCal.remove(u.logId); }catch(e){}
     if(u.kind === 'pend') cur.pending.splice(u.idx, 0, u.item);
     else{ delete cur.burn[u.id]; if(u.wasOff) cur.off[u.id] = true; }
     $('bdStart').value = u.prevStart;
@@ -17854,6 +17920,7 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
     undo = { idx:i, bill:Object.assign({}, bill), prevStart:prev,
       text:'Burned ' + (bill.label || 'a line') + ' (' + money(amt) + ') — starting balance ' + money(s0) + ' → ' + money(ns) };
     apBills.splice(i, 1); saveApBills();
+    try{ undo.logId = window.budgetCal && window.budgetCal.add({ t:'burn', text:bill.label || 'Expense', amt:amt, src:'Action Plan' }); }catch(e){}
     sEl.value = ns;
     renderApBills(); renderApBalance(); showNote();
   }
@@ -17866,10 +17933,326 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
   });
   note.addEventListener('click', function(e){
     if(!e.target.closest('#apMatchUndo') || !undo) return;
+    try{ if(undo.logId && window.budgetCal) window.budgetCal.remove(undo.logId); }catch(e){}
     apBills.splice(Math.min(undo.idx, apBills.length), 0, undo.bill); saveApBills();
     document.getElementById('apStartBalance').value = undo.prevStart;
     undo = null; renderApBills(); renderApBalance(); showNote();
   });
+})();
+
+/* ============================================================
+   BUDGET-BOT "CALL" — one button that clears the sheet and loads this week
+   from Action Plan: the starting balance + the Bills Valley calendar bills.
+   Split View ON  -> Channel A = this week, Channel B = next week
+                     (B starts from A's ending balance).
+   Split View OFF -> Channel A = this week only.
+   ============================================================ */
+(function(){
+  const actions = document.querySelector('.budget-head-actions'), split = document.getElementById('budgetSplitToggle');
+  if(!actions || !split || typeof moominData === 'undefined') return;
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'budget-split-toggle'; btn.id = 'budgetCallBtn';
+  btn.title = 'Clear the sheet and load this week (and next week in Split View) from Action Plan: starting balance + Bills Valley bills';
+  btn.textContent = '📞 Call: Load Week';
+  actions.insertBefore(btn, split);
+  const undoBtn = document.createElement('button');
+  undoBtn.type = 'button'; undoBtn.className = 'budget-split-toggle'; undoBtn.id = 'budgetCallUndo'; undoBtn.textContent = '↩ Undo call'; undoBtn.style.display = 'none';
+  actions.insertBefore(undoBtn, split);
+
+  function pad(n){ return String(n).padStart(2, '0'); }
+  function ymd(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function money(n){ return (n < 0 ? '-' : '') + '$' + Math.abs(n).toFixed(2); }
+  function ls(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function billsOn(d){
+    const month = moominData[d.getFullYear() + '-' + (d.getMonth() + 1)] || {};
+    return (month[String(d.getDate())] || []).map(function(b){ return { name:b.name, amt:parseFloat(b.amt) || 0 }; });
+  }
+  function weekRows(mon){
+    const rows = [];
+    for(let i = 0; i < 7; i++){
+      const d = new Date(mon); d.setDate(mon.getDate() + i);
+      billsOn(d).forEach(function(b){ rows.push({ date:ymd(d), desc:b.name || '', amount:-Math.abs(b.amt) }); });
+    }
+    return rows;
+  }
+  // the starting balance Action Plan holds for the real current week
+  function apStart(){
+    const real = weekKey(mondayOf(new Date()));
+    let v = null;
+    if(ls('actionPlan3000_apLiveWk') === real) v = ls('actionPlan3000_apStartBalance');
+    else { try{ const a = JSON.parse(ls('actionPlan3000_apWeeks') || '{}'); v = a[real] && a[real].start; }catch(e){} }
+    const n = parseFloat(v); return (v === '' || v == null || isNaN(n)) ? null : n;
+  }
+  function lanes(){ return window.__budgetLanes || {}; }
+  let backup = null;
+
+  /* in-page confirm (browsers block window.confirm inside sandboxed frames, which made the button look dead) */
+  const ask = document.createElement('div');
+  ask.id = 'budgetCallAsk';
+  ask.style.cssText = 'position:fixed;inset:0;z-index:1300;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(5,8,16,.72);';
+  ask.innerHTML = '<div style="width:min(420px,100%);background:#1b2128;color:#d8dee4;border:3px solid #ffd23f;border-radius:14px;padding:16px 16px 14px;box-shadow:0 14px 40px rgba(0,0,0,.6);font-family:Nunito,sans-serif">' +
+    '<div style="font:700 16px Fredoka,sans-serif;color:#ffd23f;margin-bottom:8px">📞 Call: Load Week</div>' +
+    '<div id="budgetCallMsg" style="font-weight:700;font-size:14px;line-height:1.5;white-space:pre-line"></div>' +
+    '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">' +
+    '<button type="button" id="budgetCallNo" class="budget-split-toggle" style="font-size:10px;padding:9px 12px">Cancel</button>' +
+    '<button type="button" id="budgetCallYes" class="budget-split-toggle active" style="font-size:10px;padding:9px 12px">Clear &amp; load</button></div></div>';
+  document.body.appendChild(ask);
+  let pending = null;
+  function say(t){ const st = document.getElementById('budgetImportStatus'); if(st) st.textContent = t; try{ showBackupToast(t); }catch(e){} }
+  function run(plan){
+    const L = lanes();
+    try{
+      backup = { A:L[''].snapshot(), B: plan.dual ? L['Twin'].snapshot() : null, dual:plan.dual };
+      L[''].clearAll(); L[''].setStart(plan.start); if(plan.a.length) L[''].addRows(plan.a);
+      const endA = plan.start == null ? null : L[''].final();
+      if(plan.dual){ L['Twin'].clearAll(); L['Twin'].setStart(endA); if(plan.b.length) L['Twin'].addRows(plan.b); }
+      undoBtn.style.display = '';
+      try{ soundSaved(); }catch(e){}
+      say('📞 Loaded ' + (plan.dual ? 'this week + next week' : 'this week') + ' from Action Plan — ' + (plan.start == null ? 'no starting balance found, ' : 'start ' + money(plan.start) + ', ') + plan.a.length + (plan.dual ? ' + ' + plan.b.length : '') + ' bill' + ((plan.a.length + plan.b.length) === 1 ? '' : 's') + '.');
+    }catch(err){ say('⚠️ The call failed: ' + (err && err.message ? err.message : err)); }
+  }
+  btn.addEventListener('click', function(){
+    const L = lanes(); if(!L[''] || !L['Twin']){ say('⚠️ Budget-Bot is not ready yet — close and reopen it, then try again.'); return; }
+    const box = document.getElementById('budgetModalBox');
+    const dual = !!(box && box.classList.contains('split-mode'));
+    const mon = mondayOf(new Date()), nextMon = new Date(mon); nextMon.setDate(mon.getDate() + 7);
+    const start = apStart(), a = weekRows(mon), b = dual ? weekRows(nextMon) : [];
+    const lab = function(m){ const e = new Date(m); e.setDate(m.getDate() + 6); return fmtShort(m) + ' – ' + fmtShort(e); };
+    pending = { dual:dual, start:start, a:a, b:b };
+    document.getElementById('budgetCallMsg').textContent =
+      'Clear ' + (dual ? 'BOTH channels' : 'Channel A') + ' and load from Action Plan?\n\n' +
+      'Channel A — week of ' + lab(mon) + '\n   start: ' + (start == null ? 'none set in Action Plan' : money(start)) + ' · ' + a.length + ' bill' + (a.length === 1 ? '' : 's') + ' from Bills Valley\n' +
+      (dual ? '\nChannel B — week of ' + lab(nextMon) + '\n   starts from A\'s ending balance · ' + b.length + ' bill' + (b.length === 1 ? '' : 's') + '\n' : '') +
+      '\nWhat is on the sheet now gets replaced (↩ Undo call brings it back).';
+    ask.style.display = 'flex';
+  });
+  document.getElementById('budgetCallNo').addEventListener('click', function(){ ask.style.display = 'none'; pending = null; });
+  document.getElementById('budgetCallYes').addEventListener('click', function(){ ask.style.display = 'none'; if(pending) run(pending); pending = null; });
+  undoBtn.addEventListener('click', function(){
+    const L = lanes(); if(!backup) return;
+    L[''].restore(backup.A); if(backup.B) L['Twin'].restore(backup.B);
+    backup = null; undoBtn.style.display = 'none';
+    try{ showBackupToast('↩ Budget-Bot restored to what it was before the call.'); }catch(e){}
+  });
+})();
+
+/* ============================================================
+   BUDGET-BOT: two tabs under the Combined Balance
+   1) "Really have"  = Combined − the amount you hold back (default $462.50)
+   2) "Rent gap"     = Combined vs rent (default $925.00): how much more you need, or how much is over
+   Both amounts are editable and remembered.
+   ============================================================ */
+(function(){
+  const bar = document.getElementById('budgetCombinedBar'), val = document.getElementById('budgetCombinedValue');
+  if(!bar || !val) return;
+  const KEY = 'actionPlan3000_budgetTargets';
+  let t = { hold:462.5, rent:925 };
+  try{ const r = JSON.parse(localStorage.getItem(KEY) || 'null'); if(r){ if(isFinite(r.hold)) t.hold = r.hold; if(isFinite(r.rent)) t.rent = r.rent; } }catch(e){}
+
+  const real = document.createElement('div'); real.className = 'budget-combined-bar budget-target-bar'; real.id = 'budgetReallyBar';
+  real.innerHTML = '<span class="budget-combined-label">💵 Really have<br>Combined − $<input class="bt-in" id="btHold" type="number" step="0.01" inputmode="decimal"></span>' +
+    '<span class="budget-combined-value" id="btReallyVal">$0.00</span>';
+  const rent = document.createElement('div'); rent.className = 'budget-combined-bar budget-target-bar'; rent.id = 'budgetRentBar';
+  rent.innerHTML = '<span class="budget-combined-label">🏠 Rent gap<br>Rent $<input class="bt-in" id="btRent" type="number" step="0.01" inputmode="decimal"> vs Combined</span>' +
+    '<span class="budget-combined-value" id="btRentVal">$0.00</span><span class="bt-note" id="btRentNote"></span>';
+  bar.parentNode.insertBefore(real, bar.nextSibling);
+  real.parentNode.insertBefore(rent, real.nextSibling);
+  document.getElementById('btHold').value = t.hold; document.getElementById('btRent').value = t.rent;
+
+  function money(n){ return (n < 0 ? '-' : '') + '$' + Math.abs(n).toFixed(2); }
+  function combined(){
+    const s = val.textContent || '', neg = s.trim().charAt(0) === '-';
+    const n = parseFloat(s.replace(/[^0-9.]/g, '')) || 0; return neg ? -n : n;
+  }
+  function update(){
+    const c = combined(), rv = document.getElementById('btReallyVal'), gv = document.getElementById('btRentVal'), gn = document.getElementById('btRentNote');
+    const really = c - t.hold;
+    rv.textContent = money(really); rv.className = 'budget-combined-value ' + (really < 0 ? 'bad' : 'good');
+    const gap = t.rent - c;                       // positive = still short of rent
+    if(gap > 0.004){ gv.textContent = money(gap); gv.className = 'budget-combined-value bad'; gn.textContent = 'You still need ' + money(gap) + ' to cover rent.'; }
+    else { gv.textContent = money(-gap); gv.className = 'budget-combined-value good'; gn.textContent = Math.abs(gap) < 0.005 ? 'Rent is covered exactly.' : 'Rent is covered with ' + money(-gap) + ' to spare.'; }
+  }
+  function onEdit(){
+    const h = parseFloat(document.getElementById('btHold').value), r = parseFloat(document.getElementById('btRent').value);
+    if(isFinite(h)) t.hold = h; if(isFinite(r)) t.rent = r;
+    try{ localStorage.setItem(KEY, JSON.stringify(t)); }catch(e){}
+    update();
+  }
+  document.getElementById('btHold').addEventListener('input', onEdit);
+  document.getElementById('btRent').addEventListener('input', onEdit);
+  new MutationObserver(update).observe(val, { childList:true, characterData:true, subtree:true });
+  update();
+})();
+
+/* ============================================================
+   BUDGET-BOT SCRATCH PAD — CALENDAR TAB
+   • Pin notes to any date; the pad shows what is on today / coming up, and a badge on the
+     Scratch Pad button counts today's notes.
+   • When you burn a line with the match (Action Plan Bills/Expenses or Bill Day), it is logged on
+     today's date as a 🔥 entry — the raw material for spending patterns.
+   • The bottom of the tab shows the burned spending for the last 4 weeks and the weekly average.
+   Store: actionPlan3000_budgetCal = { 'YYYY-MM-DD': [ {id, t:'note'|'burn', text, amt?, src?, ts} ] }
+   ============================================================ */
+(function(){
+  const frame = document.querySelector('.budget-scratchpad-frame'), head = frame && frame.querySelector('.budget-scratchpad-head');
+  const toolbar = frame && frame.querySelector('.budget-scratchpad-toolbar'), textEl = document.getElementById('budgetScratchpadText');
+  const toggle = document.getElementById('budgetScratchToggle');
+  if(!frame || !head || !toolbar || !textEl) return;
+  const KEY = 'actionPlan3000_budgetCal', TAB_KEY = 'actionPlan3000_budgetScratchTab';
+  let store = {}; try{ store = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(e){ store = {}; }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
+  function pad(n){ return String(n).padStart(2, '0'); }
+  function ymd(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function money(n){ return (n < 0 ? '-' : '') + '$' + Math.abs(n).toFixed(2); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function uid(){ return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function parse(ds){ return new Date(ds + 'T12:00:00'); }
+  function short(ds){ return parse(ds).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); }
+
+  /* ---------- public API (used by the match buttons) ---------- */
+  window.budgetCal = {
+    add: function(e){
+      const ds = e.date || ymd(new Date()), id = uid();
+      (store[ds] = store[ds] || []).push({ id:id, t:e.t || 'note', text:e.text || '', amt:e.amt, src:e.src || '', ts:Date.now() });
+      save(); render(); return id;
+    },
+    remove: function(id){
+      Object.keys(store).forEach(function(ds){ store[ds] = (store[ds] || []).filter(function(x){ return x.id !== id; }); if(!store[ds].length) delete store[ds]; });
+      save(); render();
+    },
+    all: function(){ return JSON.parse(JSON.stringify(store)); }
+  };
+
+  /* ---------- UI scaffolding ---------- */
+  const tabs = document.createElement('div'); tabs.className = 'bsp-tabs';
+  tabs.innerHTML = '<button type="button" class="bsp-tab" data-t="notes">📝 Notes</button><button type="button" class="bsp-tab" data-t="cal">📅 Calendar</button>';
+  head.parentNode.insertBefore(tabs, head.nextSibling);
+  const cal = document.createElement('div'); cal.className = 'bsp-cal'; cal.id = 'bspCal';
+  textEl.parentNode.insertBefore(cal, textEl);
+  let tab = 'notes'; try{ tab = localStorage.getItem(TAB_KEY) || 'notes'; }catch(e){}
+  let view = new Date(); view.setDate(1); let sel = ymd(new Date());
+  if(toggle && !toggle.querySelector('.bsp-badge')){ const b = document.createElement('span'); b.className = 'bsp-badge'; b.style.display = 'none'; toggle.appendChild(b); }
+
+  function setTab(t){
+    tab = t; try{ localStorage.setItem(TAB_KEY, t); }catch(e){}
+    tabs.querySelectorAll('.bsp-tab').forEach(function(b){ b.classList.toggle('on', b.dataset.t === t); });
+    toolbar.style.display = t === 'notes' ? '' : 'none';
+    textEl.style.display = t === 'notes' ? '' : 'none';
+    cal.classList.toggle('on', t === 'cal');
+    if(t === 'cal') render();
+  }
+  tabs.addEventListener('click', function(e){ const b = e.target.closest('.bsp-tab'); if(b) setTab(b.dataset.t); });
+
+  /* ---------- rendering ---------- */
+  function weekStart(d){ const m = new Date(d); m.setHours(12, 0, 0, 0); m.setDate(m.getDate() - ((m.getDay() + 6) % 7)); return m; }
+  function spendByWeek(){
+    const thisMon = weekStart(new Date()), out = [];
+    for(let i = 3; i >= 0; i--){
+      const a = new Date(thisMon); a.setDate(a.getDate() - 7 * i); const b = new Date(a); b.setDate(a.getDate() + 6);
+      let tot = 0, n = 0;
+      for(let k = 0; k < 7; k++){ const d = new Date(a); d.setDate(a.getDate() + k);
+        (store[ymd(d)] || []).forEach(function(x){ if(x.t === 'burn' && x.amt < 0){ tot += -x.amt; n++; } }); }
+      out.push({ a:a, tot:tot, n:n });
+    }
+    return out;
+  }
+  function updateBadge(){
+    if(!toggle) return;
+    let b = toggle.querySelector('.bsp-badge');
+    if(!b){ b = document.createElement('span'); b.className = 'bsp-badge'; toggle.appendChild(b); }   // the pad rewrites the button's text, which drops the badge
+    const n = (store[ymd(new Date())] || []).filter(function(x){ return x.t === 'note'; }).length;
+    b.textContent = n; b.style.display = n ? '' : 'none';
+  }
+  function awareHtml(){
+    const today = ymd(new Date()), lines = [];
+    const tn = (store[today] || []).filter(function(x){ return x.t === 'note'; });
+    if(tn.length) lines.push('<b>Today:</b> ' + tn.map(function(x){ return esc(x.text); }).join(' · '));
+    const up = [];
+    for(let i = 1; i <= 7; i++){ const d = new Date(); d.setDate(d.getDate() + i); const ds = ymd(d);
+      (store[ds] || []).filter(function(x){ return x.t === 'note'; }).forEach(function(x){ up.push('<b>' + short(ds) + ':</b> ' + esc(x.text)); }); }
+    if(up.length) lines.push('<b>Coming up:</b><br>' + up.slice(0, 5).join('<br>') + (up.length > 5 ? '<br>+' + (up.length - 5) + ' more' : ''));
+    return '<div class="bsp-aware">' + (lines.length ? lines.join('<br>') : 'Nothing pinned for today or the next 7 days.') + '</div>';
+  }
+  function render(){
+    updateBadge();
+    if(tab !== 'cal') return;
+    const y = view.getFullYear(), m = view.getMonth(), first = new Date(y, m, 1), lead = (first.getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate();
+    const today = ymd(new Date());
+    let cells = ['Mo','Tu','We','Th','Fr','Sa','Su'].map(function(d){ return '<div class="bsp-dow">' + d + '</div>'; }).join('');
+    for(let i = 0; i < lead; i++) cells += '<div></div>';
+    for(let d = 1; d <= dim; d++){
+      const ds = y + '-' + pad(m + 1) + '-' + pad(d), es = store[ds] || [];
+      const notes = es.filter(function(x){ return x.t === 'note'; }).length, burns = es.filter(function(x){ return x.t === 'burn'; }).length;
+      cells += '<button type="button" class="bsp-day' + (ds === today ? ' today' : '') + (ds === sel ? ' sel' : '') + '" data-d="' + ds + '">' + d +
+        '<span class="dots">' + (notes ? '<i class="dn"></i>' + (notes > 1 ? notes : '') : '') + (burns ? '🔥' + (burns > 1 ? burns : '') : '') + '</span></button>';
+    }
+    const es = store[sel] || [];
+    const list = es.length ? es.map(function(x){
+      return '<div class="bsp-entry' + (x.t === 'burn' ? ' burn' : '') + '"><span class="tx">' + (x.t === 'burn' ? '🔥 ' : '') + esc(x.text) + (x.src ? ' <small style="opacity:.6">(' + esc(x.src) + ')</small>' : '') + '</span>' +
+        (x.t === 'burn' && x.amt != null ? '<span class="am' + (x.amt >= 0 ? ' pos' : '') + '">' + money(x.amt) + '</span>' : '') +
+        '<button type="button" data-del="' + x.id + '" title="Remove">&times;</button></div>';
+    }).join('') : '<div style="opacity:.6;font-weight:700;font-size:13px">Nothing on this day yet.</div>';
+    const wk = spendByWeek(), tot = wk.reduce(function(s, w){ return s + w.tot; }, 0);
+    const spend = '<div class="bsp-spend">🔥 Burned spending — last 4 weeks: <b>' + money(tot) + '</b> · avg <b>' + money(tot / 4) + '</b>/wk' +
+      '<div class="row">' + wk.map(function(w){ return '<div class="wk"><b>' + money(w.tot) + '</b>' + w.a.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + (w.n ? ' · ' + w.n : '') + '</div>'; }).join('') + '</div></div>';
+    const pfx = y + '-' + pad(m + 1) + '-';
+    let mOut = 0, mIn = 0, mN = 0, mNotes = 0;
+    Object.keys(store).forEach(function(ds){ if(ds.indexOf(pfx) !== 0) return; store[ds].forEach(function(x){
+      if(x.t === 'burn'){ mN++; if(x.amt < 0) mOut += -x.amt; else if(x.amt > 0) mIn += x.amt; } else mNotes++; }); });
+    const exp = '<div class="bsp-spend">⬇ Export <b>' + view.toLocaleDateString('en-US', { month:'long', year:'numeric' }) + '</b>: ' + mN + ' burned line' + (mN === 1 ? '' : 's') + ' · ' + money(-mOut) + ' out' + (mIn ? ' · ' + money(mIn) + ' in' : '') + ' · ' + mNotes + ' note' + (mNotes === 1 ? '' : 's') +
+      '<div class="row"><button type="button" class="bsp-xbtn" data-export="csv">⬇ Month CSV</button><button type="button" class="bsp-xbtn" data-export="json">⬇ Everything (JSON)</button></div>' +
+      '<div style="opacity:.65;font-weight:600;margin-top:4px">Open the CSV in Excel / Sheets next to your bank statement to check how accurate your tracking was.</div></div>';
+    cal.innerHTML = awareHtml() +
+      '<div class="bsp-nav"><button type="button" data-nav="-1">‹</button><span>' + view.toLocaleDateString('en-US', { month:'long', year:'numeric' }) + ' <button type="button" data-nav="0" style="font-size:11px">Today</button></span><button type="button" data-nav="1">›</button></div>' +
+      '<div class="bsp-grid">' + cells + '</div>' +
+      '<div class="bsp-detail"><h4>' + short(sel) + '</h4>' + list +
+      '<div class="bsp-add"><input type="text" id="bspNewNote" maxlength="200" placeholder="Pin a note to this day…"><button type="button" id="bspAddNote">Add</button></div></div>' + spend + exp;
+  }
+  cal.addEventListener('click', function(e){
+    const nav = e.target.closest('[data-nav]'), day = e.target.closest('[data-d]'), del = e.target.closest('[data-del]');
+    if(nav){ const v = +nav.dataset.nav; if(v === 0){ view = new Date(); view.setDate(1); sel = ymd(new Date()); } else view = new Date(view.getFullYear(), view.getMonth() + v, 1); render(); }
+    else if(day){ sel = day.dataset.d; render(); }
+    else if(del){ window.budgetCal.remove(del.dataset.del); }
+    else if(e.target.id === 'bspAddNote') addNote();
+    else if(e.target.closest('[data-export]')) doExport(e.target.closest('[data-export]').dataset.export);
+  });
+  cal.addEventListener('keydown', function(e){ if(e.key === 'Enter' && e.target.id === 'bspNewNote'){ e.preventDefault(); addNote(); } });
+  /* ---------- export ---------- */
+  function csvCell(v){
+    let t = String(v == null ? '' : v);
+    if(/^[=+\-@]/.test(t) && isNaN(Number(t))) t = "'" + t;      // keep spreadsheets from treating text as a formula
+    return /[",\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  }
+  function download(name, text, type){
+    try{
+      const blob = new Blob([text], { type:type }), url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+      try{ showBackupToast('⬇ Saved ' + name); }catch(e){}
+    }catch(e){ try{ showBackupToast('⚠️ Could not start the download here — open the hosted Action Plan page and try again.'); }catch(_){} }
+  }
+  function doExport(kind){
+    if(kind === 'json'){
+      download('budgetbot-everything-' + ymd(new Date()) + '.json', JSON.stringify({ exportedAt:new Date().toISOString(), calendar:store }, null, 2), 'application/json');
+      return;
+    }
+    const pfx = view.getFullYear() + '-' + pad(view.getMonth() + 1) + '-', rows = [['date', 'type', 'description', 'amount', 'source', 'logged_at']];
+    Object.keys(store).sort().forEach(function(ds){
+      if(ds.indexOf(pfx) !== 0) return;
+      store[ds].slice().sort(function(a, b){ return a.ts - b.ts; }).forEach(function(x){
+        rows.push([ds, x.t === 'burn' ? 'burned' : 'note', x.text, x.t === 'burn' && x.amt != null ? Number(x.amt).toFixed(2) : '', x.src || '', x.ts ? new Date(x.ts).toISOString() : '']);
+      });
+    });
+    if(rows.length === 1){ try{ showBackupToast('Nothing logged for ' + pfx.slice(0, 7) + ' yet.'); }catch(e){} return; }
+    download('budgetbot-' + pfx.slice(0, 7) + '.csv', '\ufeff' + rows.map(function(r){ return r.map(csvCell).join(','); }).join('\r\n'), 'text/csv;charset=utf-8');
+  }
+  function addNote(){
+    const inp = document.getElementById('bspNewNote'), v = inp && inp.value.trim(); if(!v) return;
+    window.budgetCal.add({ t:'note', text:v, date:sel });
+    const n = document.getElementById('bspNewNote'); if(n) n.focus();
+  }
+  if(toggle) toggle.addEventListener('click', function(){ setTimeout(updateBadge, 0); });
+  setTab(tab); updateBadge(); setInterval(updateBadge, 60000);
 })();
 
 /* ============================================================
