@@ -4803,6 +4803,68 @@
 .launch-count.go .lc-hint,.launch-count:not(.go) .lc-timer{display:none;}
 @media (prefers-reduced-motion:reduce){ .launch-orb{animation:none;} .launch-count .lc-num.pop{animation:none;} }
 
+/* ===== CALSIFER — a bouncing amber fireball that is also your debt calculator ===== */
+#csBall{ position:fixed; left:0; top:0; width:50px; height:58px; z-index:596; cursor:pointer; will-change:transform; display:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+#csBall.show{ display:block; }
+#csBall .cs-glow{ position:absolute; left:-16px; top:-8px; width:82px; height:82px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(255,176,32,.8) 0%, rgba(255,120,0,.38) 42%, rgba(255,100,0,0) 70%); animation:csPulse 1.6s ease-in-out infinite; }
+#csBall .cs-flame{ position:absolute; inset:0; width:100%; height:100%; transform-origin:50% 100%; animation:csFlick .9s ease-in-out infinite alternate; }
+@keyframes csPulse{ 0%,100%{ transform:scale(.88); opacity:.7; } 50%{ transform:scale(1.14); opacity:1; } }
+@keyframes csFlick{ from{ transform:scale(1,1) rotate(-2deg); } to{ transform:scale(.95,1.07) rotate(2deg); } }
+.cs-bubble{ position:absolute; left:50%; bottom:100%; transform:translateX(-50%); width:max-content; max-width:210px; margin-bottom:10px; padding:7px 10px; border-radius:11px;
+  background:#2a1405; color:#ffd9a0; border:1px solid #ff9d00; font:700 12.5px/1.35 'Nunito',sans-serif; display:none; box-shadow:0 6px 18px rgba(0,0,0,.5); pointer-events:none; text-align:center; }
+.cs-bubble.on{ display:block; }
+.cs-bubble.below{ bottom:auto; top:100%; margin:10px 0 0; }
+#csOv{ position:fixed; inset:0; z-index:1210; display:none; align-items:flex-start; justify-content:center; padding:18px 12px; overflow-y:auto; background:rgba(14,6,0,.78); }
+#csOv.on{ display:flex; }
+.cs-box{ width:min(760px,100%); margin:auto; background:linear-gradient(180deg,#2b1608 0%,#170a02 100%); color:#ffe7c2; border:2px solid #ff9d00; border-radius:20px; padding:16px 16px 14px;
+  box-shadow:0 0 36px rgba(255,140,0,.35), 0 18px 50px rgba(0,0,0,.6); font-family:'Nunito',sans-serif; }
+.cs-head{ display:flex; justify-content:space-between; align-items:center; }
+.cs-title{ font:700 22px 'Fredoka',sans-serif; color:#ffb938; display:flex; align-items:center; gap:10px; letter-spacing:.5px; }
+.cs-title small{ font:700 12px 'Nunito',sans-serif; color:#c58a4a; letter-spacing:0; }
+.cs-mini{ width:20px; height:24px; background:radial-gradient(circle at 50% 70%, #fff2b0, #ffb21f 45%, #e85d04); clip-path:path('M10 1 C12 6 19 9 19 17 C19 22 15 24 10 24 C5 24 1 22 1 17 C1 12 4 10 6 7 C7 10 9 11 9.5 10.5 C8.5 6 9 3 10 1Z'); display:inline-block; }
+#csX{ background:none; border:0; color:#ffd9a0; font-size:28px; line-height:1; cursor:pointer; }
+.cs-say{ margin:8px 0 4px; padding:10px 12px; border-radius:12px; background:#3a1c08; border:1px solid #ff9d00; font-weight:800; font-size:15px; line-height:1.4; color:#ffe3b0; cursor:pointer; }
+.cs-sub{ font-size:12px; opacity:.65; margin:2px 0 10px; font-weight:600; }
+.cs-cols, .cs-row{ display:grid; grid-template-columns:2.1fr 1.15fr .8fr .75fr 1fr 28px; gap:6px; align-items:center; }
+.cs-cols{ font:700 11px 'Nunito',sans-serif; color:#c58a4a; padding:0 2px 3px; text-transform:uppercase; letter-spacing:.04em; }
+.cs-row{ margin-bottom:6px; }
+.cs-row input, .cs-plan input, .cs-plan select{ width:100%; min-width:0; box-sizing:border-box; font:700 15px 'Nunito',sans-serif; padding:9px 9px; border-radius:9px; border:1px solid #6b3a12; background:#1f0f04; color:#ffe7c2; }
+.cs-row input::placeholder, .cs-plan input::placeholder{ color:#8a5f35; font-weight:600; }
+.cs-row input:focus, .cs-plan input:focus, .cs-plan select:focus{ outline:2px solid #ff9d00; border-color:#ff9d00; }
+.cs-row button{ background:none; border:0; color:#c58a4a; font-size:20px; cursor:pointer; line-height:1; }
+.cs-btn{ border:0; border-radius:10px; padding:8px 14px; font:700 14px 'Fredoka',sans-serif; background:#ff8a1f; color:#2b1100; cursor:pointer; box-shadow:0 3px 0 #a84e00; }
+.cs-plan{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0 8px; }
+.cs-plan label{ font:700 12.5px 'Nunito',sans-serif; color:#d9a566; display:flex; flex-direction:column; gap:4px; }
+.cs-robot{ font-size:12.5px; font-weight:700; padding:8px 11px; border-radius:10px; background:#1f2f1a; border:1px solid #3c7a3c; color:#bfe8b8; margin:6px 0 10px; line-height:1.5; }
+.cs-tiles{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin:8px 0; }
+.cs-tile{ background:#2a1405; border:1px solid #6b3a12; border-radius:12px; padding:9px 11px; }
+.cs-tile span{ display:block; font:700 11px 'Nunito',sans-serif; color:#c58a4a; text-transform:uppercase; letter-spacing:.03em; }
+.cs-tile b{ display:block; font:700 22px 'Fredoka',sans-serif; color:#ffb938; margin-top:2px; }
+.cs-tile b.good{ color:#8be08b; } .cs-tile b.bad{ color:#ff7a5a; }
+.cs-tile small{ font-size:11px; opacity:.7; font-weight:600; }
+.cs-verdict{ margin:8px 0; font-weight:700; font-size:13.5px; line-height:1.55; }
+.cs-verdict p{ margin:0 0 6px; padding-left:12px; border-left:3px solid #ff9d00; }
+.cs-tbl{ width:100%; border-collapse:collapse; font-size:12.5px; margin:8px 0; }
+.cs-tbl th{ text-align:right; font:700 10.5px 'Nunito',sans-serif; color:#c58a4a; text-transform:uppercase; padding:4px 6px; border-bottom:1px solid #6b3a12; }
+.cs-tbl td{ text-align:right; padding:6px 6px; border-bottom:1px solid #3a1c08; font-weight:700; }
+.cs-tbl th:first-child, .cs-tbl td:first-child{ text-align:left; }
+.cs-h{ font:700 15px 'Fredoka',sans-serif; color:#ffb938; margin:12px 0 4px; }
+.cs-sched{ display:flex; justify-content:space-between; gap:8px; padding:7px 10px; border-radius:9px; background:#2a1405; border:1px solid #6b3a12; margin-bottom:4px; font-weight:700; font-size:13.5px; }
+.cs-sched b{ color:#ffb938; }
+.cs-heckle{ display:block; margin-top:12px; font-size:12.5px; font-weight:700; color:#d9a566; }
+.cs-foot{ margin-top:8px; font-size:11px; opacity:.55; line-height:1.4; font-weight:600; }
+@media (max-width:640px){
+  .cs-cols{ display:none; }
+  .cs-row{ grid-template-columns:1fr 1fr; padding:8px; border:1px solid #4a2a10; border-radius:11px; background:#1d0e04; }
+  .cs-row input[data-f="name"]{ grid-column:1 / 3; }
+  .cs-row button{ grid-column:1 / 3; justify-self:end; }
+  .cs-plan{ grid-template-columns:1fr; }
+  .cs-tbl{ font-size:11.5px; }
+}
+@media (prefers-reduced-motion:reduce){ #csBall .cs-glow, #csBall .cs-flame{ animation:none; } }
+@media print{ #csBall, #csOv{ display:none!important; } }
+
 /* ===== Budget-Bot Scratch Pad: calendar tab + burn log ===== */
 .bsp-tabs{ display:flex; gap:6px; margin:6px 0 8px; }
 .bsp-tab{
@@ -5627,6 +5689,42 @@
     <div class="lc-hint">tap anywhere to cancel</div>
   </div>
 
+  <div id="csBall" title="Calsifer — poke him (if you can catch him)">
+    <div class="cs-glow"></div>
+    <svg class="cs-flame" viewBox="0 0 60 70" aria-label="A glowing amber fireball">
+      <defs>
+        <radialGradient id="csG1" cx="50%" cy="68%" r="62%"><stop offset="0" stop-color="#fff2b0"/><stop offset=".38" stop-color="#ffc233"/><stop offset=".78" stop-color="#ff8a00"/><stop offset="1" stop-color="#d94a00"/></radialGradient>
+      </defs>
+      <path d="M30 2 C34 14 50 22 50 42 C50 57 41 67 30 67 C19 67 10 57 10 42 C10 31 16 25 21 19 C22 26 26 28 27 27 C25 17 27 9 30 2Z" fill="url(#csG1)"/>
+      <path d="M30 30 C33 38 40 41 40 50 C40 58 35 63 30 63 C25 63 20 58 20 50 C20 43 27 39 30 30Z" fill="#fff3b8" opacity=".85"/>
+    </svg>
+    <div class="cs-bubble" id="csBubble"></div>
+  </div>
+  <div id="csOv">
+    <div class="cs-box" role="dialog" aria-label="Calsifer, the debt calculator">
+      <div class="cs-head">
+        <div class="cs-title"><span class="cs-mini"></span> CALSIFER <small>debt calculator</small></div>
+        <button type="button" id="csX" aria-label="Close">&times;</button>
+      </div>
+      <div class="cs-say" id="csSay"></div>
+      <div class="cs-sub">Fill in the blanks. Nothing here leaves your browser.</div>
+      <div class="cs-cols"><span>Institution</span><span>Debt $</span><span>APR %</span><span>Due day</span><span>Min pmt $</span><span></span></div>
+      <div id="csRows"></div>
+      <button type="button" class="cs-btn" id="csAdd">+ Add another one</button>
+      <div class="cs-plan">
+        <label>Extra $ / month on top of minimums <input type="number" id="csExtra" step="1" min="0" inputmode="decimal" placeholder="0"></label>
+        <label>Attack order <select id="csStrat"><option value="avalanche">Highest APR first (saves the most)</option><option value="snowball">Smallest balance first (quick wins)</option></select></label>
+      </div>
+      <div class="cs-robot" id="csRobot"></div>
+      <div class="cs-tiles" id="csTiles"></div>
+      <div class="cs-verdict" id="csVerdict"></div>
+      <div id="csTable"></div>
+      <div id="csSchedule"></div>
+      <div id="csTargets"></div>
+      <label class="cs-heckle"><input type="checkbox" id="csHeckle"> Let Calsifer heckle me from the bouncing flame now and then</label>
+      <div class="cs-foot">Estimates: interest is APR ÷ 12 on the balance each month, minimums held at today's amount, no new charges. Blank minimum = max($25, 1% of the balance + that month's interest). Use your statement for the exact numbers.</div>
+    </div>
+  </div>
   <div id="gizmoBot" title="Gizmo — click for your 4-week average balance">
     <svg viewBox="0 0 60 72" aria-label="Gizmo, a friendly green robot">
       <line x1="30" y1="10" x2="30" y2="2" stroke="#1d7a3a" stroke-width="2.4" stroke-linecap="round"/>
@@ -18256,6 +18354,275 @@ __ideaBoards.push(createIdeaBoard('family', 'actionPlan3000_familyBoard', true))
 })();
 
 /* ============================================================
+   CALSIFER — a pulsing amber fireball that bounces around the screen. Poke him and he is your debt
+   calculator: institution, debt, APR, due day, minimum  ->  interest now, projected interest to Dec 31,
+   a month-by-month payoff plan (avalanche or snowball), and what it takes to be debt-free in 12/24/36 months.
+   He also reads the little robot's 4-week average balance and your burned-spending average, and he is a jerk
+   about all of it (on purpose).
+   ============================================================ */
+(function(){
+  const ball = document.getElementById('csBall'), ov = document.getElementById('csOv'); if(!ball || !ov) return;
+  const KEY = 'actionPlan3000_calsifer';
+  let st = { debts:[], extra:'', strategy:'avalanche', heckle:true };
+  try{ const r = JSON.parse(localStorage.getItem(KEY) || 'null'); if(r) st = Object.assign(st, r); }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+  function uid(){ return 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+  function money(n){ return (n < 0 ? '-' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+  function money0(n){ return (n < 0 ? '-' : '') + '$' + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function $(id){ return document.getElementById(id); }
+  while(st.debts.length < 3) st.debts.push({ id:uid(), name:'', bal:'', apr:'', due:'', min:'' });
+
+  /* ================= the math (pure, exposed for testing) ================= */
+  function norm(list){
+    return list.filter(function(d){ return num(d.bal) > 0; }).map(function(d){
+      const bal = num(d.bal), apr = Math.max(0, num(d.apr)), r = apr / 1200;
+      let min = num(d.min); const est = !(min > 0);
+      if(est) min = Math.max(25, bal * 0.01 + bal * r);
+      min = Math.min(min, bal * (1 + r));
+      let due = Math.round(num(d.due)); if(due < 1 || due > 31) due = 0;
+      return { id:d.id, name:(String(d.name || '').trim() || 'Unnamed'), bal:bal, apr:apr, r:r, min:min, est:est, due:due };
+    });
+  }
+  // pay-down simulation: fixed monthly budget T, minimums first, the rest to the target order
+  function simPlan(ds, T, strategy, maxM){
+    maxM = maxM || 600;
+    const s = ds.map(function(d){ return { id:d.id, bal:d.bal, r:d.r, min:d.min, apr:d.apr, paid:null, interest:0 }; });
+    const cycles = [], start = ds.reduce(function(a, d){ return a + d.bal; }, 0);
+    for(let k = 1; k <= maxM; k++){
+      const active = s.filter(function(d){ return d.bal > 0.005; }); if(!active.length) break;
+      const cyc = {}; active.forEach(function(d){ const i = d.bal * d.r; d.bal += i; d.interest += i; cyc[d.id] = { interest:i, pay:0 }; });
+      let used = 0;
+      active.forEach(function(d){ const p = Math.min(d.min, d.bal); d.bal -= p; used += p; cyc[d.id].pay += p; });
+      let rem = Math.max(0, T - used);
+      active.filter(function(d){ return d.bal > 0.005; }).sort(function(a, b){
+        return strategy === 'snowball' ? (a.bal - b.bal) : (b.apr - a.apr || a.bal - b.bal);
+      }).forEach(function(d){ const p = Math.min(rem, d.bal); d.bal -= p; rem -= p; cyc[d.id].pay += p; });
+      active.forEach(function(d){ if(d.bal <= 0.005 && d.paid == null) d.paid = k; });
+      cycles.push(cyc);
+      if(s.reduce(function(a, d){ return a + Math.max(0, d.bal); }, 0) > start * 4) return { s:s, cycles:cycles, never:true };
+    }
+    const never = s.some(function(d){ return d.bal > 0.005; });
+    return { s:s, cycles:cycles, never:never };
+  }
+  // each card on its own, minimum only
+  function simMinOnly(d, maxM){
+    maxM = maxM || 600; let bal = d.bal, interest = 0; const per = [];
+    for(let k = 1; k <= maxM; k++){
+      const i = bal * d.r; bal += i; interest += i; const p = Math.min(d.min, bal); bal -= p; per.push(i);
+      if(bal <= 0.005) return { paid:k, interest:interest, per:per, never:false };
+      if(bal > d.bal * 4) break;
+    }
+    return { paid:null, interest:interest, per:per, never:true };
+  }
+  function today0(){ const t = new Date(); t.setHours(0, 0, 0, 0); return t; }
+  function dueDate(due, k, base){
+    base = base || today0(); if(!due) return null;
+    let y = base.getFullYear(), m = base.getMonth();
+    function mk(yy, mm){ const dim = new Date(yy, mm + 1, 0).getDate(); return new Date(yy, mm, Math.min(due, dim)); }
+    let first = mk(y, m); if(first < base) first = mk(y, m + 1);
+    return mk(first.getFullYear(), first.getMonth() + (k - 1));
+  }
+  function cyclesToYearEnd(due, base){
+    base = base || today0(); const d1 = dueDate(due || 1, 1, base); if(!due) return 0;
+    return d1.getFullYear() === base.getFullYear() ? (11 - d1.getMonth() + 1) : 0;
+  }
+  function monthsFromNow(k){ const d = new Date(); d.setMonth(d.getMonth() + k); return d; }
+  function fmtMonth(d){ return d.toLocaleDateString('en-US', { month:'short', year:'numeric' }); }
+  function fmtDate(d){ return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); }
+  function solveTotal(ds, months, strategy){        // smallest monthly total that clears everything within `months`
+    const mins = ds.reduce(function(a, d){ return a + d.min; }, 0), debt = ds.reduce(function(a, d){ return a + d.bal; }, 0);
+    let lo = mins, hi = Math.max(mins, debt * 1.5 + 1000);
+    function ok(T){ const r = simPlan(ds, T, strategy, months); return !r.never; }
+    if(ok(lo)) return lo;
+    for(let i = 0; i < 40; i++){ const mid = (lo + hi) / 2; if(ok(mid)) hi = mid; else lo = mid; }
+    return Math.ceil(hi);
+  }
+  window.__calsiferSim = { norm:norm, simPlan:simPlan, simMinOnly:simMinOnly, cyclesToYearEnd:cyclesToYearEnd, solveTotal:solveTotal, dueDate:dueDate };
+
+  /* ================= the little robot's numbers ================= */
+  function robot(){
+    let avg = null, src = '';
+    try{ const log = JSON.parse(localStorage.getItem('actionPlan3000_budgetWeekLog') || '[]').slice(-4);
+      if(log.length){ avg = log.reduce(function(a, w){ return a + (w.balance || 0); }, 0) / log.length; src = 'Budget-Bot, ' + log.length + '/4 weeks logged'; } }catch(e){}
+    if(avg == null){ try{ const g = window.__gizmoReport && window.__gizmoReport(); if(g && g.avg != null){ avg = g.avg; src = 'Gizmo, ' + g.have.length + ' of 4 weeks'; } }catch(e){} }
+    let spend = null;
+    try{ const all = window.budgetCal && window.budgetCal.all(); if(all){ let tot = 0; const now = new Date(); now.setHours(12, 0, 0, 0);
+      const mon = new Date(now); mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+      for(let w = 0; w < 4; w++) for(let k = 0; k < 7; k++){ const d = new Date(mon); d.setDate(mon.getDate() - 7 * w + k);
+        const ds = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        (all[ds] || []).forEach(function(x){ if(x.t === 'burn' && x.amt < 0) tot += -x.amt; }); }
+      if(tot > 0) spend = tot / 4; } }catch(e){}
+    return { avg:avg, src:src, spend:spend };
+  }
+
+  /* ================= taunts ================= */
+  const TAUNTS = [
+    'Oh good, you opened me. Bold of you to look at it directly.',
+    'Interest never takes a day off. Neither do I.',
+    'That balance is not going to pay itself. Believe me, I checked.',
+    'Every day you wait, I get a little brighter. You get a little poorer.',
+    'You can run. The APR compounds faster.',
+    'Fill in the blanks. Avoiding it is also data, and the data is rude.',
+    'The bank thinks you are a wonderful customer. Think about why.'
+  ];
+  const HECKLES = ['Pay me.', 'That interest is not going to feed itself.', 'Still owing, huh.', 'Open me. I dare you.', 'Tick tock, balance.', 'I know what the APR is. Do you?'];
+  let tIdx = Math.floor(Math.random() * TAUNTS.length);
+  function nextTaunt(){ tIdx = (tIdx + 1) % TAUNTS.length; return TAUNTS[tIdx]; }
+
+  /* ================= UI ================= */
+  function renderRows(){
+    $('csRows').innerHTML = st.debts.map(function(d, i){
+      return '<div class="cs-row" data-i="' + i + '">' +
+        '<input data-f="name" type="text" maxlength="40" placeholder="Institution" value="' + esc(d.name) + '">' +
+        '<input data-f="bal" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Debt $" value="' + esc(d.bal) + '">' +
+        '<input data-f="apr" type="number" step="0.01" min="0" inputmode="decimal" placeholder="APR %" value="' + esc(d.apr) + '">' +
+        '<input data-f="due" type="number" step="1" min="1" max="31" inputmode="numeric" placeholder="Day" value="' + esc(d.due) + '">' +
+        '<input data-f="min" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Min $" value="' + esc(d.min) + '">' +
+        '<button type="button" data-del="' + i + '" title="Remove" aria-label="Remove row">&times;</button></div>';
+    }).join('');
+  }
+  function compute(){
+    const ds = norm(st.debts), extra = Math.max(0, num(st.extra)), strat = st.strategy;
+    const r = { ds:ds, extra:extra, strat:strat };
+    if(!ds.length) return r;
+    r.sumMin = ds.reduce(function(a, d){ return a + d.min; }, 0);
+    r.totalDebt = ds.reduce(function(a, d){ return a + d.bal; }, 0);
+    r.T = r.sumMin + extra;
+    r.monthInterest = ds.reduce(function(a, d){ return a + d.bal * d.r; }, 0);
+    r.plan = simPlan(ds, r.T, strat);
+    r.minOnly = ds.map(function(d){ return simMinOnly(d); });
+    // projected interest to Dec 31, per debt
+    r.ye = ds.map(function(d, i){
+      const n = cyclesToYearEnd(d.due, null);
+      const sum = function(arr){ let t = 0; for(let k = 0; k < Math.min(n, arr.length); k++) t += arr[k]; return t; };
+      const planPer = r.plan.cycles.map(function(c){ return c[d.id] ? c[d.id].interest : 0; });
+      return { n:n, min:sum(r.minOnly[i].per), plan:sum(planPer) };
+    });
+    r.yeMin = r.ye.reduce(function(a, x){ return a + x.min; }, 0);
+    r.yePlan = r.ye.reduce(function(a, x){ return a + x.plan; }, 0);
+    r.planInterest = r.plan.s.reduce(function(a, d){ return a + d.interest; }, 0);
+    r.minInterest = r.minOnly.reduce(function(a, m){ return a + m.interest; }, 0);
+    r.minNever = r.minOnly.some(function(m){ return m.never; });
+    r.months = r.plan.never ? null : r.plan.cycles.length;
+    return r;
+  }
+  function verdict(r, rb){
+    const out = [];
+    if(!r.ds.length){ return ['Blank. Either you are debt-free or you are hiding it from me. Fill in a row.']; }
+    const perDay = r.monthInterest / 30.4;
+    out.push('Right now your debt costs about <b>' + money(r.monthInterest) + '/month</b> in interest — roughly <b>' + money(perDay) + ' a day</b> donated to banks. They say thanks.');
+    r.ds.forEach(function(d){ if(d.apr > 0 && d.min <= d.bal * d.r + 0.005) out.push('Your minimum on <b>' + esc(d.name) + '</b> (' + money(d.min) + ') does not even cover its interest (' + money(d.bal * d.r) + '). It grows while you "pay" it. Impressive.'); });
+    if(r.ds.some(function(d){ return d.apr === 0 && num((st.debts.filter(function(x){ return x.id === d.id; })[0] || {}).apr) === 0; }) && r.ds.some(function(d){ return !String((st.debts.filter(function(x){ return x.id === d.id; })[0] || {}).apr).trim(); })) out.push('A blank APR counts as 0%. If that is wrong, my numbers are flattering you. Look it up.');
+    if(r.extra <= 0) out.push('Zero extra on top of minimums? So the plan is "minimums forever." Bold strategy.');
+    if(r.plan.never) out.push('At <b>' + money(r.T) + '/month</b> this never gets paid off. The balance wins. Raise the number.');
+    else{
+      out.push('Plan: <b>' + money(r.T) + '/month</b> → debt-free in <b>' + r.months + ' month' + (r.months === 1 ? '' : 's') + '</b> (' + fmtMonth(monthsFromNow(r.months)) + '), total interest <b>' + money(r.planInterest) + '</b>.');
+      if(!r.minNever && r.minInterest > r.planInterest + 1) out.push('Minimums only would cost <b>' + money(r.minInterest) + '</b> in interest. The plan keeps <b class="cs-keep">' + money(r.minInterest - r.planInterest) + '</b> in your pocket. Do not make me say I told you so.');
+      if(r.minNever) out.push('Minimums only? Some of these never die. Plan or perish.');
+    }
+    if(rb.avg != null && r.T > 0){
+      const pct = r.T / Math.max(1, rb.avg) * 100;
+      if(rb.avg <= 0) out.push('The little robot says your 4-week average balance is ' + money(rb.avg) + '. And you want to pay ' + money(r.T) + ' a month? Cute.');
+      else if(pct > 60) out.push('The little robot says you average <b>' + money(rb.avg) + '</b>. This plan eats <b>' + Math.round(pct) + '%</b> of that every month. Math does not care about optimism.');
+      else out.push('The little robot says you average <b>' + money(rb.avg) + '</b>; this plan is <b>' + Math.round(pct) + '%</b> of it. Doable. Annoying, but doable.');
+    }
+    const first = nextPayments(r)[0];
+    if(first) out.push('Next move, no excuses: pay <b>' + money(first.pay) + '</b> to <b>' + esc(first.name) + '</b> by <b>' + fmtDate(first.date) + '</b>.');
+    return out;
+  }
+  function nextPayments(r){
+    if(!r.plan || !r.plan.cycles.length) return [];
+    return r.ds.map(function(d){ const c = r.plan.cycles[0][d.id]; return { name:d.name, pay:c ? c.pay : 0, date:dueDate(d.due, 1), due:d.due }; })
+      .filter(function(p){ return p.pay > 0.005; }).sort(function(a, b){ return (a.date ? a.date.getTime() : 9e15) - (b.date ? b.date.getTime() : 9e15); });
+  }
+  function renderResults(){
+    const r = compute(), rb = robot();
+    // robot box
+    $('csRobot').innerHTML = '🤖 Little robot says: 4-week average balance <b>' + (rb.avg == null ? '— (nothing logged yet)' : money(rb.avg)) + '</b>' + (rb.src ? ' <small>(' + rb.src + ')</small>' : '') +
+      (rb.spend != null ? ' · burned spending avg <b>' + money(rb.spend) + '/wk</b> (≈ ' + money(rb.spend * 4.345) + '/mo)' : '');
+    if(!r.ds.length){ $('csTiles').innerHTML = ''; $('csTable').innerHTML = ''; $('csSchedule').innerHTML = ''; $('csTargets').innerHTML = ''; $('csVerdict').innerHTML = '<p>' + verdict(r, rb)[0] + '</p>'; return; }
+    $('csTiles').innerHTML =
+      '<div class="cs-tile"><span>Total debt</span><b>' + money0(r.totalDebt) + '</b><small>' + r.ds.length + ' account' + (r.ds.length === 1 ? '' : 's') + '</small></div>' +
+      '<div class="cs-tile"><span>Interest per month now</span><b class="bad">' + money(r.monthInterest) + '</b><small>min payments total ' + money(r.sumMin) + '</small></div>' +
+      '<div class="cs-tile"><span>Interest by Dec 31</span><b class="bad">' + money(r.yeMin) + '</b><small>paying minimums only</small></div>' +
+      '<div class="cs-tile"><span>…with the plan</span><b class="good">' + money(r.yePlan) + '</b><small>saves ' + money(Math.max(0, r.yeMin - r.yePlan)) + ' by year end</small></div>' +
+      '<div class="cs-tile"><span>Debt-free</span><b class="' + (r.plan.never ? 'bad' : 'good') + '">' + (r.plan.never ? 'Never' : fmtMonth(monthsFromNow(r.months))) + '</b><small>at ' + money(r.T) + '/mo</small></div>';
+    $('csVerdict').innerHTML = verdict(r, rb).map(function(l){ return '<p>' + l + '</p>'; }).join('');
+    $('csTable').innerHTML = '<div class="cs-h">Account by account</div><div style="overflow-x:auto"><table class="cs-tbl"><tr><th>Account</th><th>Debt</th><th>APR</th><th>Next due</th><th>Interest to Dec 31 (mins)</th><th>(plan)</th><th>Paid off (plan)</th></tr>' +
+      r.ds.map(function(d, i){ const dd = dueDate(d.due, 1), p = r.plan.s[i];
+        return '<tr><td>' + esc(d.name) + '</td><td>' + money(d.bal) + '</td><td>' + d.apr + '%</td><td>' + (dd ? fmtDate(dd) : '<i>set a due day</i>') + '</td><td>' + money(r.ye[i].min) + '</td><td>' + money(r.ye[i].plan) + '</td><td>' + (p.paid ? fmtMonth(monthsFromNow(p.paid)) : 'never') + '</td></tr>'; }).join('') + '</table></div>';
+    const np = nextPayments(r);
+    $('csSchedule').innerHTML = '<div class="cs-h">Payment plan — what to pay next</div>' + (np.length ? np.map(function(p){
+      return '<div class="cs-sched"><span>' + (p.date ? fmtDate(p.date) : 'set a due day') + ' · ' + esc(p.name) + '</span><b>' + money(p.pay) + '</b></div>'; }).join('') +
+      '<div class="cs-foot" style="opacity:.7">Minimums go to everyone; every extra dollar goes to ' + (r.strat === 'snowball' ? 'the smallest balance' : 'the highest APR') + ' first. When one dies, its payment rolls onto the next.</div>' : '<div class="cs-foot">Nothing due.</div>');
+    const t = [12, 24, 36].map(function(m){ const T = solveTotal(r.ds, m, r.strat); return '<div class="cs-tile"><span>Debt-free in ' + m + ' months</span><b>' + money0(T) + '/mo</b><small>' + money0(Math.max(0, T - r.sumMin)) + ' above minimums</small></div>'; }).join('');
+    $('csTargets').innerHTML = '<div class="cs-h">What it actually takes</div><div class="cs-tiles">' + t + '</div>';
+  }
+  function say(txt){ $('csSay').innerHTML = txt; }
+
+  /* ---------- events ---------- */
+  ov.addEventListener('input', function(e){
+    const row = e.target.closest('.cs-row');
+    if(row && e.target.dataset.f){ st.debts[+row.dataset.i][e.target.dataset.f] = e.target.value; save(); renderResults(); }
+    else if(e.target.id === 'csExtra'){ st.extra = e.target.value; save(); renderResults(); }
+  });
+  ov.addEventListener('change', function(e){
+    if(e.target.id === 'csStrat'){ st.strategy = e.target.value; save(); renderResults(); }
+    else if(e.target.id === 'csHeckle'){ st.heckle = e.target.checked; save(); }
+  });
+  ov.addEventListener('click', function(e){
+    const del = e.target.closest('[data-del]');
+    if(del){ st.debts.splice(+del.dataset.del, 1); while(st.debts.length < 3) st.debts.push({ id:uid(), name:'', bal:'', apr:'', due:'', min:'' }); save(); renderRows(); renderResults(); return; }
+    if(e.target.id === 'csAdd'){ st.debts.push({ id:uid(), name:'', bal:'', apr:'', due:'', min:'' }); save(); renderRows(); const ins = $('csRows').querySelectorAll('.cs-row'); const l = ins[ins.length - 1]; if(l) l.querySelector('input').focus(); return; }
+    if(e.target.id === 'csX' || e.target === ov){ closeIt(); return; }
+    if(e.target.closest('#csSay')) say(nextTaunt());
+  });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && ov.classList.contains('on')) closeIt(); });
+  function openIt(){
+    renderRows(); $('csExtra').value = st.extra; $('csStrat').value = st.strategy; $('csHeckle').checked = !!st.heckle;
+    say(nextTaunt()); renderResults(); ov.classList.add('on'); ball.classList.remove('show'); paused = true;
+  }
+  function closeIt(){ ov.classList.remove('on'); paused = false; sync(); }
+  ball.addEventListener('click', openIt);
+  window.openCalsifer = openIt;
+
+  /* ================= the bouncing ball ================= */
+  let x = 80, y = 200, vx = 62, vy = 48, last = performance.now(), paused = false, bubbleT = null, nextHeckle = performance.now() + 90000;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const bubble = $('csBubble');
+  function sync(){
+    const lock = document.getElementById('apLockScreen');
+    ball.classList.toggle('show', !lock && !ov.classList.contains('on'));
+  }
+  function heckle(){
+    if(!st.heckle || !norm(st.debts).length) return;
+    bubble.textContent = HECKLES[Math.floor(Math.random() * HECKLES.length)];
+    bubble.classList.toggle('below', y < 70); bubble.classList.add('on');
+    clearTimeout(bubbleT); bubbleT = setTimeout(function(){ bubble.classList.remove('on'); }, 3200);
+  }
+  function tick(t){
+    const dt = Math.min(0.05, (t - last) / 1000); last = t;
+    if(!paused && !document.hidden && ball.classList.contains('show')){
+      const W = Math.max(0, window.innerWidth - 50), H = Math.max(0, window.innerHeight - 58);
+      if(!reduce){
+        x += vx * dt; y += vy * dt;
+        if(x < 0){ x = 0; vx = Math.abs(vx); vy += (Math.random() - .5) * 14; }
+        if(x > W){ x = W; vx = -Math.abs(vx); vy += (Math.random() - .5) * 14; }
+        if(y < 0){ y = 0; vy = Math.abs(vy); vx += (Math.random() - .5) * 14; }
+        if(y > H){ y = H; vy = -Math.abs(vy); vx += (Math.random() - .5) * 14; }
+        const sp = Math.hypot(vx, vy); if(sp < 45 || sp > 90){ const k = (sp < 45 ? 45 : 90) / sp; vx *= k; vy *= k; }
+      }else{ x = W - 8; y = H - 90; }
+      ball.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+      if(t > nextHeckle){ heckle(); nextHeckle = t + 100000 + Math.random() * 80000; }
+    }
+    requestAnimationFrame(tick);
+  }
+  sync(); setInterval(sync, 1000); requestAnimationFrame(tick);
+})();
+
+/* ============================================================
    POCKET PLAN IMPORTER — pulls the phone companion's state file
    (pp-state.json) from the Vault's Firestore every 15 minutes and
    merges it in: notes -> boards, appointments -> Appointments,
@@ -18535,6 +18902,9 @@ setTimeout(function(){ pollPocketPlan(false); }, 4500);
   render();
 })();
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
