@@ -19289,4 +19289,213 @@ setTimeout(function(){ pollPocketPlan(false); }, 4500);
   window.__tallTale = { get:function(){ return st; } };
 })();
 </script>
+<!-- ============================================================
+     SHIFTS — drag-out drawer: Dan's work shifts Mon–Sun with
+     important dates (interviews, school closings, kids' events).
+     Mirrors the standalone "Dan's Shifts" page; Claude updates both.
+     ============================================================ -->
+<style>
+  .blueprint-handle[data-board="ideas"]{ top:14%; }
+  .blueprint-handle[data-board="work"]{ top:31%; }
+  .blueprint-handle[data-board="family"]{ top:48%; }
+  .blueprint-handle[data-board="gloomglow"]{ top:65%; }
+  .blueprint-handle[data-board="shifts"]{ top:82%; }
+  .blueprint-handle.theme-shifts{ --bp-handle1:#1b1b1f; --bp-handle2:#000000; --bp-line-rgb:207,230,251; --bp-label:#cfe6fb; }
+  .sh-panel{
+    position:fixed; top:0; right:0; height:100%; width:min(620px, 96vw); z-index:1052;
+    transform:translateX(100%); transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    background:#f6f7f9; color:#14161a; box-shadow:-10px 0 40px rgba(0,0,0,0.45);
+    display:flex; flex-direction:column; overflow:hidden; font-family:'Nunito',sans-serif;
+  }
+  .sh-panel.open{ transform:translateX(0); }
+  .sh-top{ display:flex; align-items:flex-start; gap:12px; padding:18px 16px 10px; border-bottom:1px solid #d9dde3; background:#fff; }
+  .sh-close{ background:#f1f3f6; border:1.5px solid #d9dde3; color:#14161a; width:34px; height:34px; border-radius:50%; font-size:20px; cursor:pointer; flex-shrink:0; line-height:1; }
+  .sh-title{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:24px; }
+  .sh-sub{ font-size:12.5px; color:#5d6573; margin-top:2px; }
+  .sh-legend{ display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:8px; font-size:12px; color:#5d6573; }
+  .sh-legend i{ width:13px; height:13px; border-radius:3px; display:inline-block; vertical-align:-2px; margin-right:4px; }
+  .sh-body{ flex:1; overflow-y:auto; padding:14px 14px 28px; display:grid; gap:20px; align-content:start; -webkit-overflow-scrolling:touch; }
+  .sh-week{ display:grid; gap:6px; }
+  .sh-wk-head{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .sh-wk-head b{ font-size:15px; }
+  .sh-wk-head span{ font-size:12px; color:#5d6573; font-variant-numeric:tabular-nums; }
+  .sh-grid{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }
+  .sh-day{ border-radius:7px; padding:6px 5px 8px; min-height:80px; display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .sh-day.work{ background:#0b0b0c; color:#fff; }
+  .sh-day.off{ background:#cfe6fb; color:#1f4e79; }
+  .sh-dow{ font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; opacity:.8; }
+  .sh-date{ font-size:15px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .sh-hrs{ font-size:15px; font-weight:800; margin-top:auto; font-variant-numeric:tabular-nums; }
+  .sh-day.off .sh-hrs{ font-size:11px; letter-spacing:.04em; }
+  .sh-chip{ font-size:10px; font-weight:800; line-height:1.15; padding:2px 3px; border-radius:4px; overflow-wrap:anywhere; }
+  .sh-chip.school, .sh-tag.school, .sh-legend .school{ background:#fde68a; color:#713f12; }
+  .sh-chip.job, .sh-tag.job, .sh-legend .job{ background:#bbf7d0; color:#14532d; }
+  .sh-chip.family, .sh-tag.family, .sh-legend .family{ background:#fbcfe8; color:#831843; }
+  .sh-events{ background:#fff; border:1px solid #d9dde3; border-radius:10px; padding:14px; display:grid; gap:10px; }
+  .sh-events h3{ margin:0; font-family:'Fredoka',sans-serif; font-size:18px; }
+  .sh-ev{ display:grid; grid-template-columns:64px minmax(0,1fr); gap:10px; padding-top:10px; border-top:1px solid #e5e8ec; }
+  .sh-ev:first-of-type{ border-top:0; padding-top:0; }
+  .sh-ev-date{ font-weight:800; font-size:13px; }
+  .sh-ev-date small{ display:block; color:#5d6573; font-weight:700; }
+  .sh-ev-title{ font-weight:800; font-size:14px; }
+  .sh-tag{ font-size:10px; font-weight:800; padding:1px 6px; border-radius:999px; margin-left:4px; white-space:nowrap; }
+  .sh-ev-detail{ font-size:13px; color:#5d6573; margin-top:2px; line-height:1.4; }
+  .sh-ev-flag{ font-size:13px; color:#b42318; font-weight:800; margin-top:3px; }
+  @media (max-width:480px){
+    .sh-grid{ gap:3px; } .sh-day{ padding:5px 3px 6px; min-height:72px; }
+    .sh-date{ font-size:13px; } .sh-hrs{ font-size:12.5px; } .sh-day.off .sh-hrs{ font-size:9.5px; }
+    .sh-chip{ font-size:8.5px; padding:1px 2px; } .sh-dow{ font-size:9px; }
+  }
+  body.print-actionplan-only .sh-panel, body.print-moomin-only .sh-panel{ display:none!important; }
+  .sh-wk-head{ padding:7px 10px; border-radius:8px; align-items:center; flex-wrap:wrap; }
+  .sh-wk-head.girls{ background:#ff3fa4; color:#5c0636; }
+  .sh-wk-head.nogirls{ background:#b9e0ff; color:#10284a; }
+  .sh-wk-head span{ color:inherit; opacity:.85; }
+  .sh-gw{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800; cursor:pointer; user-select:none; }
+  .sh-gw input{ width:18px; height:18px; margin:0; cursor:pointer; accent-color:#5c0636; }
+</style>
+
+<div class="blueprint-handle theme-shifts" id="shHandle" data-board="shifts" title="Open Dan's shift calendar">
+  <span class="blueprint-handle-grip"></span>
+  <span class="blueprint-handle-label">SHIFTS</span>
+</div>
+<div class="sh-panel" id="shPanel" aria-hidden="true">
+  <div class="sh-top">
+    <button type="button" class="sh-close" id="shClose" title="Close">&times;</button>
+    <div>
+      <div class="sh-title">Dan's Shifts</div>
+      <div class="sh-sub">Oct 26 – Nov 29, 2026 · hours as written on the store schedule</div>
+      <div class="sh-legend">
+        <span><i style="background:#0b0b0c"></i>Working</span>
+        <span><i style="background:#cfe6fb"></i>Off</span>
+        <span><i class="school"></i>School</span>
+        <span><i class="job"></i>Job search</span>
+        <span><i class="family"></i>Kids</span>
+        <span>RX = requested off</span>
+      </div>
+    </div>
+  </div>
+  <div class="sh-body" id="shBody"></div>
+</div>
+
+<script>
+(function(){
+  /* ---- data: Claude edits these two lists when the schedule or dates change ---- */
+  const DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const weeks = [
+    { start:"Oct 26", key:"2026-10-26", days:[["Oct 26","4–12"],["Oct 27","11–8"],["Oct 28",null,"OFF"],["Oct 29","9–5"],["Oct 30","9–5"],["Oct 31",null,"RX"],["Nov 1","4–1"]] },
+    { start:"Nov 2", key:"2026-11-02",  days:[["Nov 2","4–12"],["Nov 3","11–8"],["Nov 4",null,"OFF"],["Nov 5","9–5"],["Nov 6","9–5"],["Nov 7",null,"RX"],["Nov 8","4–1"]] },
+    { start:"Nov 9", key:"2026-11-09",  days:[["Nov 9","4–12"],["Nov 10","11–8"],["Nov 11",null,"OFF"],["Nov 12","9–5"],["Nov 13",null,"OFF"],["Nov 14","4–1"],["Nov 15","4–1"]] },
+    { start:"Nov 16", key:"2026-11-16", days:[["Nov 16","4–12"],["Nov 17","11–8"],["Nov 18",null,"OFF"],["Nov 19","9–5"],["Nov 20","9–5"],["Nov 21","4–1"],["Nov 22",null,"RX"]] },
+    { start:"Nov 23", key:"2026-11-23", days:[["Nov 23","4–12"],["Nov 24","11–8"],["Nov 25",null,"OFF"],["Nov 26",null,"OFF"],["Nov 27",null,"OFF"],["Nov 28","4–1"],["Nov 29","4–1"]] }
+  ];
+  const events = [
+    { date:"Oct 26", dow:"Mon", type:"job", chip:"Interview 10:30", title:"Turning Point 2nd interview with Bonnie (COO)",
+      detail:"10:30–11:30 AM, Microsoft Teams video call. Meeting ID 291 709 548 947 653, passcode XT3E44F2. Set up by Donna Kleiner in HR." },
+    { date:"Oct 30", dow:"Fri", type:"family", chip:"Parade 2:55", title:"Neidig Halloween Parade (Cecilia)",
+      detail:"2:55 PM on the Neidig playground. Families welcome. Costume worn all day, no masks. Dismissal changes due by 1:30 PM.",
+      flag:"You're scheduled 9–5." },
+    { date:"Oct 30", dow:"Fri", type:"school", chip:null, title:"Veterans Day form due (Neidig)",
+      detail:"Only if you want a veteran honored at the Nov 11 Neidig celebration." },
+    { date:"Nov 2", dow:"Mon", type:"school", chip:"Picture retakes", title:"Picture retake day (Neidig and Strayer)",
+      detail:"Neidig asks you to fill out their retake form first." },
+    { date:"Nov 3", dow:"Tue", type:"school", chip:"No school", title:"No school for students (Election Day)",
+      detail:"All Quakertown schools closed for students.",
+      flag:"Girls week, and you're scheduled 11–8. Line up coverage for the girls." },
+    { date:"Nov 6", dow:"Fri", type:"school", chip:"Kaydance work due", title:"Kaydance: Reading 7 missing work deadline",
+      detail:"Last day of Marking Period 1. Missing assignments are on Canvas; Ms. Neiman said submissions are open until today." },
+    { date:"Nov 22", dow:"Sun", type:"family", chip:"Reindeer farm", title:"Reindeer Farm trip with Mom",
+      detail:"Moved from Nov 8. Mom's original email said 1:00 PM, so double-check the time for the new date. You're off (RX) that day." },
+    { date:"Nov 23", dow:"Mon", type:"family", chip:"Conf. 4–7", title:"Cecilia's 5th grade conferences (option 1)",
+      detail:"Evening slots 4:00–7:00 PM. Sign-up came from Mrs. Schomber on Oct 8.",
+      flag:"You're scheduled 4–12." },
+    { date:"Nov 24", dow:"Tue", type:"school", chip:"½ day · Conf.", title:"Half day for students + conferences",
+      detail:"Strayer half day with conferences. Cecilia's conference slots are 1:00–4:00 PM (option 2).",
+      flag:"You're scheduled 11–8." },
+    { date:"Nov 25", dow:"Wed", type:"school", chip:"No school", title:"Thanksgiving break begins",
+      detail:"No school Wednesday, Nov 25 through Sunday, Nov 29." }
+  ];
+  ["Nov 26","Nov 27"].forEach(function(d){ events.push({ date:d, type:"school", chip:"No school", listHidden:true }); });
+
+  const byDate = {};
+  events.forEach(function(e){ if(e.chip){ (byDate[e.date] = byDate[e.date] || []).push(e); } });
+  const labels = { school:"School", job:"Job search", family:"Kids" };
+
+  /* girls / no-girls weeks share Action Plan's own Girls planner (girlsSchedule) */
+  /* one-time seed of Dan's custody pattern (Oct 25): no girls Oct 26–Nov 1, then alternating */
+  (function(){
+    const SEED = 'actionPlan3000_shiftsGirlsSeed_v1';
+    const pattern = {"2026-10-26":"noGirls","2026-11-02":"girls","2026-11-09":"noGirls","2026-11-16":"girls","2026-11-23":"noGirls"};
+    try{
+      if(localStorage.getItem(SEED)) return;
+      if(typeof girlsSchedule === 'undefined') return;
+      Object.keys(pattern).forEach(function(k){ girlsSchedule[k] = pattern[k]; });
+      if(typeof saveGirlsSchedule === 'function') saveGirlsSchedule();
+      if(typeof updateGirlsBlockDisplay === 'function') updateGirlsBlockDisplay();
+      localStorage.setItem(SEED, '1');
+    }catch(e){}
+  })();
+  function girlsOf(k){ try{ return typeof girlsSchedule !== 'undefined' && girlsSchedule[k] === 'girls'; }catch(e){ return false; } }
+  let html = "";
+  weeks.forEach(function(w){
+    const worked = w.days.filter(function(d){ return d[1]; }).length;
+    const isGirls = girlsOf(w.key);
+    html += '<section class="sh-week"><div class="sh-wk-head ' + (isGirls ? 'girls' : 'nogirls') + '" data-wk="' + w.key + '"><b>Week of ' + w.start + '</b>' +
+      '<label class="sh-gw"><input type="checkbox" id="shGirls-' + w.key + '" data-wk="' + w.key + '"' + (isGirls ? ' checked' : '') + '><span class="sh-gw-txt">' + (isGirls ? 'Girls week' : 'No girls week') + '</span></label>' +
+      '<span>' + worked + ' shifts · ' + (7 - worked) + ' off</span></div><div class="sh-grid">';
+    w.days.forEach(function(d, i){
+      const chips = (byDate[d[0]] || []).map(function(e){ return '<span class="sh-chip ' + e.type + '">' + e.chip + '</span>'; }).join("");
+      html += '<div class="sh-day ' + (d[1] ? 'work' : 'off') + '"><div><div class="sh-dow">' + DOW[i] + '</div><div class="sh-date">' + d[0].split(" ")[1] + '</div></div>' +
+        chips + '<div class="sh-hrs">' + (d[1] || d[2]) + '</div></div>';
+    });
+    html += '</div></section>';
+  });
+  html += '<section class="sh-events"><h3>Important dates</h3>' + events.filter(function(e){ return !e.listHidden; }).map(function(e){
+    return '<div class="sh-ev"><div class="sh-ev-date">' + e.date + '<small>' + e.dow + '</small></div><div>' +
+      '<div class="sh-ev-title">' + e.title + '<span class="sh-tag ' + e.type + '">' + labels[e.type] + '</span></div>' +
+      '<div class="sh-ev-detail">' + e.detail + '</div>' + (e.flag ? '<div class="sh-ev-flag">' + e.flag + '</div>' : '') + '</div></div>';
+  }).join("") + '</section>';
+  document.getElementById('shBody').innerHTML = html;
+  document.getElementById('shBody').addEventListener('change', function(e){
+    const cb = e.target; if(!cb.dataset || !cb.dataset.wk) return;
+    const k = cb.dataset.wk, head = cb.closest('.sh-wk-head');
+    try{
+      if(typeof girlsSchedule !== 'undefined'){ girlsSchedule[k] = cb.checked ? 'girls' : 'noGirls'; }
+      if(typeof saveGirlsSchedule === 'function') saveGirlsSchedule();
+      if(typeof updateGirlsBlockDisplay === 'function') updateGirlsBlockDisplay();
+    }catch(err){}
+    head.classList.toggle('girls', cb.checked); head.classList.toggle('nogirls', !cb.checked);
+    head.querySelector('.sh-gw-txt').textContent = cb.checked ? 'Girls week' : 'No girls week';
+  });
+  /* re-read when opened, in case the Girls planner changed */
+  function syncGirls(){
+    document.querySelectorAll('#shBody .sh-gw input').forEach(function(cb){
+      const on = girlsOf(cb.dataset.wk); cb.checked = on;
+      const head = cb.closest('.sh-wk-head');
+      head.classList.toggle('girls', on); head.classList.toggle('nogirls', !on);
+      head.querySelector('.sh-gw-txt').textContent = on ? 'Girls week' : 'No girls week';
+    });
+  }
+
+  const handle = document.getElementById('shHandle');
+  const panel = document.getElementById('shPanel');
+  const board = {
+    open: function(){ try{ if(typeof closeOtherIdeaBoards === 'function') closeOtherIdeaBoards(board); }catch(e){}
+      syncGirls(); panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); handle.style.visibility='hidden'; },
+    closeIfOpen: function(){ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); handle.style.visibility=''; }
+  };
+  try{ if(typeof __ideaBoards !== 'undefined') __ideaBoards.push(board); }catch(e){}
+  let startX = null;
+  handle.addEventListener('pointerdown', function(e){ startX = e.clientX; try{ handle.setPointerCapture(e.pointerId); }catch(_){} });
+  handle.addEventListener('pointerup', function(e){
+    if(startX === null) return;
+    const dx = startX - e.clientX; startX = null;
+    if(dx > 20 || Math.abs(dx) < 8) board.open();
+  });
+  handle.addEventListener('pointercancel', function(){ startX = null; });
+  document.getElementById('shClose').addEventListener('click', board.closeIfOpen);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') board.closeIfOpen(); });
+})();
+</script>
+
 </body></html>
