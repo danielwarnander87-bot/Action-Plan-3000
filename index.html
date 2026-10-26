@@ -19498,4 +19498,100 @@ setTimeout(function(){ pollPocketPlan(false); }, 4500);
 })();
 </script>
 
+<script>
+/* ============================================================
+   CLOUD SYNC for Journal + Appointments (db capability)
+   Journal:      journal/<week Monday YYYY-MM-DD> = {week, entries:{mon..sun}, updatedAt}
+   Appointments: appointments/all = {items:{<dayKey>:[{id,time,text}]}, updatedAt}
+   Lets Claude's Monday "Weekly Print Pack" read them, and keeps
+   devices in step. localStorage stays the instant local copy.
+   ============================================================ */
+(function(){
+  if(!window.claude || typeof window.claude.use !== 'function') return;
+  let db = null;
+  const lastSent = {};
+  const timers = {};
+  function send(path, data){
+    if(!db) return;
+    const body = JSON.stringify(data);
+    if(lastSent[path] === body) return;
+    clearTimeout(timers[path]);
+    timers[path] = setTimeout(function(){
+      const payload = JSON.parse(body); payload.updatedAt = new Date().toISOString();
+      db.doc(path).set(payload).then(function(){ lastSent[path] = body; }).catch(function(){});
+    }, 1500);
+  }
+  function journalNow(){
+    try{ return { week: wk, entries: Object.assign({}, journalData) }; }catch(e){ return null; }
+  }
+  function apptsNow(){
+    try{ return { items: JSON.parse(JSON.stringify(appointmentsData)) }; }catch(e){ return null; }
+  }
+  // wrap the existing save points so every save also reaches the cloud
+  try{
+    const origPersist = persist;
+    persist = function(){ const r = origPersist.apply(this, arguments); const j = journalNow(); if(j) send('journal/' + wk, j); return r; };
+  }catch(e){}
+  try{
+    const origSaveAppts = saveAppointments;
+    saveAppointments = function(){ const r = origSaveAppts.apply(this, arguments); const a = apptsNow(); if(a) send('appointments/all', a); return r; };
+  }catch(e){}
+
+  window.claude.use('db').then(async function(d){
+    if(!d) return;
+    db = d;
+    // 1) pull: fill in anything written on another device
+    try{
+      const snap = await db.doc('journal/' + wk).get();
+      const remote = snap.exists ? (snap.data() || {}) : null;
+      if(remote && remote.entries){
+        let changed = false;
+        Object.keys(remote.entries).forEach(function(k){
+          const r = remote.entries[k];
+          if(r && String(r).trim() && !(journalData[k] && String(journalData[k]).trim())){ journalData[k] = r; changed = true; }
+        });
+        if(changed){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(Object.assign(JSON.parse(localStorage.getItem(STORE_KEY) || '{}'), {journal: journalData}))); }catch(e){} try{ buildJournalUI(); }catch(e){} }
+      }
+    }catch(e){}
+    try{
+      const snap = await db.doc('appointments/all').get();
+      const remote = snap.exists ? (snap.data() || {}) : null;
+      if(remote && remote.items){
+        let changed = false;
+        Object.keys(remote.items).forEach(function(dk){
+          (remote.items[dk] || []).forEach(function(a){
+            const list = appointmentsData[dk] || (appointmentsData[dk] = []);
+            if(!list.some(function(x){ return x.id === a.id; })){ list.push(a); changed = true; }
+          });
+        });
+        if(changed){ try{ localStorage.setItem(APPT_KEY, JSON.stringify(appointmentsData)); }catch(e){} try{ renderAppointments(); }catch(e){} }
+      }
+    }catch(e){}
+    // 2) push current state
+    const j = journalNow(); if(j) send('journal/' + wk, j);
+    const a = apptsNow(); if(a) send('appointments/all', a);
+    // 3) one-time copy of past weeks' journals already in this browser
+    try{
+      const FLAG = 'actionPlan3000_journalCloudMigrated_v1';
+      if(!localStorage.getItem(FLAG)){
+        const re = /^actionPlan3000::(\d{4}-\d{2}-\d{2})$/;
+        for(let i = 0; i < localStorage.length; i++){
+          const k = localStorage.key(i); const m = k && k.match(re);
+          if(!m || m[1] === wk) continue;
+          try{
+            const data = JSON.parse(localStorage.getItem(k) || '{}');
+            let entries = data.journal;
+            if(typeof entries === 'string') entries = entries ? {mon: entries} : null;
+            if(entries && Object.keys(entries).some(function(x){ return entries[x] && String(entries[x]).trim(); })){
+              await db.doc('journal/' + m[1]).set({ week: m[1], entries: entries, updatedAt: new Date().toISOString(), migrated: true });
+            }
+          }catch(e){}
+        }
+        localStorage.setItem(FLAG, '1');
+      }
+    }catch(e){}
+  }).catch(function(){});
+})();
+</script>
+
 </body></html>
